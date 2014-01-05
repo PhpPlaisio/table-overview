@@ -28,7 +28,7 @@
   "extra": {
     "component": {
       "scripts": [
-        "js/overview_table.js"
+        "overview_table.js"
       ],
       "files": [
       ]
