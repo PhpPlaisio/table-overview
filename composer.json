@@ -1,0 +1,28 @@
+{
+  "name": "setbased/table-sorter",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://packagist.setbased.nl/"
+    }
+  ],
+  "description": "An advanced JavaScript table sorter and filter",
+  "authors": [
+    {
+      "name": "Valery Zubran",
+      "role": "Developer"
+    },
+    {
+      "name": "Paul Water",
+      "email": "p.r.water@setbased.nl",
+      "homepage": "http://www.setbased.nl",
+      "role": "Architect"
+    }
+  ],
+  "type": "component",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.3.0",
+    "components/jquery": "2.*"
+  }
+}
