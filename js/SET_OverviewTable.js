@@ -380,7 +380,7 @@ SET_OverviewTable.registerForm = function (selector) {
       SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new SET_OverviewTable($this);
     } else {
       // Selector is not a table. Find tables below the selector.
-      $this.find('form').each(function () {
+      $this.find('table').each(function () {
         SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new SET_OverviewTable($(this));
       });
     }
