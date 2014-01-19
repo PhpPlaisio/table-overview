@@ -28,7 +28,7 @@
   "extra": {
     "component": {
       "scripts": [
-        "overview_table.js"
+        "set_table_sorter_filter-min.js"
       ],
       "files": [
       ]

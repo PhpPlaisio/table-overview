@@ -1,6 +1,7 @@
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
+/*global SET_NoneColumnTypeHandler */
 
 // ---------------------------------------------------------------------------------------------------------------------
 function set_to_lower_case_no_accents(text) {
@@ -80,7 +81,7 @@ function SET_OverviewTable($table) {
   var that = this;
   var i;
 
-  this.myTable = $table;
+  this.$myTable = $table;
 
   // Display the row with table filters.
   $table.find('thead tr.filter').each(function () {
@@ -160,22 +161,23 @@ SET_OverviewTable.prototype.filter = function () {
 
   if (filters.length === 0) {
     // All filters are ineffective. Show all rows.
-    this.myTable.children('tbody').children('tr').show();
+    this.$myTable.children('tbody').children('tr').show();
 
     // Apply zebra theme on all rows.
-    this.myTable.children('tbody').children('tr:odd').removeClass('odd').addClass('even');
-    this.myTable.children('tbody').children('tr:even').removeClass('even').addClass('odd');
+    this.$myTable.children('tbody').children('tr:odd').removeClass('odd').addClass('even');
+    this.$myTable.children('tbody').children('tr:even').removeClass('even').addClass('odd');
   } else {
     // One or more filters are effective.
 
     // Hide all rows.
-    this.myTable.children('tbody').children('tr').hide();
+    this.$myTable.children('tbody').children('tr').hide();
 
     // Apply all effective filters.
     row_index = 0;
-    this.myTable.children('tbody').children('tr').each(function () {
+    this.$myTable.children('tbody').children('tr').each(function () {
       var i;
       var show = 1;
+      var $this = $(this);
 
       for (i = 0; i < filters.length; i += 1) {
         if (filters[i] && !filters[i].simpleFilter(this.cells[i])) {
@@ -188,14 +190,14 @@ SET_OverviewTable.prototype.filter = function () {
 
       if (show === 1) {
         // The row matches all filters. Show the row.
-        $(this).show();
+        $this.show();
 
         // Apply zebra theme on visible rows.
         row_index = row_index + 1;
         if ((row_index % 2) === 1) {
-          $(this).removeClass('even').addClass('odd');
+          $this.removeClass('even').addClass('odd');
         } else {
-          $(this).removeClass('odd').addClass('even');
+          $this.removeClass('odd').addClass('even');
         }
       }
     });
@@ -258,7 +260,7 @@ SET_OverviewTable.prototype.getSortInfo = function (event, $table, $header, colu
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
- * Sorts the table of ths overview table.
+ * Sorts the table of this overview table.
  *
  * @param event
  * @param $header
@@ -275,7 +277,7 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   var $element;
   var i;
 
-  info = this.getSortInfo(event, this.myTable, $header, column_index);
+  info = this.getSortInfo(event, this.$myTable, $header, column_index);
   if (!info.infix) {
     // The use has clicked between two columns of a column header with colspan 2.
     // Don't sort and return immediately.
@@ -307,7 +309,7 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   column_index = column_index + info.offset;
 
   // Get all the rows of the table.
-  rows = this.myTable.children('tbody').children('tr').get();
+  rows = this.$myTable.children('tbody').children('tr').get();
 
   // Pull out the sort keys of the table cells.
   for (i = 0; i < rows.length; i = i + 1) {
@@ -321,15 +323,16 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   });
 
   // Reappend the rows to the table body.
-  var tbody = this.myTable.children('tbody')[0];
+  this.$myTable.children('tbody')[0].rows = [];
+  var tbody = this.$myTable.children('tbody')[0];
   for (i = 0; i < rows.length; i = i + 1) {
     rows[i].sortKey = null;
     tbody.appendChild(rows[i]);
   }
 
   // Remove the asc and desc sort classes from all headers.
-  that.myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
-  that.myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
+  that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
+  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
 
   // Apply asc or desc sort class to the column on witch the table has been sorted.
   if (sort_direction === 1) {
@@ -341,244 +344,18 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   // Reapply zebra theme on visible rows.
   // Note: Using attr('display') is faster than using children('tr:visible').
   var index = 0;
-  this.myTable.children('tbody').children('tr').each(function () {
-    if ($(this).css('display') !== 'none') {
+  this.$myTable.children('tbody').children('tr').each(function () {
+    var $this = $(this);
+
+    if ($this.css('display') !== 'none') {
       if (((index + 1) % 2) === 1) {
-        $(this).removeClass('even').addClass('odd');
+        $this.removeClass('even').addClass('odd');
       } else {
-        $(this).removeClass('odd').addClass('even');
+        $this.removeClass('odd').addClass('even');
       }
       index = index + 1;
     }
   });
 };
-
-// ---------------------------------------------------------------------------------------------------------------------
-function SET_NoneColumnTypeHandler() {
-  "use strict";
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Returns false
- *
- * @returns {boolean}
- */
-SET_NoneColumnTypeHandler.prototype.startFilter = function () {
-  "use strict";
-  return false;
-};
-
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_NoneColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index, column_index) {
-  "use strict";
-  var $cell;
-
-  $cell = $table.children('thead').find('tr.filter').find('td').eq(header_index);
-  $cell.html('');
-  $cell.width($cell.css('width'));
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-function SET_TextColumnTypeHandler() {
-  "use strict";
-  this.myInput = null;
-  this.myFilterValue = null;
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Returns true if the row filter must take this column filter in to account. Returns false otherwise.
- *
- * @returns {boolean}
- */
-SET_TextColumnTypeHandler.prototype.startFilter = function () {
-  "use strict";
-  this.myFilterValue = this.myInput.val();
-
-  return (this.myFilterValue !== '');
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Returns true if the table (based on this column filter) must be shown. Returns false otherwise.
- *
- * @param table_cell
- *
- * @returns {boolean}
- */
-SET_TextColumnTypeHandler.prototype.simpleFilter = function (table_cell) {
-  "use strict";
-  var value;
-
-  value = this.extractForFilter(table_cell);
-
-  return (value.indexOf(this.myFilterValue) !== -1);
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index, column_index) {
-  "use strict";
-  var that = this;
-  var $header;
-
-  this.myInput = $table.children('thead').find('tr.filter').find('td').eq(header_index).find('input');
-
-  // Clear the filter box (some browsers preserve the values on page reload).
-  this.myInput.val('');
-
-  // Install event handler for ESC-key pressed in filter.
-  this.myInput.keyup(function (event) {
-    // If the ESC-key was pressed or nothing is entered clear the value of the search box.
-    if (event.keyCode === 27) {
-      that.myInput.val('');
-    }
-  });
-
-  // Install event handler for changed filter value.
-  this.myInput.keyup({ table: overview_table, element: this.myInput}, SET_OverviewTable.filterTrigger);
-
-  // Install event handler for click on sort icon.
-  $header = $table.children('thead').find('tr.header').find('th').eq(header_index);
-  if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
-    $header.click(function (event) {
-      overview_table.sortSingleColumn(event, $header, that, header_index, column_index);
-    });
-  }
-
-  // Resize the input box.
-  this.myInput.width(this.myInput.closest('td').width() -
-    parseInt(this.myInput.css('margin-left'), 10) -
-    parseInt(this.myInput.css('border-left-width'), 10) -
-    parseInt(this.myInput.css('border-right-width'), 10) -
-    parseInt(this.myInput.css('margin-right'), 10));
-  this.myInput.css('visibility', 'visible');
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Returns the text content of a table_cell.
- *
- * @param table_cell
- *
- * @returns {string}
- */
-SET_TextColumnTypeHandler.prototype.extractForFilter = function (table_cell) {
-  "use strict";
-  return set_to_lower_case_no_accents($(table_cell).text());
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Returns the text content of a table cell.
- *
- * @param {jquery} table_cell The table cell.
- *
- * @returns {string}
- */
-SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
-  "use strict";
-  return set_to_lower_case_no_accents($(table_cell).text());
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.compareSortKeys = function (row1, row2) {
-  "use strict";
-  if (row1.sortKey < row2.sortKey) {
-    return -1;
-  }
-  if (row1.sortKey > row2.sortKey) {
-    return 1;
-  }
-
-  return 0;
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-function SET_NumericColumnTypeHandler() {
-  "use strict";
-}
-
-SET_NumericColumnTypeHandler.prototype = new SET_TextColumnTypeHandler();
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Returns the numeric content of a table cell.
- *
- * @param {jquery} table_cell The table cell.
- *
- * @returns {Number}
- */
-SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
-  "use strict";
-  var exp;
-
-  exp = /[\d\.,\-\+]/g;
-
-  return exp.exec($(table_cell).text()).replace(',', '.');
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (row1, row2) {
-  "use strict";
-  if (row1.sortKey === row2.sortKey) {
-    return 0;
-  }
-  if (row1.sortKey === "" && !isNaN(row2.sortKey)) {
-    return -1;
-  }
-  if (row2.sortKey === "" && !isNaN(row1.sortKey)) {
-    return 1;
-  }
-
-  return row1.sortKey - row2.sortKey;
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-function SET_InputTextColumnTypeHandler() {
-  "use strict";
-}
-
-SET_InputTextColumnTypeHandler.prototype = new SET_TextColumnTypeHandler();
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Returns the text content of the input box in a table_cell.
- *
- * @param table_cell
- *
- * @returns string
- */
-SET_InputTextColumnTypeHandler.prototype.extractForFilter = function (table_cell) {
-  "use strict";
-  return set_to_lower_case_no_accents($(table_cell).find('input').val());
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_InputTextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
-  "use strict";
-  return set_to_lower_case_no_accents($(table_cell).find('input').val());
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Register column type handlers.
- */
-SET_OverviewTable.registerColumnTypeHandler('none', SET_NoneColumnTypeHandler);
-SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
-SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
-SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
-SET_OverviewTable.registerColumnTypeHandler('numeric', SET_NumericColumnTypeHandler);
-
-SET_OverviewTable.registerColumnTypeHandler('input_text', SET_InputTextColumnTypeHandler);
-
-// ---------------------------------------------------------------------------------------------------------------------
-$(window).load(function () {
-  "use strict";
-  $('div.overview_table table').each(function () {
-    $(this).overview_table = new SET_OverviewTable($(this));
-  });
-});
 
 // ---------------------------------------------------------------------------------------------------------------------
