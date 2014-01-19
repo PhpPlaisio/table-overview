@@ -359,3 +359,32 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Array with all registered SET overview tables.
+ *
+ * @type {{SET_OverviewTable}}
+ */
+SET_OverviewTable.ourTables = [];
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Registers forms that match the jQuery selector as a SET overview tables.
+ */
+SET_OverviewTable.registerForm = function (selector) {
+  "use strict";
+  $(selector).each(function () {
+    var $this = $(this);
+
+    if ($this.is('table')) {
+      // Selector is a table.
+      SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new SET_OverviewTable($this);
+    } else {
+      // Selector is not a table. Find tables below the selector.
+      $this.find('form').each(function () {
+        SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new SET_OverviewTable($(this));
+      });
+    }
+  });
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
