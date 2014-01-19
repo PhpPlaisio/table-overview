@@ -9,7 +9,9 @@ function SET_NumericColumnTypeHandler() {
   "use strict";
 }
 
-SET_NumericColumnTypeHandler.prototype = SET_TextColumnTypeHandler.prototype;
+// ---------------------------------------------------------------------------------------------------------------------
+SET_NumericColumnTypeHandler.prototype = Object.create(SET_TextColumnTypeHandler.prototype);
+SET_NumericColumnTypeHandler.constructor = SET_NumericColumnTypeHandler;
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
