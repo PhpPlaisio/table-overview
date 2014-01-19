@@ -323,7 +323,6 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   });
 
   // Reappend the rows to the table body.
-  this.$myTable.children('tbody')[0].rows = [];
   var tbody = this.$myTable.children('tbody')[0];
   for (i = 0; i < rows.length; i = i + 1) {
     rows[i].sortKey = null;
