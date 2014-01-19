@@ -430,6 +430,7 @@ SET_OverviewTable.registerColumnTypeHandler('none', SET_NoneColumnTypeHandler);
 /*global window */
 /*global $ */
 /*global SET_TextColumnTypeHandler */
+/*global SET_OverviewTable */
 
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_NumericColumnTypeHandler() {
@@ -538,7 +539,7 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $tabl
     if (event.keyCode === 27) {
       that.$myInput.val('');
     }
-  }, SET_OverviewTable.filterTrigger);
+  });
 
   // Install event handler for changed filter value.
   this.$myInput.keyup({ table: overview_table, element: this.$myInput}, SET_OverviewTable.filterTrigger);
