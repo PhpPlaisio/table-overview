@@ -2,6 +2,7 @@
 /*global window */
 /*global $ */
 /*global SET_TextColumnTypeHandler */
+/*global SET_OverviewTable */
 
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_NumericColumnTypeHandler() {
