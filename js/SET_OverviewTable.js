@@ -370,7 +370,7 @@ SET_OverviewTable.ourTables = [];
 /**
  * Registers forms that match the jQuery selector as a SET overview tables.
  */
-SET_OverviewTable.registerForm = function (selector) {
+SET_OverviewTable.registerTable = function (selector) {
   "use strict";
   $(selector).each(function () {
     var $this = $(this);
