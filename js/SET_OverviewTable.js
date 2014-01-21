@@ -1,8 +1,9 @@
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
-/*console */
+/*global console */
 /*global SET_NoneColumnTypeHandler */
+/*global alert */
 
 // ---------------------------------------------------------------------------------------------------------------------
 function set_to_lower_case_no_accents(text) {
@@ -378,7 +379,7 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   }
 
   if (this.myDebug) {
-    SET_OverviewTable.benchmark('Reappend rows', time_sort);
+    SET_OverviewTable.benchmark('Reappend rows ', time_sort);
     time_reappend = new Date();
   }
 
