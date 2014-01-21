@@ -6,68 +6,76 @@
 /*global alert */
 
 // ---------------------------------------------------------------------------------------------------------------------
-var trans = {
-  'à': 'a',
-  'á': 'a',
-  'â': 'a',
-  'ã': 'a',
-  'ä': 'a',
-  'å': 'a',
-  'æ': 'ae',
-  'ç': 'c',
-  'è': 'e',
-  'é': 'e',
-  'ê': 'e',
-  'ë': 'e',
-  'ě': 'e',
-  'ę': 'e',
-  'ð': 'd',
-  'ì': 'i',
-  'í': 'i',
-  'î': 'i',
-  'ï': 'i',
-  'ł': 'l',
-  'ñ': 'n',
-  'ń': 'n',
-  'ň': 'n',
-  'ò': 'o',
-  'ó': 'o',
-  'ô': 'o',
-  'õ': 'o',
-  'ö': 'o',
-  'ø': 'o',
-  'ù': 'u',
-  'ú': 'u',
-  'û': 'u',
-  'ü': 'u',
-  'ş': 's',
-  'š': 's',
-  'ý': 'y',
-  'ÿ': 'y',
-  'ž': 'z',
-  'þ': 'th',
-  'ß': 'ss'
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
 function set_to_lower_case_no_accents(text) {
   "use strict";
-  var char;
-  var text_new = '';
-  var i;
 
-  text = text.toLowerCase();
-
-  for (i = 0; i < text.length; i = i + 1) {
-    char = text.substr(i, 1);
-    if (trans[char]) {
-      text_new += trans[char];
-    } else {
-      text_new += char;
+  function remove_accent(char) {
+    switch (char) {
+    case 'à':
+    case 'á':
+    case 'â':
+    case 'ã':
+    case 'ä':
+    case 'å':
+      return 'a';
+    case 'æ':
+      return 'ae';
+    case 'ç':
+      return 'c';
+    case 'è':
+    case 'é':
+    case 'ê':
+    case 'ë':
+    case 'ě':
+    case 'ę':
+      return 'e';
+    case 'ð':
+      return 'd';
+    case 'ì':
+    case 'í':
+    case 'î':
+    case 'ï':
+      return 'i';
+    case 'ł':
+      return 'l';
+    case 'ñ':
+    case 'ń':
+    case 'ň':
+      return 'n';
+    case 'ò':
+    case 'ó':
+    case 'ô':
+    case 'õ':
+    case 'ö':
+    case 'ø':
+      return 'o';
+    case 'ù':
+    case 'ú':
+    case 'û':
+    case 'ü':
+      return 'u';
+    case 'ş':
+    case 'š':
+      return 's';
+    case 'ý':
+    case 'ÿ':
+      return 'y';
+    case 'ž':
+      return 'z';
+    case 'þ':
+      return 'th';
+    case 'ß':
+      return 'ss';
+    default:
+      return char;
     }
   }
 
-  return text_new;
+  if (text) {
+    return text.toLowerCase().replace(/./g, remove_accent);
+  }
+
+  return text;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
