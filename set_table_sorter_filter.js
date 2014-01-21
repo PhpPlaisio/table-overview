@@ -1,6 +1,7 @@
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
+/*console */
 /*global SET_NoneColumnTypeHandler */
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -81,6 +82,12 @@ function SET_OverviewTable($table) {
   var that = this;
   var i;
 
+  /**
+   * Set to true for debugging and performance improvement.
+   * @type {boolean}
+   */
+  this.myDebug = false;
+
   this.$myTable = $table;
 
   // Display the row with table filters.
@@ -127,6 +134,22 @@ function SET_OverviewTable($table) {
     }
   });
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.benchmark = function (s, d) {
+  "use strict";
+  SET_OverviewTable.log(s + (new Date().getTime() - d.getTime()) + "ms");
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.log = function (s) {
+  "use strict";
+  if (console !== "undefined" && console.debug !== "undefined") {
+    console.log(s);
+  } else {
+    alert(s);
+  }
+};
 
 // ---------------------------------------------------------------------------------------------------------------------
 SET_OverviewTable.ourColumnTypeHandlers = {};
@@ -276,6 +299,16 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   var sort_direction;
   var $element;
   var i;
+  var time_start;
+  var time_init;
+  var time_sort_key;
+  var time_sort;
+  var time_reappend;
+  var time_fin;
+
+  if (this.myDebug) {
+    time_start = new Date();
+  }
 
   info = this.getSortInfo(event, this.$myTable, $header, column_index);
   if (!info.infix) {
@@ -308,6 +341,11 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   // Increment the column_index if the column header spans 2 columns.
   column_index = column_index + info.offset;
 
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Initialize ', time_start);
+    time_init = new Date();
+  }
+
   // Get all the rows of the table.
   rows = this.$myTable.children('tbody').children('tr').get();
 
@@ -317,10 +355,20 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
     rows[i].sortKey = column.getSortKey(cell);
   }
 
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Getting sort keys ', time_init);
+    time_sort_key = new Date();
+  }
+
   // Actually sort the rows.
   rows.sort(function (row1, row2) {
     return sort_direction * column.compareSortKeys(row1, row2);
   });
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Sorting ', time_sort_key);
+    time_sort = new Date();
+  }
 
   // Reappend the rows to the table body.
   var tbody = this.$myTable.children('tbody')[0];
@@ -329,15 +377,9 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
     tbody.appendChild(rows[i]);
   }
 
-  // Remove the asc and desc sort classes from all headers.
-  that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
-  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
-
-  // Apply asc or desc sort class to the column on witch the table has been sorted.
-  if (sort_direction === 1) {
-    $element.addClass('sorted-asc');
-  } else {
-    $element.addClass('sorted-desc');
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Reappend rows', time_sort);
+    time_reappend = new Date();
   }
 
   // Reapply zebra theme on visible rows.
@@ -355,6 +397,27 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
       index = index + 1;
     }
   });
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Applying zebra theme ', time_reappend);
+    time_fin = new Date();
+  }
+
+  // Remove the asc and desc sort classes from all headers.
+  that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
+  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
+
+  // Apply asc or desc sort class to the column on witch the table has been sorted.
+  if (sort_direction === 1) {
+    $element.addClass('sorted-asc');
+  } else {
+    $element.addClass('sorted-desc');
+  }
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Finishing ', time_fin);
+    SET_OverviewTable.benchmark('Total time ', time_start);
+  }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
