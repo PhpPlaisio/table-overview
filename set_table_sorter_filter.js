@@ -46,7 +46,46 @@ var trans = {
   'ÿ': 'y',
   'ž': 'z',
   'þ': 'th',
-  'ß': 'ss'
+  'ß': 'ss',
+  'À': 'A',
+  'Á': 'A',
+  'Â': 'A',
+  'Ã': 'A',
+  'Ä': 'A',
+  'Å': 'A',
+  'Æ': 'AE',
+  'Ç': 'C',
+  'È': 'E',
+  'É': 'E',
+  'Ê': 'E',
+  'Ë': 'E',
+  'Ě': 'E',
+  'Ę': 'E',
+  'Ð': 'D',
+  'Ì': 'I',
+  'Í': 'I',
+  'Î': 'I',
+  'Ï': 'I',
+  'Ł': 'L',
+  'Ñ': 'N',
+  'Ń': 'N',
+  'Ň': 'N',
+  'Ò': 'O',
+  'Ó': 'O',
+  'Ô': 'O',
+  'Õ': 'O',
+  'Ö': 'O',
+  'Ø': 'O',
+  'Ù': 'U',
+  'Ú': 'U',
+  'Û': 'U',
+  'Ü': 'U',
+  'Ş': 'S',
+  'Š': 'S',
+  'Ý': 'Y',
+  'Ÿ': 'Y',
+  'Ž': 'Z',
+  'Þ': 'TH'
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -55,8 +94,6 @@ function set_to_lower_case_no_accents(text) {
   var char;
   var text_new = '';
   var i;
-
-  text = text.toLowerCase();
 
   for (i = 0; i < text.length; i = i + 1) {
     char = text.substr(i, 1);
@@ -67,7 +104,7 @@ function set_to_lower_case_no_accents(text) {
     }
   }
 
-  return text_new;
+  return text_new.toLowerCase();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -197,7 +234,7 @@ SET_OverviewTable.prototype.filter = function () {
       var $this = $(this);
 
       for (i = 0; i < filters.length; i += 1) {
-        if (filters[i] && !filters[i].simpleFilter(this.cells[i])) {
+        if (filters[i] && !filters[i].simpleFilter(set_to_lower_case_no_accents(this.cells[i]))) {
           // The table cell does not match the filter. Don't show the row.
           show = 0;
           // There is no need to apply other filters on this row.
@@ -287,6 +324,7 @@ SET_OverviewTable.prototype.getSortInfo = function (event, $table, $header, colu
  */
 SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column, header_index, column_index) {
   "use strict";
+  var even;
   var that = this;
   var info;
   var rows;
@@ -377,18 +415,18 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
   }
 
   // Reapply zebra theme on visible rows.
-  // Note: Using attr('display') is faster than using children('tr:visible').
-  var index = 0;
+  // Note: Using this.style.display is faster than using children('tr:visible').
+  even = true;
   this.$myTable.children('tbody').children('tr').each(function () {
     var $this = $(this);
 
-    if ($this.css('display') !== 'none') {
-      if (((index + 1) % 2) === 1) {
-        $this.removeClass('even').addClass('odd');
-      } else {
+    if (this.style.display !== 'none') {
+      if (even === true) {
         $this.removeClass('odd').addClass('even');
+      } else {
+        $this.removeClass('even').addClass('odd');
       }
-      index = index + 1;
+      even = !even;
     }
   });
 
