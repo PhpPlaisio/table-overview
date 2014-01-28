@@ -234,7 +234,7 @@ SET_OverviewTable.prototype.filter = function () {
       var $this = $(this);
 
       for (i = 0; i < filters.length; i += 1) {
-        if (filters[i] && !filters[i].simpleFilter(set_to_lower_case_no_accents(this.cells[i]))) {
+        if (filters[i] && !filters[i].simpleFilter(this.cells[i])) {
           // The table cell does not match the filter. Don't show the row.
           show = 0;
           // There is no need to apply other filters on this row.
@@ -451,6 +451,115 @@ SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column,
     SET_OverviewTable.benchmark('Total time ', time_start);
   }
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Sorts the table of this overview table.
+ *
+ * @param event
+ * @param $header
+ * @param column
+ * @param header_index
+ * @param sort_list
+ */
+SET_OverviewTable.prototype.sortMultiColumn = function (event, $header, column, header_index, sort_list) {
+  "use strict";
+  var even;
+  var that = this;
+  var info = [];
+  var rows;
+  var sort_direction;
+  var $element = [];
+  var column_index_list = [];
+  var i, j;
+  var column_index;
+  var cell = [];
+
+  for (i = 0; i < sort_list.length; i = i + 1) {
+    column_index = sort_list[i];
+    info[i] = this.getSortInfo(event, this.$myTable, $header, column_index);
+    if (!info[i].infix) {
+      // The use has clicked between two columns of a column header with colspan 2.
+      // Don't sort and return immediately.
+      return;
+    }
+
+    if (info[i].colspan === 1) {
+      // The header spans 1 column.
+      $element[i] = $header;
+    } else if (info[i].colspan === 2) {
+      // The header spans 2 columns.
+      if (info[i].offset === 0) {
+        // Sort on the first/left column.
+        $element[i] = $header.children('span').first();
+      } else if (info[i].offset === 1) {
+        // Sort on the second/right column.
+        $element[i] = $header;
+      }
+    }
+
+    // Get the sort direction.
+    if ($element[i].hasClass('sorted-asc')) {
+      sort_direction = -1;
+    } else {
+      sort_direction = 1;
+    }
+
+    // Increment the column_index if the column header spans 2 columns.
+    column_index_list[i] = column_index + info.offset;
+  }
+
+  // Get all the rows of the table.
+  rows = this.$myTable.children('tbody').children('tr').get();
+
+  // Pull out the sort keys of the table cells.
+  for (i = 0; i < rows.length; i = i + 1) {
+    for (j = 0; j < column_index_list.length; j = j + 1) {
+      cell[i] =  rows[i].cells[column_index_list[i]];
+    }
+    rows[i].sortKey = column.getSortKey(cell);
+  }
+
+  // Actually sort the rows.
+  rows.sort(function (row1, row2) {
+    return sort_direction * column.compareSortKeys(row1, row2);
+  });
+
+  // Reappend the rows to the table body.
+  var tbody = this.$myTable.children('tbody')[0];
+  for (i = 0; i < rows.length; i = i + 1) {
+    rows[i].sortKey = null;
+    tbody.appendChild(rows[i]);
+  }
+
+  // Reapply zebra theme on visible rows.
+  // Note: Using this.style.display is faster than using children('tr:visible').
+  even = true;
+  this.$myTable.children('tbody').children('tr').each(function () {
+    var $this = $(this);
+
+    if (this.style.display !== 'none') {
+      if (even === true) {
+        $this.removeClass('odd').addClass('even');
+      } else {
+        $this.removeClass('even').addClass('odd');
+      }
+      even = !even;
+    }
+  });
+
+  // Remove the asc and desc sort classes from all headers.
+  that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
+  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
+
+  // Apply asc or desc sort class to the column on witch the table has been sorted.
+  if (sort_direction === 1) {
+    $element.addClass('sorted-asc');
+  } else {
+    $element.addClass('sorted-desc');
+  }
+};
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
