@@ -3,10 +3,6 @@
 /*global $ */
 /*global SET_OverviewTable */
 /*global set_to_lower_case_no_accents */
-/*global columnsIndexList */
-
-// ---------------------------------------------------------------------------------------------------------------------
-var columnsIndexList = [];
 
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_TextColumnTypeHandler() {
@@ -47,11 +43,24 @@ SET_TextColumnTypeHandler.prototype.simpleFilter = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index, column_index) {
+SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, $table, header_index, column_index) {
   "use strict";
   var that = this;
   var $header;
-  var i, count, add;
+
+  // Install event handler for click on sort icon.
+  $header = $table.children('thead').find('tr.header').find('th').eq(header_index);
+  if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
+    $header.click(function (event) {
+      overview_table.sort(event, $header, that, header_index, column_index);
+    });
+  }
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index, column_index) {
+  "use strict";
+  var that = this;
 
   this.$myInput = $table.children('thead').find('tr.filter').find('td').eq(header_index).find('input');
 
@@ -69,46 +78,6 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $tabl
   // Install event handler for changed filter value.
   this.$myInput.keyup({ table: overview_table, element: this.$myInput}, SET_OverviewTable.filterTrigger);
 
-  // Install event handler for click on sort icon.
-  $header = $table.children('thead').find('tr.header').find('th').eq(header_index);
-  if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
-    $header.click(function (event) {
-      // todo right button for multi sort. Use global constant.
-      if (!event.ctrlKey) {
-        columnsIndexList = [];
-        columnsIndexList.push(column_index);
-      } else {
-        add = true;
-        for (i = 0; i < columnsIndexList.length; i = i + 1) {
-          if (columnsIndexList[i] === column_index) {
-            // Remove column from list if it is selected again.
-            columnsIndexList.splice(i, 1);
-            add = false;
-          }
-        }
-        if (add === true) {
-          // Add new column to sort list.
-          columnsIndexList.push(column_index);
-        }
-      }
-
-      count = 0;
-      for (i = 0; i < columnsIndexList.length; i = i + 1) {
-        if (columnsIndexList[i] !== undefined) {
-          count += 1;
-        }
-      }
-
-      if (count === 1 || count === 0) {
-        if (count === 1) {
-          column_index = columnsIndexList[0];
-        }
-        overview_table.sortSingleColumn(event, $header, that, header_index, column_index);
-      } else {
-        overview_table.sortMultiColumn(event, $header, that, header_index, columnsIndexList);
-      }
-    });
-  }
 
   // Resize the input box.
   this.$myInput.width(this.$myInput.closest('td').width() -
