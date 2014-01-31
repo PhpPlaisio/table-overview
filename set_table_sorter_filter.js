@@ -1028,33 +1028,35 @@ SET_NumericColumnTypeHandler.constructor = SET_NumericColumnTypeHandler;
 /**
  * Returns the numeric content of a table cell.
  *
- * @param {jquery} table_cell The table cell.
+ * @param {object} table_cell The table cell.
  *
  * @returns {Number}
  */
 SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   "use strict";
-  var exp;
+  var regexp;
+  var parts;
 
-  exp = /[\d\.,\-\+]/g;
+  regexp = /[\d\.,\-\+]*/;
+  parts = regexp.exec($(table_cell).text());
 
-  return parseInt(exp.exec($(table_cell).text()).replace(',', '.'), 10);
+  return parseInt(parts[0].replace(',', '.'), 10);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (row1, row2) {
+SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
-  if (row1.sortKey === row2.sortKey) {
+  if (value1 === value2) {
     return 0;
   }
-  if (row1.sortKey === "" && !isNaN(row2.sortKey)) {
+  if (value1 === "" && !isNaN(value2)) {
     return -1;
   }
-  if (row2.sortKey === "" && !isNaN(row1.sortKey)) {
+  if (value2 === "" && !isNaN(value1)) {
     return 1;
   }
 
-  return row1.sortKey - row2.sortKey;
+  return value1 - value2;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
