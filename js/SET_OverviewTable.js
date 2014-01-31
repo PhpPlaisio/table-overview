@@ -129,7 +129,7 @@ function SET_OverviewTable($table) {
    * Set to true for debugging and performance improvement.
    * @type {boolean}
    */
-  this.myDebug = true;
+  this.myDebug = false;
 
   this.$myTable = $table;
 
@@ -241,7 +241,6 @@ SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
 // --------------------------------------------------------------------------------------------------------------------
 /**
  * Get and return sort direction for current column.
- *
  * @param $header
  * @param infix
  * @returns {string}

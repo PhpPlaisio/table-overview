@@ -20,7 +20,7 @@ function SET_TextColumnTypeHandler() {
  */
 SET_TextColumnTypeHandler.prototype.startFilter = function () {
   "use strict";
-  this.myFilterValue = this.$myInput.val();
+  this.myFilterValue = set_to_lower_case_no_accents(this.$myInput.val());
 
   return (this.myFilterValue !== '');
 };
