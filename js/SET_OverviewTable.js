@@ -6,6 +6,9 @@
 /*global alert */
 
 //----------------------------------------------------------------------------------------------------------------------
+/**
+ * Object with parameters which names equals values what use for replace specific characters.
+ */
 var trans = {
   'à': 'a',
   'á': 'a',
@@ -88,9 +91,9 @@ var trans = {
   'Þ': 'TH'
 };
 
-// ---------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /**
- *
+ * Replace all specific character to standard character.
  * @param text
  * @returns {string}
  */
@@ -111,9 +114,9 @@ function set_to_lower_case_no_accents(text) {
   return text_new.toLowerCase();
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /**
- *
+ * Constructor of class SET_OverviewTable.
  * @param $table
  * @constructor
  */
@@ -163,7 +166,7 @@ function SET_OverviewTable($table) {
     }
 
     // Initialize the filter.
-    that.myColumnHandlers[column_index].initFilter(that, $table, header_index, column_index);
+    that.myColumnHandlers[column_index].initFilter(that, $table, header_index);
 
     // Initialize the filter.
     that.myColumnHandlers[column_index].initSort(that, $table, header_index, column_index);
@@ -180,6 +183,7 @@ function SET_OverviewTable($table) {
 
 // --------------------------------------------------------------------------------------------------------------------
 /**
+ * Merge info about columns.
  * @param sort_info
  * @param column_sort_info
  * @returns {*}
@@ -187,16 +191,16 @@ function SET_OverviewTable($table) {
 SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
   "use strict";
   if (sort_info.length === 0) {
+    // If selected only one column and sort info is empty, add column info
     column_sort_info.sort_order = 1;
     sort_info[0] = column_sort_info;
   } else {
-    // xxx remove holes from sort_info.
-
     if (column_sort_info.sort_order !== false && sort_info[column_sort_info.sort_order - 1]) {
-      // xxx add comment
+      // If clicked column is already sorted and sort info contain info about this column,
+      // change sort direction for it column.
       sort_info[column_sort_info.sort_order - 1].sort_direction = column_sort_info.sort_direction;
     } else {
-      // xxx add comment.
+      // If clicked column isn't sort add this column info to sort info.
       column_sort_info.sort_order = sort_info.length;
       sort_info[sort_info.length] = column_sort_info;
     }
@@ -206,6 +210,57 @@ SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
 };
 
 // --------------------------------------------------------------------------------------------------------------------
+/**
+ * Get and return sort sort order for current column.
+ *
+ * @param $header
+ * @param infix
+ * @returns {boolean}
+ */
+SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
+  "use strict";
+  var attr;
+  var classes;
+  var sort_order_class;
+  var i;
+  var order = false;
+
+  attr = $header.attr('class');
+  classes = attr.split(' ');
+
+  for (i = 0; i < classes.length; i = i + 1) {
+    sort_order_class = 'sort-order' + infix;
+    if (classes[i].substr(0, sort_order_class.length) === sort_order_class) {
+      order = parseInt(classes[i].substr(sort_order_class.length), 10);
+    }
+  }
+
+  return order;
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+/**
+ * Get and return sort direction for current column.
+ *
+ * @param $header
+ * @param infix
+ * @returns {string}
+ *
+ */
+SET_OverviewTable.prototype.getSortDirection = function ($header, infix) {
+  "use strict";
+
+  if ($header.hasClass('sorted' + infix + 'desc')) {
+    return 'desc';
+  }
+
+  if ($header.hasClass('sorted' + infix + 'asc')) {
+    return 'asc';
+  }
+  return '';
+};
+
+//---------------------------------------------------------------------------------------------------------------------
 /**
  *
  * @param event
@@ -218,109 +273,102 @@ SET_OverviewTable.prototype.sort = function (event, $header, that, header_index,
   "use strict";
   var sort_info;
   var sort_column_info;
+  // Debug info
+  var time;
+  var total_time;
 
+  if (this.myDebug) {
+    SET_OverviewTable.log('Start sort:');
+    time = new Date();
+    total_time = time;
+  }
+
+  // Get info about all  currently sorted columns.
   sort_info = this.getSortInfo();
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Get all sort info - ', time);
+    time = new Date();
+  }
+
+  // Get info about column what was selected for sort.
   sort_column_info = this.getColumnSortInfo(event, $header, header_index, column_index);
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Get info about current column - ', time);
+    time = new Date();
+  }
 
   // Remove all classes concerning sorting from the column headers.
   this.cleanSortClasses();
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Reset column headers - ', time);
+    time = new Date();
+  }
+
   if (!event.ctrlKey) {
+
     sort_info = this.mergeInfo([], sort_column_info);
-    this.sortSingleColumn(sort_info[0], that);
-  } else {
-    sort_info = this.mergeInfo(sort_info, sort_column_info);
-    if (sort_info.length === 1) {
-      this.sortSingleColumn(sort_info[0], that);
-    } else {
-      this.sortMultiColumn(sort_info);
+
+    if (this.myDebug) {
+      SET_OverviewTable.benchmark('Merge info - ', time);
+      time = new Date();
     }
+
+    this.sortSingleColumn(sort_info[0], that);
+
+    if (this.myDebug) {
+      SET_OverviewTable.benchmark('Sorted by one column - ', time);
+      time = new Date();
+    }
+  } else {
+
+    sort_info = this.mergeInfo(sort_info, sort_column_info);
+
+    if (this.myDebug) {
+      SET_OverviewTable.benchmark('Merge info - ', time);
+      time = new Date();
+    }
+
+    if (sort_info.length === 1) {
+
+      this.sortSingleColumn(sort_info[0], that);
+
+      if (this.myDebug) {
+        SET_OverviewTable.benchmark('Sorted by one column - ', time);
+        time = new Date();
+      }
+
+    } else {
+
+      this.sortMultiColumn(sort_info);
+
+      if (this.myDebug) {
+        SET_OverviewTable.benchmark('Sorted by ' + sort_info.length + ' column - ', time);
+        time = new Date();
+      }
+
+    }
+
   }
 
   // Add classes concerning sorting to the column headers.
   this.addSortInfo(sort_info);
 
-  // Apply zebra theme for table.
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Added info to table head - ', time);
+    time = new Date();
+  }
+
+  // Apply zebra theme for the table.
   this.applyZebraTheme();
-};
 
-// --------------------------------------------------------------------------------------------------------------------
-/**
- * Add classes concerning sorting to the column headers.
- *
- * @param sort_info
- */
-SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
-  "use strict";
-  var order;
-  var $header;
-  var i;
-
-  for (i = 0; i < sort_info.length; i = i + 1) {
-    order = i + 1;
-    $header = this.$myTable.children('thead').find('tr.header').find('th').eq(sort_info[i].header_index);
-
-    if (sort_info[i].colspan === 1) {
-      $header.addClass('sort-order-' + order);
-    } else if (sort_info[i].colspan === 2) {
-      if (sort_info[i].offset === 0) {
-        $header.addClass('sort-order-1-' + order);
-
-      } else if (sort_info[i].offset === 1) {
-        $header.addClass('sort-order-2-' + order);
-      }
-    }
-    $header.addClass('sorted-' + sort_info[i].sort_direction);
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Apply zebra theme - ', time);
+    SET_OverviewTable.benchmark('Finished for - ', total_time);
   }
 };
-
-// --------------------------------------------------------------------------------------------------------------------
-/**
- * Get and return sort sort order for current column.
- *
- * @param $header
- * @param string
- * @returns {boolean}
- */
-SET_OverviewTable.prototype.getSortOrder = function ($header, string) {
-  "use strict";
-  var attr;
-  var classes;
-  var i;
-  var order = false;
-
-  attr = $header.attr('class');
-  classes = attr.split(' ');
-
-  for (i = 0; i < classes.length; i = i + 1) {
-    if (classes[i].substr(0, string.length) === string) {
-      order = parseInt(classes[i].substr(string.length), 10);
-    }
-  }
-
-  return order;
-};
-
-
-// --------------------------------------------------------------------------------------------------------------------
-/**
- * Get and return sort direction for current column.
- *
- * @param $header
- * @returns {boolean}
- */
-SET_OverviewTable.prototype.getSortDirection = function ($header) {
-  "use strict";
-  var sort_direction = false;
-
-  if ($header.hasClass('sorted-desc')) {
-    sort_direction = 'desc';
-  } else {
-    sort_direction = 'asc';
-  }
-
-  return sort_direction;
-};
-
 
 // --------------------------------------------------------------------------------------------------------------------
 /**
@@ -341,13 +389,13 @@ SET_OverviewTable.prototype.getSortInfo = function () {
     var $th = $(th);
     span = $(this).attr('colspan');
     if (!span || span === '1') {
-      sort_order = that.getSortOrder($th, 'sort-order-');
+      sort_order = that.getSortOrder($th, '-');
       if (sort_order) {
         columns_info[sort_order - 1] = {
           column_index: column_index,
           header_index: header_index,
           sort_order: sort_order,
-          sort_direction: that.getSortDirection($th),
+          sort_direction: that.getSortDirection($th, '-'),
           infix: '-',
           colspan: 1,
           offset: 0
@@ -355,13 +403,13 @@ SET_OverviewTable.prototype.getSortInfo = function () {
       }
     } else if (span === '2') {
       if ($th.hasClass('sort-1')) {
-        sort_order = that.getSortOrder($th, 'sort-order-1-');
+        sort_order = that.getSortOrder($th, '-1-');
         if (sort_order) {
           columns_info[sort_order - 1] = {
             column_index: column_index,
             header_index: header_index,
             sort_order: sort_order,
-            sort_direction: that.getSortDirection($th),
+            sort_direction: that.getSortDirection($th, '-1-'),
             infix: '-1-',
             colspan: 2,
             offset: 0
@@ -370,12 +418,12 @@ SET_OverviewTable.prototype.getSortInfo = function () {
       }
 
       if ($th.hasClass('sort-2')) {
-        sort_order = that.getSortOrder($th, 'sort-order-2-');
+        sort_order = that.getSortOrder($th, '-2-');
         if (sort_order) {
           columns_info[sort_order - 1] = {
             column_index: column_index,
             header_index: header_index,
-            sort_order: that.getSortDirection($th),
+            sort_order: that.getSortDirection($th, '-2-'),
             sort_direction: sort_direction,
             infix: '-2-',
             colspan: 2,
@@ -398,43 +446,46 @@ SET_OverviewTable.prototype.getSortInfo = function () {
 
 // --------------------------------------------------------------------------------------------------------------------
 /**
- * Add sort direction
- *
+ * Get all info about clicked column.
+ * Return object with column info.
  * @param event
  * @param $header
  * @param header_index
  * @param column_index
  * @returns {{}}
  */
-SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header,  header_index, column_index) {
+SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, header_index, column_index) {
   "use strict";
   var span;
   var column_info = {};
   var width_col1;
   var width_col2;
   var width_header;
-  var direction;
   var $table = this.$myTable;
   var diff;
   var x;
 
+  function getFlipSortDirection($table, $header, infix) {
+    var sort_direction;
+
+    sort_direction = $table.getSortDirection($header, infix);
+    if (sort_direction === 'desc' || sort_direction === '') {
+      return 'asc';
+    }
+
+    return 'desc';
+  }
+
   column_info.column_index = column_index;
   column_info.header_index = header_index;
 
-  direction = this.getSortDirection($header);
-
-  if (direction === 'desc' || direction === false) {
-    column_info.sort_direction = 'asc';
-  } else {
-    column_info.sort_direction = 'desc';
-  }
-
   span = $header.attr('colspan');
   if (!span || span === '1') {
-    column_info.sort_order = this.getSortOrder($header, 'sort-order-');
     column_info.infix = '-';
     column_info.colspan = 1;
     column_info.offset = 0;
+    column_info.sort_order = this.getSortOrder($header, column_info.infix);
+    column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
   } else if (span === '2') {
     if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
       // Header spans two columns and both columns can be used for sorting.
@@ -448,28 +499,32 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header,  heade
 
       // We account diff due to cell separation.
       if (x < ((2 * width_col1 - diff) / 2)) {
-        column_info.sort_order = this.getSortOrder($header, 'sort-order-1-');
         column_info.infix = '-1-';
         column_info.colspan = 2;
         column_info.offset = 0;
+        column_info.sort_order = this.getSortOrder($header, column_info.infix);
+        column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
       } else if (x > ((2 * width_col1 + diff) / 2)) {
-        column_info.sort_order = this.getSortOrder($header, 'sort-order-2-');
         column_info.infix = '-2-';
         column_info.colspan = 2;
         column_info.offset = 1;
+        column_info.sort_order = this.getSortOrder($header, column_info.infix);
+        column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
       }
     } else if ($header.hasClass('sort-1')) {
       // Header spans two columns but only the first/left column can used for sorting.
-      column_info.sort_order = this.getSortOrder($header, 'sort-order-1-');
       column_info.infix = '-1-';
       column_info.colspan = 2;
       column_info.offset = 0;
+      column_info.sort_order = this.getSortOrder($header, column_info.infix);
+      column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
     } else if ($header.hasClass('sort-2')) {
       // Header spans two columns but only the second/right column can used for sorting.
-      column_info.sort_order = this.getSortOrder($header, 'sort-order-2-');
       column_info.infix = '-2-';
       column_info.colspan = 2;
       column_info.offset = 1;
+      column_info.sort_order = this.getSortOrder($header, column_info.infix);
+      column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
     }
   }
   // Colspan greater than 2 is not supported.
@@ -495,37 +550,35 @@ SET_OverviewTable.prototype.cleanSortClasses = function () {
   that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
 };
 
-
-// --------------------------------------------------------------------------------------------------------------------
-// Debug part:
-// put columns and direction on console.
-//if (this.myDebug) {
-//  time_start = new Date();
-//}
-//
-//code
-//
-//if (this.myDebug) {
-//  SET_OverviewTable.benchmark('Sort', time_start);
-//  time_reappend = new Date();
-//}
-
-
-// If working okay, implement:
-// sort one column => use sortSingleColumn
-// sort 2 or more columns => sortMultiColumn
-//   -- create dynamic sorting function.
-
-// ---------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
 /**
- * Apply zebra theme for table.
+ * Add classes concerning sorting to the column headers.
+ *
+ * @param sort_info
+ */
+SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
+  "use strict";
+  var order;
+  var $header;
+  var i;
+
+  for (i = 0; i < sort_info.length; i = i + 1) {
+    order = i + 1;
+    $header = this.$myTable.children('thead').find('tr.header').find('th').eq(sort_info[i].header_index);
+    $header.addClass('sort-order' + sort_info[i].infix + order);
+    $header.addClass('sorted' + sort_info[i].infix + sort_info[i].sort_direction);
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+/**
+ * Apply theme zebra for the table.
  */
 SET_OverviewTable.prototype.applyZebraTheme = function () {
   "use strict";
-  // Reapply zebra theme on visible rows.
-  // Note: Using this.style.display is faster than using children('tr:visible').
   var even = true;
 
+  // Note: Using this.style.display is faster than using children('tr:visible').
   this.$myTable.children('tbody').children('tr').each(function () {
     var $this = $(this);
 
@@ -542,8 +595,7 @@ SET_OverviewTable.prototype.applyZebraTheme = function () {
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
- * Sorts the table of this overview table.
- *
+ * Sorts the table by one column.
  * @param sorting_info
  * @param column
  */
@@ -563,9 +615,9 @@ SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
 
   // Get the sort direction.
   if (sorting_info.sort_direction === 'asc') {
-    sort_direction = -1;
-  } else {
     sort_direction = 1;
+  } else {
+    sort_direction = -1;
   }
 
   // Increment the column_index if the column header spans 2 columns.
@@ -582,7 +634,7 @@ SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
 
   // Actually sort the rows.
   rows.sort(function (row1, row2) {
-    return sort_direction * column.compareSortKeys(row1, row2);
+    return sort_direction * column.compareSortKeys(row1.sortKey, row2.sortKey);
   });
 
   // Reappend the rows to the table body.
@@ -596,84 +648,77 @@ SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
 // ---------------------------------------------------------------------------------------------------------------------
 /**
  * Sorts the table by two or more columns.
+ * @param sorting_info
  */
 SET_OverviewTable.prototype.sortMultiColumn = function (sorting_info) {
   "use strict";
   var dir;
   var cmp;
-  var $table = this.$myTable;
-  var sort_direction;
-  var i;
+  var i, j;
   var sort_func = '';
+  var rows;
+  var cell;
+  var column_handler;
+  var tbody;
+  var that = this;
+  var multi_cmp = null;
 
-  // in sort_info column_index;
-  // use this.myColumnHandlers[column_index]
 
-  sort_func += "function () {\n";
+  sort_func += "multi_cmp = function (row1, row2) {\n";
+  sort_func += "  var cmp;\n";
   for (i = 0; i < sorting_info.length; i = i + 1) {
-    if (i === sorting_info.length) {
-      sort_func += "  return column[" + i + "].compareSortKeys(row1[" + i + "], row2[" + i + "]);\n";
-    } else {
-      sort_func += "  cmp = ($table.myColumnHandlers[" + i + "].compareSortKeys(row1[" + i + "], row2[" + i + "]);\n";
-      sort_func += "  if (cmp!==0) {\n";
-      sort_func += "    dir = 1;\n";
-      sort_func += "    if (sorting_info[" + i + "].sort_direction === 'desc') {\n";
-      sort_func += "      dir = -1;\n";
-      sort_func += "    }\n";
-      sort_func += "   return dir * cmp;\n";
-      sort_func += "  }\n";
+    dir = 1;
+    if (sorting_info[i].sort_direction === 'desc') {
+      dir = -1;
     }
+    sort_func += "  cmp = that.myColumnHandlers[" +
+      sorting_info[i].column_index +
+      "].compareSortKeys(row1.sortKey[" +
+      i + "], row2.sortKey[" +
+      i + "]);\n";
+    sort_func += "  if (cmp !== 0) {\n";
+    sort_func += "    return cmp * " + dir + ";\n";
+    sort_func += "  }\n";
   }
-  sort_func += "}\n";
+  sort_func += "  return 0;\n";
+  sort_func += "};\n";
 
   // Get all the rows of the table.
-  //rows = this.$myTable.children('tbody').children('tr').get();
+  rows = this.$myTable.children('tbody').children('tr').get();
 
-  // Increment the column_index if the column header spans 2 columns.
-  //column_index = sorting_info[0].column_index + sorting_info.offset;
+  for (i = 0; i < rows.length; i = i + 1) {
+    rows[i].sortKey = [];
+    for (j = 0; j < sorting_info.length; j = j + 1) {
+      column_handler = this.myColumnHandlers[sorting_info[j].column_index];
 
-  // xxx loop over sort_info
-  // Pull out the sort keys of the table cells.
-  //for (i = 0; i < rows.length; i = i + 1) {
-  //  var cell = rows[i].cells[column_index];
-  //  rows[i].sortKey[j] = column.getSortKey(cell);
-  //}
+      // Pull out the sort keys of the table cells.
+      cell = rows[i].cells[sorting_info[j].column_index];
+      rows[i].sortKey[j] = column_handler.getSortKey(cell);
+    }
+  }
 
   // Actually sort the rows.
-  //rows.sort(eval(sort_func));
+  eval(sort_func);
 
-  // Reappend the rows to the table body.
-  //tbody = this.$myTable.children('tbody')[0];
-  //for (i = 0; i < rows.length; i = i + 1) {
-  //  rows[i].sortKey = null;
-  //  tbody.appendChild(rows[i]);
+  rows.sort(multi_cmp);
 
-  //}
-};
-
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.ourColumnTypeHandlers = {};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.registerColumnTypeHandler = function (column_type, handler) {
-  "use strict";
-  SET_OverviewTable.ourColumnTypeHandlers[column_type] = handler;
+// Reappend the rows to the table body.
+  tbody = this.$myTable.children('tbody')[0];
+  for (i = 0; i < rows.length; i = i + 1) {
+    rows[i].sortKey = null;
+    tbody.appendChild(rows[i]);
+  }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.filterTrigger = function (event) {
-  "use strict";
-  event.data.table.filter(event, event.data.element);
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-//xxx improve zebra
+/**
+ *
+ */
 SET_OverviewTable.prototype.filter = function () {
   "use strict";
   var filters = [];
-  var row_index;
   var i;
+  var that = this;
 
   // Create a list of effective filters.
   for (i = 0; i < this.myColumnHandlers.length; i = i + 1) {
@@ -689,8 +734,7 @@ SET_OverviewTable.prototype.filter = function () {
     this.$myTable.children('tbody').children('tr').show();
 
     // Apply zebra theme on all rows.
-    this.$myTable.children('tbody').children('tr:odd').removeClass('odd').addClass('even');
-    this.$myTable.children('tbody').children('tr:even').removeClass('even').addClass('odd');
+    that.applyZebraTheme();
   } else {
     // One or more filters are effective.
 
@@ -698,7 +742,6 @@ SET_OverviewTable.prototype.filter = function () {
     this.$myTable.children('tbody').children('tr').hide();
 
     // Apply all effective filters.
-    row_index = 0;
     this.$myTable.children('tbody').children('tr').each(function () {
       var i;
       var show = 1;
@@ -718,14 +761,37 @@ SET_OverviewTable.prototype.filter = function () {
         $this.show();
 
         // Apply zebra theme on visible rows.
-        row_index = row_index + 1;
-        if ((row_index % 2) === 1) {
-          $this.removeClass('even').addClass('odd');
-        } else {
-          $this.removeClass('odd').addClass('even');
-        }
+        that.applyZebraTheme();
       }
     });
+  }
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.registerColumnTypeHandler = function (column_type, handler) {
+  "use strict";
+  SET_OverviewTable.ourColumnTypeHandlers[column_type] = handler;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.filterTrigger = function (event) {
+  "use strict";
+  event.data.table.filter(event, event.data.element);
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.benchmark = function (s, d) {
+  "use strict";
+  SET_OverviewTable.log(s + (new Date().getTime() - d.getTime()) + "ms");
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.log = function (s) {
+  "use strict";
+  if (console !== "undefined" && console.debug !== "undefined") {
+    console.log(s);
+  } else {
+    alert(s);
   }
 };
 
@@ -736,6 +802,9 @@ SET_OverviewTable.prototype.filter = function () {
  * @type {{SET_OverviewTable}}
  */
 SET_OverviewTable.ourTables = [];
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.ourColumnTypeHandlers = {};
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
@@ -758,20 +827,4 @@ SET_OverviewTable.registerTable = function (selector) {
   });
 };
 
-// ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.benchmark = function (s, d) {
-  "use strict";
-  SET_OverviewTable.log(s + (new Date().getTime() - d.getTime()) + "ms");
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.log = function (s) {
-  "use strict";
-  if (console !== "undefined" && console.debug !== "undefined") {
-    console.log(s);
-  } else {
-    alert(s);
-  }
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------

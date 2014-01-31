@@ -58,7 +58,7 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, $table,
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index, column_index) {
+SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index) {
   "use strict";
   var that = this;
 
@@ -115,12 +115,12 @@ SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.compareSortKeys = function (row1, row2) {
+SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
-  if (row1.sortKey < row2.sortKey) {
+  if (value1 < value2) {
     return -1;
   }
-  if (row1.sortKey > row2.sortKey) {
+  if (value1 > value2) {
     return 1;
   }
 
