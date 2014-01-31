@@ -39,6 +39,8 @@
         <append destFile="${BUILD_DIR}/${COMBINED_JS_FILE}">
             <filelist dir="${BUILD_DIR}/js" listfile="js/sources.txt"/>
         </append>
+
+        <!-- Copy the combined JavaScript file to the project's root directory if this file has changed only. -->
         <loadfile property="COMBINED_JS_FILE_OLD" file="${COMBINED_JS_FILE}"/>
         <loadfile property="COMBINED_JS_FILE_NEW" file="${BUILD_DIR}/${COMBINED_JS_FILE}"/>
         <if>
@@ -52,11 +54,11 @@
     </target>
     <target name="minify_js">
         <echo msg="Minifying JavaScript files…"/>
-        <jsMin targetDir="${BUILD_DIR}">
-            <fileset dir="${BUILD_DIR}">
-                <include name="${COMBINED_JS_FILE}"/>
-            </fileset>
-        </jsMin>
+        <exec command="java -jar vendor/bin/yuicompressor.jar ${COMBINED_JS_FILE} -o ${COMBINED_JS_FILE_MIN}" passthru="true"
+              checkreturn="true"/>
+
+        <!-- Copy the minimized combined JavaScript file to the project's root directory if this file has changed
+             only. -->
         <loadfile property="COMBINED_JS_FILE_MIN_OLD" file="${COMBINED_JS_FILE_MIN}"/>
         <loadfile property="COMBINED_JS_FILE_MIN_NEW" file="${BUILD_DIR}/${COMBINED_JS_FILE_MIN}"/>
         <if>
