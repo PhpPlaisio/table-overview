@@ -180,6 +180,11 @@ function SET_OverviewTable($table) {
     }
   });
 }
+// --------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.debugEnable = function () {
+  "use strict";
+  this.myDebug = true;
+};
 
 // --------------------------------------------------------------------------------------------------------------------
 /**
@@ -272,100 +277,54 @@ SET_OverviewTable.prototype.sort = function (event, $header, that, header_index,
   "use strict";
   var sort_info;
   var sort_column_info;
-  // Debug info
-  var time;
-  var total_time;
 
   if (this.myDebug) {
     SET_OverviewTable.log('Start sort:');
-    time = new Date();
-    total_time = time;
+    this.myTimeStart = new Date();
+    this.myTimeIntermidiate = new Date();
   }
 
   // Get info about all  currently sorted columns.
   sort_info = this.getSortInfo();
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Get all sort info - ', time);
-    time = new Date();
-  }
+  SET_OverviewTable.benchmark('Get all sort info');
 
   // Get info about column what was selected for sort.
   sort_column_info = this.getColumnSortInfo(event, $header, header_index, column_index);
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Get info about current column - ', time);
-    time = new Date();
-  }
+  SET_OverviewTable.benchmark('Get info about current column');
 
   // Remove all classes concerning sorting from the column headers.
   this.cleanSortClasses();
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Reset column headers - ', time);
-    time = new Date();
-  }
+  SET_OverviewTable.benchmark('Reset column headers');
 
   if (!event.ctrlKey) {
-
     sort_info = this.mergeInfo([], sort_column_info);
-
-    if (this.myDebug) {
-      SET_OverviewTable.benchmark('Merge info - ', time);
-      time = new Date();
-    }
+    SET_OverviewTable.benchmark('Merge info');
 
     this.sortSingleColumn(sort_info[0], that);
-
-    if (this.myDebug) {
-      SET_OverviewTable.benchmark('Sorted by one column - ', time);
-      time = new Date();
-    }
+    SET_OverviewTable.benchmark('Sorted by one column');
   } else {
-
     sort_info = this.mergeInfo(sort_info, sort_column_info);
-
-    if (this.myDebug) {
-      SET_OverviewTable.benchmark('Merge info - ', time);
-      time = new Date();
-    }
-
+    SET_OverviewTable.benchmark('Merge info');
     if (sort_info.length === 1) {
-
       this.sortSingleColumn(sort_info[0], that);
-
-      if (this.myDebug) {
-        SET_OverviewTable.benchmark('Sorted by one column - ', time);
-        time = new Date();
-      }
-
+      SET_OverviewTable.benchmark('Sorted by one column');
     } else {
-
       this.sortMultiColumn(sort_info);
-
-      if (this.myDebug) {
-        SET_OverviewTable.benchmark('Sorted by ' + sort_info.length + ' column - ', time);
-        time = new Date();
-      }
-
+      SET_OverviewTable.benchmark('Sorted by ' + sort_info.length + ' column');
     }
 
   }
 
   // Add classes concerning sorting to the column headers.
   this.addSortInfo(sort_info);
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Added info to table head - ', time);
-    time = new Date();
-  }
+  SET_OverviewTable.benchmark('Added info to table head');
 
   // Apply zebra theme for the table.
   this.applyZebraTheme();
+  SET_OverviewTable.benchmark('Apply zebra theme');
 
   if (this.myDebug) {
-    SET_OverviewTable.benchmark('Apply zebra theme - ', time);
-    SET_OverviewTable.benchmark('Finished for - ', total_time);
+    SET_OverviewTable.log('Finish sort ' + this.myTimeIntermidiate.getTime() + 'ms');
   }
 };
 
@@ -779,9 +738,10 @@ SET_OverviewTable.filterTrigger = function (event) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.benchmark = function (s, d) {
+SET_OverviewTable.benchmark = function (message) {
   "use strict";
-  SET_OverviewTable.log(s + (new Date().getTime() - d.getTime()) + "ms");
+  SET_OverviewTable.log(message + (new Date().getTime() - this.myTimeStart.getTime()) + "ms");
+  this.myTimeStart = new Date();
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
