@@ -5,6 +5,12 @@
 /*global SET_NoneColumnTypeHandler */
 /*global alert */
 
+
+/**
+ * Set to true for debugging and performance improvement.
+ * @type {boolean}
+ */
+
 //----------------------------------------------------------------------------------------------------------------------
 /**
  * Object with parameters which names equals values what use for replace specific characters.
@@ -125,13 +131,8 @@ function SET_OverviewTable($table) {
   var that = this;
   var i;
 
-  /**
-   * Set to true for debugging and performance improvement.
-   * @type {boolean}
-   */
-  this.myDebug = false;
-
   this.$myTable = $table;
+  SET_OverviewTable.myDebug = false;
 
   // Display the row with table filters.
   $table.find('thead tr.filter').each(function () {
@@ -180,10 +181,11 @@ function SET_OverviewTable($table) {
     }
   });
 }
+
 // --------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.debugEnable = function () {
+SET_OverviewTable.enableDebug = function () {
   "use strict";
-  this.myDebug = true;
+  SET_OverviewTable.myDebug = true;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -269,19 +271,19 @@ SET_OverviewTable.prototype.getSortDirection = function ($header, infix) {
  *
  * @param event
  * @param $header
- * @param that
+ * @param column
  * @param header_index
  * @param column_index
  */
-SET_OverviewTable.prototype.sort = function (event, $header, that, header_index, column_index) {
+SET_OverviewTable.prototype.sort = function (event, $header, column, header_index, column_index) {
   "use strict";
   var sort_info;
   var sort_column_info;
 
-  if (this.myDebug) {
+  if (SET_OverviewTable.myDebug) {
     SET_OverviewTable.log('Start sort:');
-    this.myTimeStart = new Date();
-    this.myTimeIntermidiate = new Date();
+    SET_OverviewTable.myTimeStart = new Date();
+    SET_OverviewTable.myTimeIntermidiate = new Date();
   }
 
   // Get info about all  currently sorted columns.
@@ -299,20 +301,17 @@ SET_OverviewTable.prototype.sort = function (event, $header, that, header_index,
   if (!event.ctrlKey) {
     sort_info = this.mergeInfo([], sort_column_info);
     SET_OverviewTable.benchmark('Merge info');
-
-    this.sortSingleColumn(sort_info[0], that);
-    SET_OverviewTable.benchmark('Sorted by one column');
+    this.sortSingleColumn(sort_info[0], column);
   } else {
     sort_info = this.mergeInfo(sort_info, sort_column_info);
     SET_OverviewTable.benchmark('Merge info');
     if (sort_info.length === 1) {
-      this.sortSingleColumn(sort_info[0], that);
+      this.sortSingleColumn(sort_info[0], column);
       SET_OverviewTable.benchmark('Sorted by one column');
     } else {
       this.sortMultiColumn(sort_info);
       SET_OverviewTable.benchmark('Sorted by ' + sort_info.length + ' column');
     }
-
   }
 
   // Add classes concerning sorting to the column headers.
@@ -323,8 +322,10 @@ SET_OverviewTable.prototype.sort = function (event, $header, that, header_index,
   this.applyZebraTheme();
   SET_OverviewTable.benchmark('Apply zebra theme');
 
-  if (this.myDebug) {
-    SET_OverviewTable.log('Finish sort ' + this.myTimeIntermidiate.getTime() + 'ms');
+  if (SET_OverviewTable.myDebug) {
+    SET_OverviewTable.log('Finish sort ' +
+                          (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
+                          'ms');
   }
 };
 
@@ -589,11 +590,13 @@ SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
     var cell = rows[i].cells[column_index];
     rows[i].sortKey = column.getSortKey(cell);
   }
+  SET_OverviewTable.benchmark('Extracting sort keys');
 
   // Actually sort the rows.
   rows.sort(function (row1, row2) {
     return sort_direction * column.compareSortKeys(row1.sortKey, row2.sortKey);
   });
+  SET_OverviewTable.benchmark('Sorted by one column');
 
   // Reappend the rows to the table body.
   tbody = this.$myTable.children('tbody')[0];
@@ -601,6 +604,7 @@ SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
     rows[i].sortKey = null;
     tbody.appendChild(rows[i]);
   }
+  SET_OverviewTable.benchmark('Reappend the sorted rows');
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -622,6 +626,21 @@ SET_OverviewTable.prototype.sortMultiColumn = function (sorting_info) {
   var multi_cmp = null;
 
 
+  // Get all the rows of the table.
+  rows = this.$myTable.children('tbody').children('tr').get();
+
+  for (i = 0; i < rows.length; i = i + 1) {
+    rows[i].sortKey = [];
+    for (j = 0; j < sorting_info.length; j = j + 1) {
+      column_handler = this.myColumnHandlers[sorting_info[j].column_index];
+
+      // Pull out the sort keys of the table cells.
+      cell = rows[i].cells[sorting_info[j].column_index];
+      rows[i].sortKey[j] = column_handler.getSortKey(cell);
+    }
+  }
+  SET_OverviewTable.benchmark('Extracting sort keys');
+
   sort_func += "multi_cmp = function (row1, row2) {\n";
   sort_func += "  var cmp;\n";
   for (i = 0; i < sorting_info.length; i = i + 1) {
@@ -640,32 +659,20 @@ SET_OverviewTable.prototype.sortMultiColumn = function (sorting_info) {
   }
   sort_func += "  return 0;\n";
   sort_func += "};\n";
-
-  // Get all the rows of the table.
-  rows = this.$myTable.children('tbody').children('tr').get();
-
-  for (i = 0; i < rows.length; i = i + 1) {
-    rows[i].sortKey = [];
-    for (j = 0; j < sorting_info.length; j = j + 1) {
-      column_handler = this.myColumnHandlers[sorting_info[j].column_index];
-
-      // Pull out the sort keys of the table cells.
-      cell = rows[i].cells[sorting_info[j].column_index];
-      rows[i].sortKey[j] = column_handler.getSortKey(cell);
-    }
-  }
+  eval(sort_func);
+  SET_OverviewTable.benchmark('Prepare multi sort function');
 
   // Actually sort the rows.
-  eval(sort_func);
-
   rows.sort(multi_cmp);
+  SET_OverviewTable.benchmark('Sorted by ' + sorting_info.length + ' columns');
 
-// Reappend the rows to the table body.
+  // Reappend the rows to the table body.
   tbody = this.$myTable.children('tbody')[0];
   for (i = 0; i < rows.length; i = i + 1) {
     rows[i].sortKey = null;
     tbody.appendChild(rows[i]);
   }
+  SET_OverviewTable.benchmark('Reappend the sorted rows');
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -740,8 +747,10 @@ SET_OverviewTable.filterTrigger = function (event) {
 // ---------------------------------------------------------------------------------------------------------------------
 SET_OverviewTable.benchmark = function (message) {
   "use strict";
-  SET_OverviewTable.log(message + (new Date().getTime() - this.myTimeStart.getTime()) + "ms");
-  this.myTimeStart = new Date();
+  if (this.myDebug === true) {
+    SET_OverviewTable.log(message + ' ' + (new Date().getTime() - SET_OverviewTable.myTimeStart.getTime()) + " ms");
+    SET_OverviewTable.myTimeStart = new Date();
+  }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
