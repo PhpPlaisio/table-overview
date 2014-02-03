@@ -91,16 +91,16 @@ var trans = {
 // ---------------------------------------------------------------------------------------------------------------------
 function set_to_lower_case_no_accents(text) {
   "use strict";
-  var char;
+  var c;
   var text_new = '';
   var i;
 
   for (i = 0; i < text.length; i = i + 1) {
-    char = text.substr(i, 1);
-    if (trans[char]) {
-      text_new += trans[char];
+    c = text.substr(i, 1);
+    if (trans[c]) {
+      text_new += trans[c];
     } else {
-      text_new += char;
+      text_new += c;
     }
   }
 

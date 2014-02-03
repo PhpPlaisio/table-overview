@@ -19,6 +19,9 @@
       "role": "Architect"
     }
   ],
+  "require-dev": {
+    "packagist/yuicompressor-bin": "dev-master"
+  },
   "type": "component",
   "license": "MIT",
   "require": {
