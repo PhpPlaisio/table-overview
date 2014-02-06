@@ -5,7 +5,10 @@
 /*global SET_NoneColumnTypeHandler */
 /*global alert */
 
-// ---------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+/**
+ * Object with parameters which names equals values what use for replace specific characters.
+ */
 var trans = {
   'à': 'a',
   'á': 'a',
@@ -88,7 +91,12 @@ var trans = {
   'Þ': 'TH'
 };
 
-// ---------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+/**
+ * Replace all specific character to standard character.
+ * @param text
+ * @returns {string}
+ */
 function set_to_lower_case_no_accents(text) {
   "use strict";
   var c;
@@ -103,11 +111,15 @@ function set_to_lower_case_no_accents(text) {
       text_new += c;
     }
   }
-
   return text_new.toLowerCase();
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+/**
+ * Constructor of class SET_OverviewTable.
+ * @param $table
+ * @constructor
+ */
 function SET_OverviewTable($table) {
   "use strict";
   var that = this;
@@ -117,7 +129,7 @@ function SET_OverviewTable($table) {
    * Set to true for debugging and performance improvement.
    * @type {boolean}
    */
-  this.myDebug = true;
+  this.myDebug = false;
 
   this.$myTable = $table;
 
@@ -154,7 +166,10 @@ function SET_OverviewTable($table) {
     }
 
     // Initialize the filter.
-    that.myColumnHandlers[column_index].initFilter(that, $table, header_index, column_index);
+    that.myColumnHandlers[column_index].initFilter(that, $table, header_index);
+
+    // Initialize the filter.
+    that.myColumnHandlers[column_index].initSort(that, $table, header_index, column_index);
 
     // Take the colspan into account for computing the next column_index.
     span = $(this).attr('colspan');
@@ -166,43 +181,543 @@ function SET_OverviewTable($table) {
   });
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.benchmark = function (s, d) {
+// --------------------------------------------------------------------------------------------------------------------
+/**
+ * Merge info about columns.
+ * @param sort_info
+ * @param column_sort_info
+ * @returns {*}
+ */
+SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
   "use strict";
-  SET_OverviewTable.log(s + (new Date().getTime() - d.getTime()) + "ms");
+  if (sort_info.length === 0) {
+    // If selected only one column and sort info is empty, add column info
+    column_sort_info.sort_order = 1;
+    sort_info[0] = column_sort_info;
+  } else {
+    if (column_sort_info.sort_order !== false && sort_info[column_sort_info.sort_order - 1]) {
+      // If clicked column is already sorted and sort info contain info about this column,
+      // change sort direction for it column.
+      sort_info[column_sort_info.sort_order - 1].sort_direction = column_sort_info.sort_direction;
+    } else {
+      // If clicked column isn't sort add this column info to sort info.
+      column_sort_info.sort_order = sort_info.length;
+      sort_info[sort_info.length] = column_sort_info;
+    }
+  }
+
+  return sort_info;
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+/**
+ * Get and return sort sort order for current column.
+ *
+ * @param $header
+ * @param infix
+ * @returns {boolean}
+ */
+SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
+  "use strict";
+  var attr;
+  var classes;
+  var sort_order_class;
+  var i;
+  var order = false;
+
+  attr = $header.attr('class');
+  classes = attr.split(' ');
+
+  for (i = 0; i < classes.length; i = i + 1) {
+    sort_order_class = 'sort-order' + infix;
+    if (classes[i].substr(0, sort_order_class.length) === sort_order_class) {
+      order = parseInt(classes[i].substr(sort_order_class.length), 10);
+    }
+  }
+
+  return order;
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+/**
+ * Get and return sort direction for current column.
+ * @param $header
+ * @param infix
+ * @returns {string}
+ *
+ */
+SET_OverviewTable.prototype.getSortDirection = function ($header, infix) {
+  "use strict";
+
+  if ($header.hasClass('sorted' + infix + 'desc')) {
+    return 'desc';
+  }
+
+  if ($header.hasClass('sorted' + infix + 'asc')) {
+    return 'asc';
+  }
+  return '';
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ *
+ * @param event
+ * @param $header
+ * @param that
+ * @param header_index
+ * @param column_index
+ */
+SET_OverviewTable.prototype.sort = function (event, $header, that, header_index, column_index) {
+  "use strict";
+  var sort_info;
+  var sort_column_info;
+  // Debug info
+  var time;
+  var total_time;
+
+  if (this.myDebug) {
+    SET_OverviewTable.log('Start sort:');
+    time = new Date();
+    total_time = time;
+  }
+
+  // Get info about all  currently sorted columns.
+  sort_info = this.getSortInfo();
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Get all sort info - ', time);
+    time = new Date();
+  }
+
+  // Get info about column what was selected for sort.
+  sort_column_info = this.getColumnSortInfo(event, $header, header_index, column_index);
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Get info about current column - ', time);
+    time = new Date();
+  }
+
+  // Remove all classes concerning sorting from the column headers.
+  this.cleanSortClasses();
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Reset column headers - ', time);
+    time = new Date();
+  }
+
+  if (!event.ctrlKey) {
+
+    sort_info = this.mergeInfo([], sort_column_info);
+
+    if (this.myDebug) {
+      SET_OverviewTable.benchmark('Merge info - ', time);
+      time = new Date();
+    }
+
+    this.sortSingleColumn(sort_info[0], that);
+
+    if (this.myDebug) {
+      SET_OverviewTable.benchmark('Sorted by one column - ', time);
+      time = new Date();
+    }
+  } else {
+
+    sort_info = this.mergeInfo(sort_info, sort_column_info);
+
+    if (this.myDebug) {
+      SET_OverviewTable.benchmark('Merge info - ', time);
+      time = new Date();
+    }
+
+    if (sort_info.length === 1) {
+
+      this.sortSingleColumn(sort_info[0], that);
+
+      if (this.myDebug) {
+        SET_OverviewTable.benchmark('Sorted by one column - ', time);
+        time = new Date();
+      }
+
+    } else {
+
+      this.sortMultiColumn(sort_info);
+
+      if (this.myDebug) {
+        SET_OverviewTable.benchmark('Sorted by ' + sort_info.length + ' column - ', time);
+        time = new Date();
+      }
+
+    }
+
+  }
+
+  // Add classes concerning sorting to the column headers.
+  this.addSortInfo(sort_info);
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Added info to table head - ', time);
+    time = new Date();
+  }
+
+  // Apply zebra theme for the table.
+  this.applyZebraTheme();
+
+  if (this.myDebug) {
+    SET_OverviewTable.benchmark('Apply zebra theme - ', time);
+    SET_OverviewTable.benchmark('Finished for - ', total_time);
+  }
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+/**
+ * Returns information about the columns on which the table is currently sorted.
+ * Returns an array indexed by the sort order with objects holding sorting information of the column.
+ */
+SET_OverviewTable.prototype.getSortInfo = function () {
+  "use strict";
+  var column_index = 0;
+  var columns_info = [];
+  var span;
+  var sort_order;
+  var sort_direction;
+  var that = this;
+  var colspan;
+
+  this.$myTable.find('thead tr.header').find('th').each(function (header_index, th) {
+    var $th = $(th);
+    span = $(this).attr('colspan');
+    if (!span || span === '1') {
+      sort_order = that.getSortOrder($th, '-');
+      if (sort_order) {
+        columns_info[sort_order - 1] = {
+          column_index: column_index,
+          header_index: header_index,
+          sort_order: sort_order,
+          sort_direction: that.getSortDirection($th, '-'),
+          infix: '-',
+          colspan: 1,
+          offset: 0
+        };
+      }
+    } else if (span === '2') {
+      if ($th.hasClass('sort-1')) {
+        sort_order = that.getSortOrder($th, '-1-');
+        if (sort_order) {
+          columns_info[sort_order - 1] = {
+            column_index: column_index,
+            header_index: header_index,
+            sort_order: sort_order,
+            sort_direction: that.getSortDirection($th, '-1-'),
+            infix: '-1-',
+            colspan: 2,
+            offset: 0
+          };
+        }
+      }
+
+      if ($th.hasClass('sort-2')) {
+        sort_order = that.getSortOrder($th, '-2-');
+        if (sort_order) {
+          columns_info[sort_order - 1] = {
+            column_index: column_index,
+            header_index: header_index,
+            sort_order: that.getSortDirection($th, '-2-'),
+            sort_direction: sort_direction,
+            infix: '-2-',
+            colspan: 2,
+            offset: 1
+          };
+        }
+      }
+    }
+
+    // Take the colspan into account for computing the next column_index.
+    if (span) {
+      column_index = column_index + parseFloat(span);
+    } else {
+      column_index = column_index + 1;
+    }
+  });
+
+  return columns_info;
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+/**
+ * Get all info about clicked column.
+ * Return object with column info.
+ * @param event
+ * @param $header
+ * @param header_index
+ * @param column_index
+ * @returns {{}}
+ */
+SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, header_index, column_index) {
+  "use strict";
+  var span;
+  var column_info = {};
+  var width_col1;
+  var width_col2;
+  var width_header;
+  var $table = this.$myTable;
+  var diff;
+  var x;
+
+  function getFlipSortDirection($table, $header, infix) {
+    var sort_direction;
+
+    sort_direction = $table.getSortDirection($header, infix);
+    if (sort_direction === 'desc' || sort_direction === '') {
+      return 'asc';
+    }
+
+    return 'desc';
+  }
+
+  column_info.column_index = column_index;
+  column_info.header_index = header_index;
+
+  span = $header.attr('colspan');
+  if (!span || span === '1') {
+    column_info.infix = '-';
+    column_info.colspan = 1;
+    column_info.offset = 0;
+    column_info.sort_order = this.getSortOrder($header, column_info.infix);
+    column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+  } else if (span === '2') {
+    if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
+      // Header spans two columns and both columns can be used for sorting.
+      x = event.pageX - $header.offset().left;
+
+      width_col1 = $table.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+      width_col2 = $table.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
+      width_header = $header.outerWidth();
+
+      diff = width_header - width_col1 - width_col2;
+
+      // We account diff due to cell separation.
+      if (x < ((2 * width_col1 - diff) / 2)) {
+        column_info.infix = '-1-';
+        column_info.colspan = 2;
+        column_info.offset = 0;
+        column_info.sort_order = this.getSortOrder($header, column_info.infix);
+        column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+      } else if (x > ((2 * width_col1 + diff) / 2)) {
+        column_info.infix = '-2-';
+        column_info.colspan = 2;
+        column_info.offset = 1;
+        column_info.sort_order = this.getSortOrder($header, column_info.infix);
+        column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+      }
+    } else if ($header.hasClass('sort-1')) {
+      // Header spans two columns but only the first/left column can used for sorting.
+      column_info.infix = '-1-';
+      column_info.colspan = 2;
+      column_info.offset = 0;
+      column_info.sort_order = this.getSortOrder($header, column_info.infix);
+      column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+    } else if ($header.hasClass('sort-2')) {
+      // Header spans two columns but only the second/right column can used for sorting.
+      column_info.infix = '-2-';
+      column_info.colspan = 2;
+      column_info.offset = 1;
+      column_info.sort_order = this.getSortOrder($header, column_info.infix);
+      column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+    }
+  }
+  // Colspan greater than 2 is not supported.
+
+  return column_info;
+};
+
+// --------------------------------------------------------------------------------------------------------------------
+/**
+ * Remove all classes concerning sorting from the column headers.
+ */
+SET_OverviewTable.prototype.cleanSortClasses = function () {
+  "use strict";
+  var that = this;
+  var i;
+  // Remove all orders for all columns.
+  for (i = 0; i < that.myColumnHandlers.length; i = i + 1) {
+    that.$myTable.children('thead').find('th').removeClass('sort-order-' + i);
+  }
+
+  // Remove the asc and desc sort classes from all headers.
+  that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
+  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ * Add classes concerning sorting to the column headers.
+ *
+ * @param sort_info
+ */
+SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
+  "use strict";
+  var order;
+  var $header;
+  var i;
+
+  for (i = 0; i < sort_info.length; i = i + 1) {
+    order = i + 1;
+    $header = this.$myTable.children('thead').find('tr.header').find('th').eq(sort_info[i].header_index);
+    $header.addClass('sort-order' + sort_info[i].infix + order);
+    $header.addClass('sorted' + sort_info[i].infix + sort_info[i].sort_direction);
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+/**
+ * Apply theme zebra for the table.
+ */
+SET_OverviewTable.prototype.applyZebraTheme = function () {
+  "use strict";
+  var even = true;
+
+  // Note: Using this.style.display is faster than using children('tr:visible').
+  this.$myTable.children('tbody').children('tr').each(function () {
+    var $this = $(this);
+
+    if (this.style.display !== 'none') {
+      if (even === true) {
+        $this.removeClass('odd').addClass('even');
+      } else {
+        $this.removeClass('even').addClass('odd');
+      }
+      even = !even;
+    }
+  });
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.log = function (s) {
+/**
+ * Sorts the table by one column.
+ * @param sorting_info
+ * @param column
+ */
+SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
   "use strict";
-  if (console !== "undefined" && console.debug !== "undefined") {
-    console.log(s);
+  var column_index;
+  var rows;
+  var sort_direction;
+  var i;
+  var tbody;
+
+  if (!sorting_info.infix) {
+    // The use has clicked between two columns of a column header with colspan 2.
+    // Don't sort and return immediately.
+    return;
+  }
+
+  // Get the sort direction.
+  if (sorting_info.sort_direction === 'asc') {
+    sort_direction = 1;
   } else {
-    alert(s);
+    sort_direction = -1;
+  }
+
+  // Increment the column_index if the column header spans 2 columns.
+  column_index = sorting_info.column_index + sorting_info.offset;
+
+  // Get all the rows of the table.
+  rows = this.$myTable.children('tbody').children('tr').get();
+
+  // Pull out the sort keys of the table cells.
+  for (i = 0; i < rows.length; i = i + 1) {
+    var cell = rows[i].cells[column_index];
+    rows[i].sortKey = column.getSortKey(cell);
+  }
+
+  // Actually sort the rows.
+  rows.sort(function (row1, row2) {
+    return sort_direction * column.compareSortKeys(row1.sortKey, row2.sortKey);
+  });
+
+  // Reappend the rows to the table body.
+  tbody = this.$myTable.children('tbody')[0];
+  for (i = 0; i < rows.length; i = i + 1) {
+    rows[i].sortKey = null;
+    tbody.appendChild(rows[i]);
   }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.ourColumnTypeHandlers = {};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.registerColumnTypeHandler = function (column_type, handler) {
+/**
+ * Sorts the table by two or more columns.
+ * @param sorting_info
+ */
+SET_OverviewTable.prototype.sortMultiColumn = function (sorting_info) {
   "use strict";
-  SET_OverviewTable.ourColumnTypeHandlers[column_type] = handler;
+  var dir;
+  var cmp;
+  var i, j;
+  var sort_func = '';
+  var rows;
+  var cell;
+  var column_handler;
+  var tbody;
+  var that = this;
+  var multi_cmp = null;
+
+
+  sort_func += "multi_cmp = function (row1, row2) {\n";
+  sort_func += "  var cmp;\n";
+  for (i = 0; i < sorting_info.length; i = i + 1) {
+    dir = 1;
+    if (sorting_info[i].sort_direction === 'desc') {
+      dir = -1;
+    }
+    sort_func += "  cmp = that.myColumnHandlers[" +
+      sorting_info[i].column_index +
+      "].compareSortKeys(row1.sortKey[" +
+      i + "], row2.sortKey[" +
+      i + "]);\n";
+    sort_func += "  if (cmp !== 0) {\n";
+    sort_func += "    return cmp * " + dir + ";\n";
+    sort_func += "  }\n";
+  }
+  sort_func += "  return 0;\n";
+  sort_func += "};\n";
+
+  // Get all the rows of the table.
+  rows = this.$myTable.children('tbody').children('tr').get();
+
+  for (i = 0; i < rows.length; i = i + 1) {
+    rows[i].sortKey = [];
+    for (j = 0; j < sorting_info.length; j = j + 1) {
+      column_handler = this.myColumnHandlers[sorting_info[j].column_index];
+
+      // Pull out the sort keys of the table cells.
+      cell = rows[i].cells[sorting_info[j].column_index];
+      rows[i].sortKey[j] = column_handler.getSortKey(cell);
+    }
+  }
+
+  // Actually sort the rows.
+  eval(sort_func);
+
+  rows.sort(multi_cmp);
+
+// Reappend the rows to the table body.
+  tbody = this.$myTable.children('tbody')[0];
+  for (i = 0; i < rows.length; i = i + 1) {
+    rows[i].sortKey = null;
+    tbody.appendChild(rows[i]);
+  }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.filterTrigger = function (event) {
-  "use strict";
-  event.data.table.filter(event, event.data.element);
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
+/**
+ *
+ */
 SET_OverviewTable.prototype.filter = function () {
   "use strict";
   var filters = [];
-  var row_index;
   var i;
+  var that = this;
 
   // Create a list of effective filters.
   for (i = 0; i < this.myColumnHandlers.length; i = i + 1) {
@@ -218,8 +733,7 @@ SET_OverviewTable.prototype.filter = function () {
     this.$myTable.children('tbody').children('tr').show();
 
     // Apply zebra theme on all rows.
-    this.$myTable.children('tbody').children('tr:odd').removeClass('odd').addClass('even');
-    this.$myTable.children('tbody').children('tr:even').removeClass('even').addClass('odd');
+    that.applyZebraTheme();
   } else {
     // One or more filters are effective.
 
@@ -227,7 +741,6 @@ SET_OverviewTable.prototype.filter = function () {
     this.$myTable.children('tbody').children('tr').hide();
 
     // Apply all effective filters.
-    row_index = 0;
     this.$myTable.children('tbody').children('tr').each(function () {
       var i;
       var show = 1;
@@ -247,319 +760,39 @@ SET_OverviewTable.prototype.filter = function () {
         $this.show();
 
         // Apply zebra theme on visible rows.
-        row_index = row_index + 1;
-        if ((row_index % 2) === 1) {
-          $this.removeClass('even').addClass('odd');
-        } else {
-          $this.removeClass('odd').addClass('even');
-        }
+        that.applyZebraTheme();
       }
     });
   }
 };
 
-// --------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.prototype.getSortInfo = function (event, $table, $header, column_index) {
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.registerColumnTypeHandler = function (column_type, handler) {
   "use strict";
-  var span;
-  var ret = {};
-  var width_col1;
-  var width_col2;
-  var width_header;
-  var diff;
-  var x;
-
-  span = $header.attr('colspan');
-  if (!span || span === '1') {
-    ret.infix = '-';
-    ret.colspan = 1;
-    ret.offset = 0;
-  } else if (span === '2') {
-    if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
-      // Header spans two columns and both columns can be used for sorting.
-      x = event.pageX - $header.offset().left;
-
-      width_col1 = $table.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-      width_col2 = $table.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
-      width_header = $header.outerWidth();
-
-      diff = width_header - width_col1 - width_col2;
-
-      // We account diff due to cell separation.
-      if (x < ((2 * width_col1 - diff) / 2)) {
-        ret.infix = '-1-';
-        ret.colspan = 2;
-        ret.offset = 0;
-      } else if (x > ((2 * width_col1 + diff) / 2)) {
-        ret.infix = '-2-';
-        ret.colspan = 2;
-        ret.offset = 1;
-      }
-    } else if ($header.hasClass('sort-1')) {
-      // Header spans two columns but only the first/left column can used for sorting.
-      ret.infix = '-1-';
-      ret.colspan = 2;
-      ret.offset = 0;
-    } else if ($header.hasClass('sort-2')) {
-      // Header spans two columns but only the second/right column can used for sorting.
-      ret.infix = '-2-';
-      ret.colspan = 2;
-      ret.offset = 1;
-    }
-  }
-  // Colspan greater than 2 is not supported.
-
-  return ret;
+  SET_OverviewTable.ourColumnTypeHandlers[column_type] = handler;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-/**
- * Sorts the table of this overview table.
- *
- * @param event
- * @param $header
- * @param column
- * @param header_index
- * @param column_index
- */
-SET_OverviewTable.prototype.sortSingleColumn = function (event, $header, column, header_index, column_index) {
+SET_OverviewTable.filterTrigger = function (event) {
   "use strict";
-  var even;
-  var that = this;
-  var info;
-  var rows;
-  var sort_direction;
-  var $element;
-  var i;
-  var time_start;
-  var time_init;
-  var time_sort_key;
-  var time_sort;
-  var time_reappend;
-  var time_fin;
-
-  if (this.myDebug) {
-    time_start = new Date();
-  }
-
-  info = this.getSortInfo(event, this.$myTable, $header, column_index);
-  if (!info.infix) {
-    // The use has clicked between two columns of a column header with colspan 2.
-    // Don't sort and return immediately.
-    return;
-  }
-
-  if (info.colspan === 1) {
-    // The header spans 1 column.
-    $element = $header;
-  } else if (info.colspan === 2) {
-    // The header spans 2 columns.
-    if (info.offset === 0) {
-      // Sort on the first/left column.
-      $element = $header.children('span').first();
-    } else if (info.offset === 1) {
-      // Sort on the second/right column.
-      $element = $header;
-    }
-  }
-
-  // Get the sort direction.
-  if ($element.hasClass('sorted-asc')) {
-    sort_direction = -1;
-  } else {
-    sort_direction = 1;
-  }
-
-  // Increment the column_index if the column header spans 2 columns.
-  column_index = column_index + info.offset;
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Initialize ', time_start);
-    time_init = new Date();
-  }
-
-  // Get all the rows of the table.
-  rows = this.$myTable.children('tbody').children('tr').get();
-
-  // Pull out the sort keys of the table cells.
-  for (i = 0; i < rows.length; i = i + 1) {
-    var cell = rows[i].cells[column_index];
-    rows[i].sortKey = column.getSortKey(cell);
-  }
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Getting sort keys ', time_init);
-    time_sort_key = new Date();
-  }
-
-  // Actually sort the rows.
-  rows.sort(function (row1, row2) {
-    return sort_direction * column.compareSortKeys(row1, row2);
-  });
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Sorting ', time_sort_key);
-    time_sort = new Date();
-  }
-
-  // Reappend the rows to the table body.
-  var tbody = this.$myTable.children('tbody')[0];
-  for (i = 0; i < rows.length; i = i + 1) {
-    rows[i].sortKey = null;
-    tbody.appendChild(rows[i]);
-  }
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Reappend rows ', time_sort);
-    time_reappend = new Date();
-  }
-
-  // Reapply zebra theme on visible rows.
-  // Note: Using this.style.display is faster than using children('tr:visible').
-  even = true;
-  this.$myTable.children('tbody').children('tr').each(function () {
-    var $this = $(this);
-
-    if (this.style.display !== 'none') {
-      if (even === true) {
-        $this.removeClass('odd').addClass('even');
-      } else {
-        $this.removeClass('even').addClass('odd');
-      }
-      even = !even;
-    }
-  });
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Applying zebra theme ', time_reappend);
-    time_fin = new Date();
-  }
-
-  // Remove the asc and desc sort classes from all headers.
-  that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
-  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
-
-  // Apply asc or desc sort class to the column on witch the table has been sorted.
-  if (sort_direction === 1) {
-    $element.addClass('sorted-asc');
-  } else {
-    $element.addClass('sorted-desc');
-  }
-
-  if (this.myDebug) {
-    SET_OverviewTable.benchmark('Finishing ', time_fin);
-    SET_OverviewTable.benchmark('Total time ', time_start);
-  }
+  event.data.table.filter(event, event.data.element);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-/**
- * Sorts the table of this overview table.
- *
- * @param event
- * @param $header
- * @param column
- * @param header_index
- * @param sort_list
- */
-SET_OverviewTable.prototype.sortMultiColumn = function (event, $header, column, header_index, sort_list) {
+SET_OverviewTable.benchmark = function (s, d) {
   "use strict";
-  var even;
-  var that = this;
-  var info = [];
-  var rows;
-  var sort_direction;
-  var $element = [];
-  var column_index_list = [];
-  var i, j;
-  var column_index;
-  var cell = [];
-
-  for (i = 0; i < sort_list.length; i = i + 1) {
-    column_index = sort_list[i];
-    info[i] = this.getSortInfo(event, this.$myTable, $header, column_index);
-    if (!info[i].infix) {
-      // The use has clicked between two columns of a column header with colspan 2.
-      // Don't sort and return immediately.
-      return;
-    }
-
-    if (info[i].colspan === 1) {
-      // The header spans 1 column.
-      $element[i] = $header;
-    } else if (info[i].colspan === 2) {
-      // The header spans 2 columns.
-      if (info[i].offset === 0) {
-        // Sort on the first/left column.
-        $element[i] = $header.children('span').first();
-      } else if (info[i].offset === 1) {
-        // Sort on the second/right column.
-        $element[i] = $header;
-      }
-    }
-
-    // Get the sort direction.
-    if ($element[i].hasClass('sorted-asc')) {
-      sort_direction = -1;
-    } else {
-      sort_direction = 1;
-    }
-
-    // Increment the column_index if the column header spans 2 columns.
-    column_index_list[i] = column_index + info.offset;
-  }
-
-  // Get all the rows of the table.
-  rows = this.$myTable.children('tbody').children('tr').get();
-
-  // Pull out the sort keys of the table cells.
-  for (i = 0; i < rows.length; i = i + 1) {
-    for (j = 0; j < column_index_list.length; j = j + 1) {
-      cell[i] =  rows[i].cells[column_index_list[i]];
-    }
-    rows[i].sortKey = column.getSortKey(cell);
-  }
-
-  // Actually sort the rows.
-  rows.sort(function (row1, row2) {
-    return sort_direction * column.compareSortKeys(row1, row2);
-  });
-
-  // Reappend the rows to the table body.
-  var tbody = this.$myTable.children('tbody')[0];
-  for (i = 0; i < rows.length; i = i + 1) {
-    rows[i].sortKey = null;
-    tbody.appendChild(rows[i]);
-  }
-
-  // Reapply zebra theme on visible rows.
-  // Note: Using this.style.display is faster than using children('tr:visible').
-  even = true;
-  this.$myTable.children('tbody').children('tr').each(function () {
-    var $this = $(this);
-
-    if (this.style.display !== 'none') {
-      if (even === true) {
-        $this.removeClass('odd').addClass('even');
-      } else {
-        $this.removeClass('even').addClass('odd');
-      }
-      even = !even;
-    }
-  });
-
-  // Remove the asc and desc sort classes from all headers.
-  that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
-  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
-
-  // Apply asc or desc sort class to the column on witch the table has been sorted.
-  if (sort_direction === 1) {
-    $element.addClass('sorted-asc');
-  } else {
-    $element.addClass('sorted-desc');
-  }
+  SET_OverviewTable.log(s + (new Date().getTime() - d.getTime()) + "ms");
 };
 
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.log = function (s) {
+  "use strict";
+  if (console !== "undefined" && console.debug !== "undefined") {
+    console.log(s);
+  } else {
+    alert(s);
+  }
+};
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
@@ -568,6 +801,9 @@ SET_OverviewTable.prototype.sortMultiColumn = function (event, $header, column, 
  * @type {{SET_OverviewTable}}
  */
 SET_OverviewTable.ourTables = [];
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_OverviewTable.ourColumnTypeHandlers = {};
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
@@ -590,7 +826,7 @@ SET_OverviewTable.registerTable = function (selector) {
   });
 };
 
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
@@ -608,6 +844,12 @@ function SET_NoneColumnTypeHandler() {
  * @returns {boolean}
  */
 SET_NoneColumnTypeHandler.prototype.startFilter = function () {
+  "use strict";
+  return false;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_NoneColumnTypeHandler.prototype.initSort = function (overview_table, $table, header_index, column_index) {
   "use strict";
   return false;
 };
@@ -634,10 +876,6 @@ SET_OverviewTable.registerColumnTypeHandler('none', SET_NoneColumnTypeHandler);
 /*global $ */
 /*global SET_OverviewTable */
 /*global set_to_lower_case_no_accents */
-/*global columnsIndexList */
-
-// ---------------------------------------------------------------------------------------------------------------------
-var columnsIndexList = [];
 
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_TextColumnTypeHandler() {
@@ -655,7 +893,7 @@ function SET_TextColumnTypeHandler() {
  */
 SET_TextColumnTypeHandler.prototype.startFilter = function () {
   "use strict";
-  this.myFilterValue = this.$myInput.val();
+  this.myFilterValue = set_to_lower_case_no_accents(this.$myInput.val());
 
   return (this.myFilterValue !== '');
 };
@@ -678,11 +916,24 @@ SET_TextColumnTypeHandler.prototype.simpleFilter = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index, column_index) {
+SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, $table, header_index, column_index) {
   "use strict";
   var that = this;
   var $header;
-  var i, count, add;
+
+  // Install event handler for click on sort icon.
+  $header = $table.children('thead').find('tr.header').find('th').eq(header_index);
+  if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
+    $header.click(function (event) {
+      overview_table.sort(event, $header, that, header_index, column_index);
+    });
+  }
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index) {
+  "use strict";
+  var that = this;
 
   this.$myInput = $table.children('thead').find('tr.filter').find('td').eq(header_index).find('input');
 
@@ -700,46 +951,6 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $tabl
   // Install event handler for changed filter value.
   this.$myInput.keyup({ table: overview_table, element: this.$myInput}, SET_OverviewTable.filterTrigger);
 
-  // Install event handler for click on sort icon.
-  $header = $table.children('thead').find('tr.header').find('th').eq(header_index);
-  if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
-    $header.click(function (event) {
-      // todo right button for multi sort. Use global constant.
-      if (!event.ctrlKey) {
-        columnsIndexList = [];
-        columnsIndexList.push(column_index);
-      } else {
-        add = true;
-        for (i = 0; i < columnsIndexList.length; i = i + 1) {
-          if (columnsIndexList[i] === column_index) {
-            // Remove column from list if it is selected again.
-            columnsIndexList.splice(i, 1);
-            add = false;
-          }
-        }
-        if (add === true) {
-          // Add new column to sort list.
-          columnsIndexList.push(column_index);
-        }
-      }
-
-      count = 0;
-      for (i = 0; i < columnsIndexList.length; i = i + 1) {
-        if (columnsIndexList[i] !== undefined) {
-          count += 1;
-        }
-      }
-
-      if (count === 1 || count === 0) {
-        if (count === 1) {
-          column_index = columnsIndexList[0];
-        }
-        overview_table.sortSingleColumn(event, $header, that, header_index, column_index);
-      } else {
-        overview_table.sortMultiColumn(event, $header, that, header_index, columnsIndexList);
-      }
-    });
-  }
 
   // Resize the input box.
   this.$myInput.width(this.$myInput.closest('td').width() -
@@ -777,12 +988,12 @@ SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.compareSortKeys = function (row1, row2) {
+SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
-  if (row1.sortKey < row2.sortKey) {
+  if (value1 < value2) {
     return -1;
   }
-  if (row1.sortKey > row2.sortKey) {
+  if (value1 > value2) {
     return 1;
   }
 
@@ -816,33 +1027,35 @@ SET_NumericColumnTypeHandler.constructor = SET_NumericColumnTypeHandler;
 /**
  * Returns the numeric content of a table cell.
  *
- * @param {jquery} table_cell The table cell.
+ * @param {object} table_cell The table cell.
  *
  * @returns {Number}
  */
 SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   "use strict";
-  var exp;
+  var regexp;
+  var parts;
 
-  exp = /[\d\.,\-\+]/g;
+  regexp = /[\d\.,\-\+]*/;
+  parts = regexp.exec($(table_cell).text());
 
-  return parseInt(exp.exec($(table_cell).text()).replace(',', '.'), 10);
+  return parseInt(parts[0].replace(',', '.'), 10);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (row1, row2) {
+SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
-  if (row1.sortKey === row2.sortKey) {
+  if (value1 === value2) {
     return 0;
   }
-  if (row1.sortKey === "" && !isNaN(row2.sortKey)) {
+  if (value1 === "" && !isNaN(value2)) {
     return -1;
   }
-  if (row2.sortKey === "" && !isNaN(row1.sortKey)) {
+  if (value2 === "" && !isNaN(value1)) {
     return 1;
   }
 
-  return row1.sortKey - row2.sortKey;
+  return value1 - value2;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
