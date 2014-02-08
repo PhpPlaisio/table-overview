@@ -998,13 +998,13 @@ SET_DateTimeColumnTypeHandler.constructor = SET_DateTimeColumnTypeHandler;
  *
  * @param {object} table_cell The table cell.
  *
- * @returns {Number}
+ * @returns {string}
  */
 SET_DateTimeColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   "use strict";
   var classes;
   var class_names;
-  var ret = null;
+  var ret = '';
   var i;
 
   classes = $(table_cell).attr('class');
