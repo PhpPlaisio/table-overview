@@ -307,10 +307,8 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, header_inde
     SET_OverviewTable.benchmark('Merge info');
     if (sort_info.length === 1) {
       this.sortSingleColumn(sort_info[0], column);
-      SET_OverviewTable.benchmark('Sorted by one column');
     } else {
       this.sortMultiColumn(sort_info);
-      SET_OverviewTable.benchmark('Sorted by ' + sort_info.length + ' column');
     }
   }
 
@@ -324,8 +322,8 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, header_inde
 
   if (SET_OverviewTable.myDebug) {
     SET_OverviewTable.log('Finish sort ' +
-                          (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
-                          'ms');
+      (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
+      ' ms');
   }
 };
 
@@ -535,7 +533,7 @@ SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
  */
 SET_OverviewTable.prototype.applyZebraTheme = function () {
   "use strict";
-  var even = true;
+  var even = false;
 
   // Note: Using this.style.display is faster than using children('tr:visible').
   this.$myTable.children('tbody').children('tr').each(function () {
@@ -684,27 +682,42 @@ SET_OverviewTable.prototype.filter = function () {
   var filters = [];
   var i;
   var that = this;
+  var count;
+
+  if (SET_OverviewTable.myDebug) {
+    SET_OverviewTable.log('Apply filters:');
+    SET_OverviewTable.myTimeStart = new Date();
+    SET_OverviewTable.myTimeIntermidiate = new Date();
+  }
 
   // Create a list of effective filters.
+  count = 0;
   for (i = 0; i < this.myColumnHandlers.length; i = i + 1) {
     if (this.myColumnHandlers[i] && this.myColumnHandlers[i].startFilter()) {
       filters[i] = this.myColumnHandlers[i];
+      count += 1;
     } else {
       filters[i] = null;
     }
   }
+  SET_OverviewTable.benchmark('Create a list of effective filters');
 
-  if (filters.length === 0) {
+
+  if (count === 0) {
+    if (SET_OverviewTable.myDebug) {
+      SET_OverviewTable.log('Filters list is empty.');
+    }
+
     // All filters are ineffective. Show all rows.
     this.$myTable.children('tbody').children('tr').show();
+    SET_OverviewTable.benchmark('Show all rows');
 
-    // Apply zebra theme on all rows.
-    that.applyZebraTheme();
   } else {
     // One or more filters are effective.
 
     // Hide all rows.
     this.$myTable.children('tbody').children('tr').hide();
+    SET_OverviewTable.benchmark('Hide all rows');
 
     // Apply all effective filters.
     this.$myTable.children('tbody').children('tr').each(function () {
@@ -724,11 +737,19 @@ SET_OverviewTable.prototype.filter = function () {
       if (show === 1) {
         // The row matches all filters. Show the row.
         $this.show();
-
-        // Apply zebra theme on visible rows.
-        that.applyZebraTheme();
       }
     });
+    SET_OverviewTable.benchmark('Apply all effective filters');
+  }
+
+  // Apply zebra theme on visible rows.
+  that.applyZebraTheme();
+  SET_OverviewTable.benchmark('Apply zebra theme');
+
+  if (SET_OverviewTable.myDebug) {
+    SET_OverviewTable.log('Finish, total time: ' +
+      (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
+      ' ms');
   }
 };
 
