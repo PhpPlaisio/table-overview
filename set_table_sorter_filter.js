@@ -104,6 +104,10 @@ function set_to_lower_case_no_accents(text) {
   var text_new = '';
   var i;
 
+  if (text === null || text === undefined) {
+    return text;
+  }
+
   for (i = 0; i < text.length; i = i + 1) {
     c = text.substr(i, 1);
     if (trans[c]) {
@@ -847,11 +851,15 @@ SET_OverviewTable.registerTable = function (selector) {
 
     if ($this.is('table')) {
       // Selector is a table.
-      SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new SET_OverviewTable($this);
+      if (!SET_OverviewTable.ourTables[this]) {
+        SET_OverviewTable.ourTables[this] = new SET_OverviewTable($this);
+      }
     } else {
       // Selector is not a table. Find tables below the selector.
       $this.find('table').each(function () {
-        SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new SET_OverviewTable($(this));
+        if (!SET_OverviewTable.ourTables[this]) {
+          SET_OverviewTable.ourTables[this] = new SET_OverviewTable($(this));
+        }
       });
     }
   });
