@@ -213,7 +213,7 @@ SET_OverviewTable.ourDebug = false;
  *
  * @type {{SET_OverviewTable}}
  */
-SET_OverviewTable.ourTables = [];
+SET_OverviewTable.ourTables = {};
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
@@ -615,7 +615,6 @@ SET_OverviewTable.prototype.applyZebraTheme = function () {
  */
 SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
   "use strict";
-  var column_index;
   var rows;
   var sort_direction;
   var i;
@@ -738,7 +737,7 @@ SET_OverviewTable.prototype.filter = function () {
   var that = this;
   var count;
 
-  if (SET_OverviewTable.myDebug) {
+  if (SET_OverviewTable.ourDebug) {
     SET_OverviewTable.log('Apply filters:');
     SET_OverviewTable.myTimeStart = new Date();
     SET_OverviewTable.myTimeIntermidiate = new Date();
@@ -758,7 +757,7 @@ SET_OverviewTable.prototype.filter = function () {
 
 
   if (count === 0) {
-    if (SET_OverviewTable.myDebug) {
+    if (SET_OverviewTable.ourDebug) {
       SET_OverviewTable.log('Filters list is empty.');
     }
 
@@ -800,7 +799,7 @@ SET_OverviewTable.prototype.filter = function () {
   that.applyZebraTheme();
   SET_OverviewTable.benchmark('Apply zebra theme');
 
-  if (SET_OverviewTable.myDebug) {
+  if (SET_OverviewTable.ourDebug) {
     SET_OverviewTable.log('Finish, total time: ' +
       (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
       ' ms');
