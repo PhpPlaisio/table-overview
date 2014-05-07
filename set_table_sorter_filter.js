@@ -134,7 +134,7 @@ function SET_OverviewTable($table) {
   this.$myHeaders = $table.find('thead tr.header').find('th');
 
   // Lookup from column index to header index.
-  this.myHeaderIndexLook = [];
+  this.myHeaderIndexLookup = [];
 
   // The HTML table associated with the JavaScript object.
   this.$myTable = $table;
@@ -157,7 +157,7 @@ function SET_OverviewTable($table) {
     }
 
     for (i = 0; i < span; i = i + 1) {
-      that.myHeaderIndexLook[that.myHeaderIndexLook.length] = header_index;
+      that.myHeaderIndexLookup[that.myHeaderIndexLookup.length] = header_index;
     }
   });
 
@@ -214,7 +214,7 @@ SET_OverviewTable.ourTables = [];
 // ---------------------------------------------------------------------------------------------------------------------
 /**
  * Map from column data type (i.e. class data-type-*) to column type handler.
- * 
+ *
  * @type {{}}
  */
 SET_OverviewTable.ourColumnTypeHandlers = {};
@@ -384,7 +384,7 @@ SET_OverviewTable.prototype.getSortInfo = function () {
   var colspan;
 
   this.$myTable.find('colgroup').find('col').each(function (column_index) {
-    var $th = that.$myHeaders.eq(that.myHeaderIndexLook[column_index]);
+    var $th = that.$myHeaders.eq(that.myHeaderIndexLookup[column_index]);
 
     span = $th.attr('colspan');
     if (!span || span === '1') {
@@ -449,10 +449,8 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column
   var width_col1;
   var width_col2;
   var width_header;
-  var $table = this.$myTable;
   var diff;
   var x;
-  var that = this;
 
   function getFlipSortDirection($table, $header, infix) {
     var sort_direction;
@@ -479,14 +477,16 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column
       // Header spans two columns and both columns can be used for sorting.
       x = event.pageX - $header.offset().left;
 
-      if (that.myHeaderIndexLook[column_index] === that.myHeaderIndexLook[column_index - 1]) {
-        width_col1 = $table.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
-        width_col2 = $table.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+      if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index - 1]) {
+        // User clicked right column of a dual column header.
+        width_col1 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
+        width_col2 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
       }
 
-      if (that.myHeaderIndexLook[column_index] === that.myHeaderIndexLook[column_index + 1]) {
-        width_col1 = $table.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-        width_col2 = $table.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
+      if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index + 1]) {
+        // User clicked left column of a dual column header.
+        width_col1 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+        width_col2 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
       }
 
       width_header = $header.outerWidth();
@@ -494,13 +494,13 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column
       diff = width_header - width_col1 - width_col2;
 
       // We account diff due to cell separation.
-      if (x < (width_col1 - diff)) {
+      if (x < (width_col1 - diff / 2)) {
         column_info.infix = '-1-';
         column_info.colspan = 2;
         column_info.offset = 0;
         column_info.sort_order = this.getSortOrder($header, column_info.infix);
         column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
-      } else if (x > (width_col1 + diff)) {
+      } else if (x > (width_col1 + diff / 2)) {
         column_info.infix = '-2-';
         column_info.colspan = 2;
         column_info.offset = 1;
@@ -565,7 +565,7 @@ SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
 
   for (i = 0; i < sort_info.length; i = i + 1) {
     order = i + 1;
-    $header = this.$myHeaders.eq(this.myHeaderIndexLook[sort_info[i].column_index]);
+    $header = this.$myHeaders.eq(this.myHeaderIndexLookup[sort_info[i].column_index]);
     $header.addClass('sort-order' + sort_info[i].infix + order);
     $header.addClass('sorted' + sort_info[i].infix + sort_info[i].sort_direction);
   }
@@ -577,7 +577,7 @@ SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
  */
 SET_OverviewTable.prototype.applyZebraTheme = function () {
   "use strict";
-  var even = false;
+  var even = true;
 
   // Note: Using this.style.display is faster than using children('tr:visible').
   this.$myTable.children('tbody').children('tr').each(function () {
@@ -622,15 +622,12 @@ SET_OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
     sort_direction = -1;
   }
 
-  // Increment the column_index if the column header spans 2 columns.
-  column_index = sorting_info.column_index + sorting_info.offset;
-
   // Get all the rows of the table.
   rows = this.$myTable.children('tbody').children('tr').get();
 
   // Pull out the sort keys of the table cells.
   for (i = 0; i < rows.length; i = i + 1) {
-    var cell = rows[i].cells[column_index];
+    var cell = rows[i].cells[sorting_info.column_index];
     rows[i].sortKey = column.getSortKey(cell);
   }
   SET_OverviewTable.benchmark('Extracting sort keys');
@@ -852,7 +849,6 @@ SET_OverviewTable.registerTable = function (selector) {
   });
 };
 
-// ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
@@ -953,7 +949,7 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_
   var diff;
 
   // Install event handler for click on sort icon.
-  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLook[column_index]);
+  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLookup[column_index]);
 
   if ($header.hasClass('sort')) {
     $header.click(function (event) {
@@ -966,12 +962,12 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_
 
         x = event.pageX - $header.offset().left;
 
-        if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index - 1]) {
+        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
           width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
           width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
         }
 
-        if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index + 1]) {
+        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
           width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
           width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
         }
@@ -980,12 +976,14 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_
 
         diff = width_header - width_col1 - width_col2;
 
-        if (x < (width_col1 - diff)) {
-          if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index - 1]) {
+        if (x > (width_col1 - diff / 2)) {
+          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
+            // Sort by right column.
             overview_table.sort(event, $header, that, column_index);
           }
-        } else if (x > (width_col1 + diff)) {
-          if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index + 1]) {
+        } else if (x < (width_col1 + diff / 2)) {
+          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
+            // Sort by left column.
             overview_table.sort(event, $header, that, column_index);
           }
         }
@@ -1075,7 +1073,6 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
 
-// ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */

@@ -54,7 +54,7 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_
   var diff;
 
   // Install event handler for click on sort icon.
-  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLook[column_index]);
+  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLookup[column_index]);
 
   if ($header.hasClass('sort')) {
     $header.click(function (event) {
@@ -67,12 +67,12 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_
 
         x = event.pageX - $header.offset().left;
 
-        if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index - 1]) {
+        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
           width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
           width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
         }
 
-        if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index + 1]) {
+        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
           width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
           width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
         }
@@ -81,12 +81,14 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_
 
         diff = width_header - width_col1 - width_col2;
 
-        if (x < (width_col1 - diff)) {
-          if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index - 1]) {
+        if (x > (width_col1 - diff / 2)) {
+          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
+            // Sort by right column.
             overview_table.sort(event, $header, that, column_index);
           }
-        } else if (x > (width_col1 + diff)) {
-          if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index + 1]) {
+        } else if (x < (width_col1 + diff / 2)) {
+          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
+            // Sort by left column.
             overview_table.sort(event, $header, that, column_index);
           }
         }
@@ -176,4 +178,3 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
 
-// ---------------------------------------------------------------------------------------------------------------------
