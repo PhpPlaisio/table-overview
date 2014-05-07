@@ -131,54 +131,72 @@ function SET_OverviewTable($table) {
   var that = this;
   var i;
 
+  // The HTML table cells with filters of the HTML table.
+  this.$myFilters = $table.find('thead tr.filter').find('td');
+
+  // The HTML headers of the HTML table.
+  this.$myHeaders = $table.find('thead tr.header').find('th');
+
+  // Lookup from column index to header index.
+  this.myHeaderIndexLook = [];
+
+  // The HTML table associated with the JavaScript object.
   this.$myTable = $table;
-  SET_OverviewTable.myDebug = false;
 
   // Display the row with table filters.
   $table.find('thead tr.filter').each(function () {
     $(this).css('display', 'table-row');
   });
 
+  // Column headers can span 1 or 2 columns. Create lookup table from column_index to header_index.
+  this.$myHeaders.each(function (header_index, th) {
+    var i;
+    var span;
+
+    span = $(th).attr('colspan');
+    if (span) {
+      span = parseFloat(span);
+    } else {
+      span = 1;
+    }
+
+    for (i = 0; i < span; i = i + 1) {
+      that.myHeaderIndexLook[that.myHeaderIndexLook.length] = header_index;
+    }
+  });
+
   // Get the column types and install the column handlers.
   this.myColumnHandlers = [];
-  var column_index = 0;
-  $table.find('thead tr.header').find('th').each(function (header_index, th) {
+  $table.find('colgroup').find('col').each(function (column_index, col) {
     var attr;
     var classes;
-    var span;
 
     that.myColumnHandlers[column_index] = null;
 
-    attr = $(th).attr('class');
-    classes = attr.split(' ');
-    for (i = 0; i < classes.length; i = i + 1) {
-      if (classes[i].substr(0, 10) === 'data-type-') {
+    attr = $(col).attr('class');
+    if (attr) {
+      classes = attr.split(' ');
+      for (i = 0; i < classes.length; i = i + 1) {
+        if (classes[i].substr(0, 10) === 'data-type-') {
 
-        var column_type = classes[i].substr(10);
-        if (SET_OverviewTable.ourColumnTypeHandlers[column_type]) {
-          that.myColumnHandlers[column_index] = new SET_OverviewTable.ourColumnTypeHandlers[column_type]();
+          var column_type = classes[i].substr(10);
+          if (SET_OverviewTable.ourColumnTypeHandlers[column_type]) {
+            that.myColumnHandlers[column_index] = new SET_OverviewTable.ourColumnTypeHandlers[column_type]();
+          }
         }
       }
     }
 
-    // If no handle for the column type can be found use SET_NoneColumnTypeHandler.
+    // If no handler for the column type can be found use SET_NoneColumnTypeHandler.
     if (!that.myColumnHandlers[column_index]) {
       that.myColumnHandlers[column_index] = new SET_NoneColumnTypeHandler();
     }
 
     // Initialize the filter.
-    that.myColumnHandlers[column_index].initFilter(that, $table, header_index);
+    that.myColumnHandlers[column_index].initFilter(that, column_index);
 
-    // Initialize the filter.
-    that.myColumnHandlers[column_index].initSort(that, $table, header_index, column_index);
-
-    // Take the colspan into account for computing the next column_index.
-    span = $(this).attr('colspan');
-    if (span) {
-      column_index = column_index + parseFloat(span);
-    } else {
-      column_index = column_index + 1;
-    }
+    // Initialize the sorter.
+    that.myColumnHandlers[column_index].initSort(that, column_index);
   });
 }
 
@@ -207,7 +225,7 @@ SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
       // change sort direction for it column.
       sort_info[column_sort_info.sort_order - 1].sort_direction = column_sort_info.sort_direction;
     } else {
-      // If clicked column isn't sort add this column info to sort info.
+      // If clicked column isn't sorted add this column info to sort info.
       column_sort_info.sort_order = sort_info.length;
       sort_info[sort_info.length] = column_sort_info;
     }
@@ -218,10 +236,11 @@ SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
 
 // --------------------------------------------------------------------------------------------------------------------
 /**
- * Get and return sort sort order for current column.
+ * Returns sort sort order for current column.
  *
  * @param $header
  * @param infix
+ *
  * @returns {boolean}
  */
 SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
@@ -233,12 +252,14 @@ SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
   var order = false;
 
   attr = $header.attr('class');
-  classes = attr.split(' ');
+  if (attr) {
+    classes = attr.split(' ');
 
-  for (i = 0; i < classes.length; i = i + 1) {
-    sort_order_class = 'sort-order' + infix;
-    if (classes[i].substr(0, sort_order_class.length) === sort_order_class) {
-      order = parseInt(classes[i].substr(sort_order_class.length), 10);
+    for (i = 0; i < classes.length; i = i + 1) {
+      sort_order_class = 'sort-order' + infix;
+      if (classes[i].substr(0, sort_order_class.length) === sort_order_class) {
+        order = parseInt(classes[i].substr(sort_order_class.length), 10);
+      }
     }
   }
 
@@ -272,10 +293,9 @@ SET_OverviewTable.prototype.getSortDirection = function ($header, infix) {
  * @param event
  * @param $header
  * @param column
- * @param header_index
  * @param column_index
  */
-SET_OverviewTable.prototype.sort = function (event, $header, column, header_index, column_index) {
+SET_OverviewTable.prototype.sort = function (event, $header, column, column_index) {
   "use strict";
   var sort_info;
   var sort_column_info;
@@ -291,7 +311,7 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, header_inde
   SET_OverviewTable.benchmark('Get all sort info');
 
   // Get info about column what was selected for sort.
-  sort_column_info = this.getColumnSortInfo(event, $header, header_index, column_index);
+  sort_column_info = this.getColumnSortInfo(event, $header, column_index);
   SET_OverviewTable.benchmark('Get info about current column');
 
   // Remove all classes concerning sorting from the column headers.
@@ -323,7 +343,7 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, header_inde
   if (SET_OverviewTable.myDebug) {
     SET_OverviewTable.log('Finish sort ' +
       (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
-      ' ms');
+      'ms');
   }
 };
 
@@ -334,7 +354,6 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, header_inde
  */
 SET_OverviewTable.prototype.getSortInfo = function () {
   "use strict";
-  var column_index = 0;
   var columns_info = [];
   var span;
   var sort_order;
@@ -342,15 +361,15 @@ SET_OverviewTable.prototype.getSortInfo = function () {
   var that = this;
   var colspan;
 
-  this.$myTable.find('thead tr.header').find('th').each(function (header_index, th) {
-    var $th = $(th);
-    span = $(this).attr('colspan');
+  this.$myTable.find('colgroup').find('col').each(function (column_index) {
+    var $th = that.$myHeaders.eq(that.myHeaderIndexLook[column_index]);
+
+    span = $th.attr('colspan');
     if (!span || span === '1') {
       sort_order = that.getSortOrder($th, '-');
       if (sort_order) {
         columns_info[sort_order - 1] = {
           column_index: column_index,
-          header_index: header_index,
           sort_order: sort_order,
           sort_direction: that.getSortDirection($th, '-'),
           infix: '-',
@@ -364,7 +383,6 @@ SET_OverviewTable.prototype.getSortInfo = function () {
         if (sort_order) {
           columns_info[sort_order - 1] = {
             column_index: column_index,
-            header_index: header_index,
             sort_order: sort_order,
             sort_direction: that.getSortDirection($th, '-1-'),
             infix: '-1-',
@@ -379,7 +397,6 @@ SET_OverviewTable.prototype.getSortInfo = function () {
         if (sort_order) {
           columns_info[sort_order - 1] = {
             column_index: column_index,
-            header_index: header_index,
             sort_order: that.getSortDirection($th, '-2-'),
             sort_direction: sort_direction,
             infix: '-2-',
@@ -388,13 +405,6 @@ SET_OverviewTable.prototype.getSortInfo = function () {
           };
         }
       }
-    }
-
-    // Take the colspan into account for computing the next column_index.
-    if (span) {
-      column_index = column_index + parseFloat(span);
-    } else {
-      column_index = column_index + 1;
     }
   });
 
@@ -407,11 +417,10 @@ SET_OverviewTable.prototype.getSortInfo = function () {
  * Return object with column info.
  * @param event
  * @param $header
- * @param header_index
  * @param column_index
  * @returns {{}}
  */
-SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, header_index, column_index) {
+SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column_index) {
   "use strict";
   var span;
   var column_info = {};
@@ -434,7 +443,6 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, header
   }
 
   column_info.column_index = column_index;
-  column_info.header_index = header_index;
 
   span = $header.attr('colspan');
   if (!span || span === '1') {
@@ -521,7 +529,7 @@ SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
 
   for (i = 0; i < sort_info.length; i = i + 1) {
     order = i + 1;
-    $header = this.$myTable.children('thead').find('tr.header').find('th').eq(sort_info[i].header_index);
+    $header = this.$myHeaders.eq(this.myHeaderIndexLook[sort_info[i].column_index]);
     $header.addClass('sort-order' + sort_info[i].infix + order);
     $header.addClass('sorted' + sort_info[i].infix + sort_info[i].sort_direction);
   }
@@ -839,17 +847,17 @@ SET_NoneColumnTypeHandler.prototype.startFilter = function () {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_NoneColumnTypeHandler.prototype.initSort = function (overview_table, $table, header_index, column_index) {
+SET_NoneColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
   "use strict";
   return false;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_NoneColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index, column_index) {
+SET_NoneColumnTypeHandler.prototype.initFilter = function (overview_table, column_index) {
   "use strict";
   var $cell;
 
-  $cell = $table.children('thead').find('tr.filter').find('td').eq(header_index);
+  $cell = overview_table.$myFilters.eq(column_index);
   $cell.html('');
   $cell.width($cell.css('width'));
 };
@@ -906,26 +914,26 @@ SET_TextColumnTypeHandler.prototype.simpleFilter = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, $table, header_index, column_index) {
+SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
   "use strict";
   var that = this;
   var $header;
 
   // Install event handler for click on sort icon.
-  $header = $table.children('thead').find('tr.header').find('th').eq(header_index);
+  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLook[column_index]);
   if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
     $header.click(function (event) {
-      overview_table.sort(event, $header, that, header_index, column_index);
+      overview_table.sort(event, $header, that, column_index);
     });
   }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index) {
+SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, column_index) {
   "use strict";
   var that = this;
 
-  this.$myInput = $table.children('thead').find('tr.filter').find('td').eq(header_index).find('input');
+  this.$myInput = overview_table.$myFilters.eq(column_index).find('input');
 
   // Clear the filter box (some browsers preserve the values on page reload).
   this.$myInput.val('');
@@ -996,6 +1004,61 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
  */
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
+
+// ---------------------------------------------------------------------------------------------------------------------
+/*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
+/*global window */
+/*global $ */
+/*global SET_TextColumnTypeHandler */
+/*global SET_OverviewTable */
+
+// ---------------------------------------------------------------------------------------------------------------------
+function SET_DateTimeColumnTypeHandler() {
+  "use strict";
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_DateTimeColumnTypeHandler.prototype = Object.create(SET_TextColumnTypeHandler.prototype);
+SET_DateTimeColumnTypeHandler.constructor = SET_DateTimeColumnTypeHandler;
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Returns the numeric content of a table cell.
+ *
+ * @param {object} table_cell The table cell.
+ *
+ * @returns {string}
+ */
+SET_DateTimeColumnTypeHandler.prototype.getSortKey = function (table_cell) {
+  "use strict";
+  var classes;
+  var class_names;
+  var ret = '';
+  var i;
+
+  classes = $(table_cell).attr('class');
+  if (classes) {
+    // Split all the classes of @a $cell into an array.
+    class_names = classes.split(/\s+/);
+
+    // Look for a class that starts with 'data-'.
+    for (i = 0; i < class_names.length; i = i + 1) {
+      if (class_names[i].substr(0, 5) === "data-") {
+        ret = decodeURIComponent(class_names[i].substr(5).replace(/\+/g, '%20'));
+        break;
+      }
+    }
+  }
+
+  return ret;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Register column type handlers.
+ */
+SET_OverviewTable.registerColumnTypeHandler('date', SET_DateTimeColumnTypeHandler);
+SET_OverviewTable.registerColumnTypeHandler('date-time', SET_DateTimeColumnTypeHandler);
 
 // ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */

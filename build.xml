@@ -8,7 +8,7 @@
     <target name="prepare">
         <echo msg="Preparing files…"/>
         <if>
-            <available file="${BUILD_DIR}" type="dir"/>
+            <available file="${BUILD_DIR}" type="dir" property="build_dir_exists"/>
             <then>
                 <echo msg="Removing old files…"/>
                 <delete includeemptydirs="true" verbose="false" failonerror="true">
@@ -35,39 +35,65 @@
     </target>
     <target name="combine_js">
         <echo msg="Combining all js files into one…"/>
-        <delete file="${BUILD_DIR}/${COMBINED_JS_FILE}"/>
+        <if>
+            <available file="${BUILD_DIR}/${COMBINED_JS_FILE}" property="combine_js_file_exists"/>
+            <then>
+                <delete file="${BUILD_DIR}/${COMBINED_JS_FILE}"/>
+            </then>
+        </if>
         <append destFile="${BUILD_DIR}/${COMBINED_JS_FILE}">
             <filelist dir="${BUILD_DIR}/js" listfile="js/sources.txt"/>
         </append>
 
         <!-- Copy the combined JavaScript file to the project's root directory if this file has changed only. -->
-        <loadfile property="COMBINED_JS_FILE_OLD" file="${COMBINED_JS_FILE}"/>
-        <loadfile property="COMBINED_JS_FILE_NEW" file="${BUILD_DIR}/${COMBINED_JS_FILE}"/>
         <if>
             <not>
-                <equals arg1="${COMBINED_JS_FILE_OLD}" arg2="${COMBINED_JS_FILE_NEW}"></equals>
+                <available file="${COMBINED_JS_FILE}" property="combine_js_file_exists"/>
             </not>
             <then>
                 <copy file="${BUILD_DIR}/${COMBINED_JS_FILE}" tofile="${COMBINED_JS_FILE}"/>
             </then>
+            <else>
+                <loadfile property="COMBINED_JS_FILE_OLD" file="${COMBINED_JS_FILE}"/>
+                <loadfile property="COMBINED_JS_FILE_NEW" file="${BUILD_DIR}/${COMBINED_JS_FILE}"/>
+                <if>
+                    <not>
+                        <equals arg1="${COMBINED_JS_FILE_OLD}" arg2="${COMBINED_JS_FILE_NEW}"/>
+                    </not>
+                    <then>
+                        <copy file="${BUILD_DIR}/${COMBINED_JS_FILE}" tofile="${COMBINED_JS_FILE}"/>
+                    </then>
+                </if>
+            </else>
         </if>
     </target>
     <target name="minify_js">
         <echo msg="Minifying JavaScript files…"/>
-        <exec command="java -jar vendor/bin/yuicompressor.jar ${COMBINED_JS_FILE} -o ${COMBINED_JS_FILE_MIN}" passthru="true"
+        <exec command="java -jar vendor/bin/yuicompressor.jar ${COMBINED_JS_FILE} -o ${COMBINED_JS_FILE_MIN}"
+              passthru="true"
               checkreturn="true"/>
 
         <!-- Copy the minimized combined JavaScript file to the project's root directory if this file has changed
              only. -->
-        <loadfile property="COMBINED_JS_FILE_MIN_OLD" file="${COMBINED_JS_FILE_MIN}"/>
-        <loadfile property="COMBINED_JS_FILE_MIN_NEW" file="${BUILD_DIR}/${COMBINED_JS_FILE_MIN}"/>
         <if>
             <not>
-                <equals arg1="${COMBINED_JS_FILE_MIN_OLD}" arg2="${COMBINED_JS_FILE_MIN_NEW}"></equals>
+                <available file="${COMBINED_JS_FILE_MIN}" property="combine_js_min_file_exists"/>
             </not>
             <then>
                 <copy file="${BUILD_DIR}/${COMBINED_JS_FILE_MIN}" tofile="${COMBINED_JS_FILE_MIN}"/>
             </then>
+            <else>
+                <loadfile property="COMBINED_JS_FILE_MIN_OLD" file="${COMBINED_JS_FILE_MIN}"/>
+                <loadfile property="COMBINED_JS_FILE_MIN_NEW" file="${BUILD_DIR}/${COMBINED_JS_FILE_MIN}"/>
+                <if>
+                    <not>
+                        <equals arg1="${COMBINED_JS_FILE_MIN_OLD}" arg2="${COMBINED_JS_FILE_MIN_NEW}"/>
+                    </not>
+                    <then>
+                        <copy file="${BUILD_DIR}/${COMBINED_JS_FILE_MIN}" tofile="${COMBINED_JS_FILE_MIN}"/>
+                    </then>
+                </if>
+            </else>
         </if>
     </target>
 </project>
