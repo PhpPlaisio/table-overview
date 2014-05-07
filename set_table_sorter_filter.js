@@ -238,18 +238,19 @@ SET_OverviewTable.enableDebug = function () {
  */
 SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
   "use strict";
+
   if (sort_info.length === 0) {
     // If selected only one column and sort info is empty, add column info
     column_sort_info.sort_order = 1;
     sort_info[0] = column_sort_info;
   } else {
-    if (column_sort_info.sort_order !== false && sort_info[column_sort_info.sort_order - 1]) {
+    if (column_sort_info.sort_order !== -1 && sort_info[column_sort_info.sort_order - 1]) {
       // If clicked column is already sorted and sort info contain info about this column,
       // change sort direction for it column.
       sort_info[column_sort_info.sort_order - 1].sort_direction = column_sort_info.sort_direction;
     } else {
       // If clicked column isn't sorted add this column info to sort info.
-      column_sort_info.sort_order = sort_info.length;
+      column_sort_info.sort_order = sort_info.length + 1;
       sort_info[sort_info.length] = column_sort_info;
     }
   }
@@ -264,7 +265,7 @@ SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
  * @param $header
  * @param infix
  *
- * @returns {boolean}
+ * @returns {int}
  */
 SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
   "use strict";
@@ -272,7 +273,7 @@ SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
   var classes;
   var sort_order_class;
   var i;
-  var order = false;
+  var order = -1;
 
   attr = $header.attr('class');
   if (attr) {
@@ -329,7 +330,7 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, column_inde
     SET_OverviewTable.myTimeIntermidiate = new Date();
   }
 
-  // Get info about all  currently sorted columns.
+  // Get info about all currently sorted columns.
   sort_info = this.getSortInfo();
   SET_OverviewTable.benchmark('Get all sort info');
 
@@ -382,6 +383,7 @@ SET_OverviewTable.prototype.getSortInfo = function () {
   var sort_direction;
   var that = this;
   var colspan;
+  var dual;
 
   this.$myTable.find('colgroup').find('col').each(function (column_index) {
     var $th = that.$myHeaders.eq(that.myHeaderIndexLookup[column_index]);
@@ -389,7 +391,7 @@ SET_OverviewTable.prototype.getSortInfo = function () {
     span = $th.attr('colspan');
     if (!span || span === '1') {
       sort_order = that.getSortOrder($th, '-');
-      if (sort_order) {
+      if (sort_order !== -1) {
         columns_info[sort_order - 1] = {
           column_index: column_index,
           sort_order: sort_order,
@@ -400,9 +402,15 @@ SET_OverviewTable.prototype.getSortInfo = function () {
         };
       }
     } else if (span === '2') {
-      if ($th.hasClass('sort-1')) {
+      if (!dual || dual === 'right') {
+        dual = 'left';
+      } else {
+        dual = 'right';
+      }
+
+      if (dual === 'left' && $th.hasClass('sort-1')) {
         sort_order = that.getSortOrder($th, '-1-');
-        if (sort_order) {
+        if (sort_order !== -1) {
           columns_info[sort_order - 1] = {
             column_index: column_index,
             sort_order: sort_order,
@@ -414,9 +422,9 @@ SET_OverviewTable.prototype.getSortInfo = function () {
         }
       }
 
-      if ($th.hasClass('sort-2')) {
+      if (dual === 'right' && $th.hasClass('sort-2')) {
         sort_order = that.getSortOrder($th, '-2-');
-        if (sort_order) {
+        if (sort_order !== -1) {
           columns_info[sort_order - 1] = {
             column_index: column_index,
             sort_order: that.getSortDirection($th, '-2-'),
@@ -848,7 +856,6 @@ SET_OverviewTable.registerTable = function (selector) {
     }
   });
 };
-
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
