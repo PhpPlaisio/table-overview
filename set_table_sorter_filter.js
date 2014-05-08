@@ -868,14 +868,17 @@ SET_OverviewTable.registerTable = function (selector, className) {
 
     if ($this.is('table')) {
       // Selector is a table.
-      if (!SET_OverviewTable.ourTables[this]) {
-        SET_OverviewTable.ourTables[this] = new window[className]($this);
+      if (!$this.hasClass('registered')) {
+        SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new window[className]($this);
+        $this.addClass('registered');
       }
     } else {
       // Selector is not a table. Find the table below the selector.
       $this.find('table').first().each(function () {
-        if (!SET_OverviewTable.ourTables[this]) {
-          SET_OverviewTable.ourTables[this] = new window[className]($(this));
+        var $this = $(this);
+        if (!$this.hasClass('registered')) {
+          SET_OverviewTable.ourTables[SET_OverviewTable.ourTables.length] = new window[className]($this);
+          $this.addClass('registered');
         }
       });
     }
