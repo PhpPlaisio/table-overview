@@ -174,18 +174,20 @@ function SET_OverviewTable($table) {
     that.myColumnHandlers[column_index] = null;
 
     attr = $(col).attr('class');
-    classes = attr.split(' ');
-    for (i = 0; i < classes.length; i = i + 1) {
-      if (classes[i].substr(0, 10) === 'data-type-') {
+    if (attr) {
+      classes = attr.split(' ');
+      for (i = 0; i < classes.length; i = i + 1) {
+        if (classes[i].substr(0, 10) === 'data-type-') {
 
-        var column_type = classes[i].substr(10);
-        if (SET_OverviewTable.ourColumnTypeHandlers[column_type]) {
-          that.myColumnHandlers[column_index] = new SET_OverviewTable.ourColumnTypeHandlers[column_type]();
+          var column_type = classes[i].substr(10);
+          if (SET_OverviewTable.ourColumnTypeHandlers[column_type]) {
+            that.myColumnHandlers[column_index] = new SET_OverviewTable.ourColumnTypeHandlers[column_type]();
+          }
         }
       }
     }
 
-    // If no handle for the column type can be found use SET_NoneColumnTypeHandler.
+    // If no handler for the column type can be found use SET_NoneColumnTypeHandler.
     if (!that.myColumnHandlers[column_index]) {
       that.myColumnHandlers[column_index] = new SET_NoneColumnTypeHandler();
     }
