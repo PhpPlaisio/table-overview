@@ -952,7 +952,9 @@ SET_TextColumnTypeHandler.prototype.startFilter = function () {
   "use strict";
   this.myFilterValue = set_to_lower_case_no_accents(this.$myInput.val());
 
-  return (this.myFilterValue !== '');
+  // Note: this.myFilterValue might be undefined in case there is no input:text box for filtering in the column header.
+
+  return (this.myFilterValue !== undefined && this.myFilterValue !== '');
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
