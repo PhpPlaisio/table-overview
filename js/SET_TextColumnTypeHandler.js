@@ -43,26 +43,26 @@ SET_TextColumnTypeHandler.prototype.simpleFilter = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, $table, header_index, column_index) {
+SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
   "use strict";
   var that = this;
   var $header;
 
   // Install event handler for click on sort icon.
-  $header = $table.children('thead').find('tr.header').find('th').eq(header_index);
+  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLook[column_index]);
   if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
     $header.click(function (event) {
-      overview_table.sort(event, $header, that, header_index, column_index);
+      overview_table.sort(event, $header, that, column_index);
     });
   }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, $table, header_index) {
+SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, column_index) {
   "use strict";
   var that = this;
 
-  this.$myInput = $table.children('thead').find('tr.filter').find('td').eq(header_index).find('input');
+  this.$myInput = overview_table.$myFilters.eq(column_index).find('input');
 
   // Clear the filter box (some browsers preserve the values on page reload).
   this.$myInput.val('');
