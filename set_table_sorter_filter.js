@@ -198,7 +198,18 @@ function SET_OverviewTable($table) {
     // Initialize the sorter.
     that.myColumnHandlers[column_index].initSort(that, column_index);
   });
+
+  // Execute additional initializations (if any)
+  this.initHook();
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+/** Does nothing. However, can be overridden are replaced for additional initializations.
+ *
+ */
+SET_OverviewTable.prototype.initHook = function () {
+  'use strict';
+};
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
@@ -841,23 +852,30 @@ SET_OverviewTable.log = function (s) {
 /**
  * Registers tables that matches a jQuery selector as a SET_OverviewTable.
  *
- * @param selector {string} The jQuery selector.
+ * @param selector  {string} The jQuery selector.
+ * @param className {string} The class name.
  */
-SET_OverviewTable.registerTable = function (selector) {
+SET_OverviewTable.registerTable = function (selector, className) {
   "use strict";
+
+  // Set name of class if this undefined.
+  if (className === 'undefined') {
+    className = 'SET_OverviewTable';
+  }
+
   $(selector).each(function () {
     var $this = $(this);
 
     if ($this.is('table')) {
       // Selector is a table.
       if (!SET_OverviewTable.ourTables[this]) {
-        SET_OverviewTable.ourTables[this] = new SET_OverviewTable($this);
+        SET_OverviewTable.ourTables[this] = new window[className]($this);
       }
     } else {
-      // Selector is not a table. Find tables below the selector.
-      $this.find('table').each(function () {
+      // Selector is not a table. Find the table below the selector.
+      $this.find('table').first().each(function () {
         if (!SET_OverviewTable.ourTables[this]) {
-          SET_OverviewTable.ourTables[this] = new SET_OverviewTable($(this));
+          SET_OverviewTable.ourTables[this] = new window[className]($(this));
         }
       });
     }
