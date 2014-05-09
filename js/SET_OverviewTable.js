@@ -430,6 +430,7 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column
   var $table = this.$myTable;
   var diff;
   var x;
+  var that = this;
 
   function getFlipSortDirection($table, $header, infix) {
     var sort_direction;
@@ -456,20 +457,28 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column
       // Header spans two columns and both columns can be used for sorting.
       x = event.pageX - $header.offset().left;
 
-      width_col1 = $table.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-      width_col2 = $table.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
+      if (that.myHeaderIndexLook[column_index] === that.myHeaderIndexLook[column_index - 1]) {
+        width_col1 = $table.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
+        width_col2 = $table.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+      }
+
+      if (that.myHeaderIndexLook[column_index] === that.myHeaderIndexLook[column_index + 1]) {
+        width_col1 = $table.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+        width_col2 = $table.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
+      }
+
       width_header = $header.outerWidth();
 
       diff = width_header - width_col1 - width_col2;
 
       // We account diff due to cell separation.
-      if (x < ((2 * width_col1 - diff) / 2)) {
+      if (x < (width_col1 - diff)) {
         column_info.infix = '-1-';
         column_info.colspan = 2;
         column_info.offset = 0;
         column_info.sort_order = this.getSortOrder($header, column_info.infix);
         column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
-      } else if (x > ((2 * width_col1 + diff) / 2)) {
+      } else if (x > (width_col1 + diff)) {
         column_info.infix = '-2-';
         column_info.colspan = 2;
         column_info.offset = 1;
@@ -505,14 +514,19 @@ SET_OverviewTable.prototype.cleanSortClasses = function () {
   "use strict";
   var that = this;
   var i;
+
   // Remove all orders for all columns.
   for (i = 0; i < that.myColumnHandlers.length; i = i + 1) {
     that.$myTable.children('thead').find('th').removeClass('sort-order-' + i);
+    that.$myTable.children('thead').find('th').removeClass('sort-order-1-' + i);
+    that.$myTable.children('thead').find('th').removeClass('sort-order-2-' + i);
   }
 
   // Remove the asc and desc sort classes from all headers.
   that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
-  that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
+
+  that.$myTable.children('thead').find('th').removeClass('sorted-1-asc').removeClass('sorted-1-desc');
+  that.$myTable.children('thead').find('th').removeClass('sorted-2-asc').removeClass('sorted-2-desc');
 };
 
 //---------------------------------------------------------------------------------------------------------------------
