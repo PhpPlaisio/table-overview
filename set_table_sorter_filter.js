@@ -6,12 +6,7 @@
 /*global alert */
 
 
-/**
- * Set to true for debugging and performance improvement.
- * @type {boolean}
- */
-
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
  * Object with parameters which names equals values what use for replace specific characters.
  */
@@ -97,7 +92,7 @@ var trans = {
   'Þ': 'TH'
 };
 
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
  * Replace all specific character to standard character.
  * @param text
@@ -120,9 +115,10 @@ function set_to_lower_case_no_accents(text) {
   return text_new.toLowerCase();
 }
 
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
- * Constructor of class SET_OverviewTable.
+ * Object constructor.
+ * 
  * @param $table
  * @constructor
  */
@@ -200,18 +196,45 @@ function SET_OverviewTable($table) {
   });
 }
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Set to true for debugging and performance improvement.
+ * @type {boolean}
+ */
+SET_OverviewTable.ourDebug = false;
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Array with all registered SET overview tables.
+ *
+ * @type {{SET_OverviewTable}}
+ */
+SET_OverviewTable.ourTables = [];
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Map from column data type (i.e. class data-type-*) to column type handler.
+ * 
+ * @type {{}}
+ */
+SET_OverviewTable.ourColumnTypeHandlers = {};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Enables profiling and debugging console messages.
+ */
 SET_OverviewTable.enableDebug = function () {
   "use strict";
-  SET_OverviewTable.myDebug = true;
+  SET_OverviewTable.ourDebug = true;
 };
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
  * Merge info about columns.
+ *
  * @param sort_info
  * @param column_sort_info
- * @returns {*}
+ * @returns {{}}
  */
 SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
   "use strict";
@@ -234,9 +257,9 @@ SET_OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
   return sort_info;
 };
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
- * Returns sort sort order for current column.
+ * Returns sort order for a column.
  *
  * @param $header
  * @param infix
@@ -266,7 +289,7 @@ SET_OverviewTable.prototype.getSortOrder = function ($header, infix) {
   return order;
 };
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
  * Get and return sort direction for current column.
  * @param $header
@@ -287,7 +310,7 @@ SET_OverviewTable.prototype.getSortDirection = function ($header, infix) {
   return '';
 };
 
-//---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
  *
  * @param event
@@ -300,7 +323,7 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, column_inde
   var sort_info;
   var sort_column_info;
 
-  if (SET_OverviewTable.myDebug) {
+  if (SET_OverviewTable.ourDebug) {
     SET_OverviewTable.log('Start sort:');
     SET_OverviewTable.myTimeStart = new Date();
     SET_OverviewTable.myTimeIntermidiate = new Date();
@@ -342,16 +365,15 @@ SET_OverviewTable.prototype.sort = function (event, $header, column, column_inde
   this.applyZebraTheme();
   SET_OverviewTable.benchmark('Apply zebra theme');
 
-  if (SET_OverviewTable.myDebug) {
+  if (SET_OverviewTable.ourDebug) {
     SET_OverviewTable.log('Finish sort ' +
       (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
       'ms');
   }
 };
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
- * Returns information about the columns on which the table is currently sorted.
  * Returns an array indexed by the sort order with objects holding sorting information of the column.
  */
 SET_OverviewTable.prototype.getSortInfo = function () {
@@ -413,10 +435,10 @@ SET_OverviewTable.prototype.getSortInfo = function () {
   return columns_info;
 };
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
- * Get all info about clicked column.
- * Return object with column info.
+ * Returns object with info for sorting of a column.
+ *
  * @param event
  * @param $header
  * @param column_index
@@ -499,7 +521,7 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column
   return column_info;
 };
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
  * Remove all classes concerning sorting from the column headers.
  */
@@ -517,7 +539,7 @@ SET_OverviewTable.prototype.cleanSortClasses = function () {
   that.$myTable.children('thead').find('th > span').removeClass('sorted-asc').removeClass('sorted-desc');
 };
 
-//---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
  * Add classes concerning sorting to the column headers.
  *
@@ -537,9 +559,9 @@ SET_OverviewTable.prototype.addSortInfo = function (sort_info) {
   }
 };
 
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /**
- * Apply theme zebra for the table.
+ * Applies zebra theme on the table.
  */
 SET_OverviewTable.prototype.applyZebraTheme = function () {
   "use strict";
@@ -563,6 +585,7 @@ SET_OverviewTable.prototype.applyZebraTheme = function () {
 // ---------------------------------------------------------------------------------------------------------------------
 /**
  * Sorts the table by one column.
+ *
  * @param sorting_info
  * @param column
  */
@@ -755,7 +778,7 @@ SET_OverviewTable.filterTrigger = function (event) {
 // ---------------------------------------------------------------------------------------------------------------------
 SET_OverviewTable.benchmark = function (message) {
   "use strict";
-  if (this.myDebug === true) {
+  if (SET_OverviewTable.ourDebug === true) {
     SET_OverviewTable.log(message + ' ' + (new Date().getTime() - SET_OverviewTable.myTimeStart.getTime()) + " ms");
     SET_OverviewTable.myTimeStart = new Date();
   }
@@ -773,18 +796,9 @@ SET_OverviewTable.log = function (s) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
- * Array with all registered SET overview tables.
+ * Registers tables that matches a jQuery selector as a SET_OverviewTable.
  *
- * @type {{SET_OverviewTable}}
- */
-SET_OverviewTable.ourTables = [];
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_OverviewTable.ourColumnTypeHandlers = {};
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Registers forms that match the jQuery selector as a SET overview tables.
+ * @param selector {string} The jQuery selector.
  */
 SET_OverviewTable.registerTable = function (selector) {
   "use strict";
@@ -803,7 +817,7 @@ SET_OverviewTable.registerTable = function (selector) {
   });
 };
 
-// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
