@@ -1037,7 +1037,7 @@ SET_DateTimeColumnTypeHandler.prototype.getSortKey = function (table_cell) {
  * Register column type handlers.
  */
 SET_OverviewTable.registerColumnTypeHandler('date', SET_DateTimeColumnTypeHandler);
-SET_OverviewTable.registerColumnTypeHandler('date-time', SET_DateTimeColumnTypeHandler);
+SET_OverviewTable.registerColumnTypeHandler('datetime', SET_DateTimeColumnTypeHandler);
 
 // ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
