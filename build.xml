@@ -74,8 +74,7 @@
     <target name="minify_js">
         <echo msg="Minifying JavaScript files…"/>
         <exec command="java -jar vendor/bin/yuicompressor.jar ${COMBINED_JS_FILE} -o ${COMBINED_JS_FILE_MIN}"
-              passthru="true"
-              checkreturn="true"/>
+              passthru="true" checkreturn="true"/>
 
         <!-- Copy the minimized combined JavaScript file to the project's root directory if this file has changed
              only. -->
@@ -94,7 +93,8 @@
                         <equals arg1="${COMBINED_JS_FILE_MIN_OLD}" arg2="${COMBINED_JS_FILE_MIN_NEW}"/>
                     </not>
                     <then>
-                        <copy file="${BUILD_DIR}/${COMBINED_JS_FILE_MIN}" tofile="${COMBINED_JS_FILE_MIN}"/>
+                        <copy file="${BUILD_DIR}/${COMBINED_JS_FILE_MIN}" tofile="${COMBINED_JS_FILE_MIN}"
+                              overwrite="true"/>
                     </then>
                 </if>
             </else>
@@ -103,6 +103,10 @@
 
     <!-- Merges the current branch with a remote branch -->
     <target name="git-merge">
+        <!-- Prevent conflicts in auto generated files. -->
+        <delete file="set_table_sorter_filter.js"/>
+        <delete file="set_table_sorter_filter-min.js"/>
+
         <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="CURRENT_BRANCH"/>
         <input message="Your current branch is '${CURRENT_BRANCH}'. Remote branch: " propertyName="BRANCH"/>
         <gitbranch branchname="temp" repository="."/>
@@ -111,5 +115,7 @@
         <gitcheckout repository="." branchname="${CURRENT_BRANCH}"/>
         <gitmerge repository="." remote="temp"/>
         <gitbranch branchname="temp" repository="." delete="true"/>
+
+        <echo message="Run phing before commiting"/>
     </target>
 </project>
