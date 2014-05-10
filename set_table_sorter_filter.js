@@ -118,7 +118,7 @@ function set_to_lower_case_no_accents(text) {
 // ---------------------------------------------------------------------------------------------------------------------
 /**
  * Object constructor.
- * 
+ *
  * @param $table
  * @constructor
  */
