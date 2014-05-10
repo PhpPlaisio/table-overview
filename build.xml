@@ -73,7 +73,7 @@
 
     <target name="minify_js">
         <echo msg="Minifying JavaScript files…"/>
-        <exec command="java -jar vendor/bin/yuicompressor.jar ${COMBINED_JS_FILE} -o ${COMBINED_JS_FILE_MIN}"
+        <exec command="java -jar vendor/bin/yuicompressor.jar ${BUILD_DIR}/${COMBINED_JS_FILE} -o ${BUILD_DIR}/${COMBINED_JS_FILE_MIN}"
               passthru="true" checkreturn="true"/>
 
         <!-- Copy the minimized combined JavaScript file to the project's root directory if this file has changed
