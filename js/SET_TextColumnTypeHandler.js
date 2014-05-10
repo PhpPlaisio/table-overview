@@ -47,12 +47,54 @@ SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_
   "use strict";
   var that = this;
   var $header;
+  var x;
+  var width_header;
+  var width_col1;
+  var width_col2;
+  var diff;
 
   // Install event handler for click on sort icon.
   $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLook[column_index]);
-  if ($header.hasClass('sort') || $header.hasClass('sort-1') || $header.hasClass('sort-2')) {
+
+  if ($header.hasClass('sort')) {
     $header.click(function (event) {
       overview_table.sort(event, $header, that, column_index);
+    });
+  } else if ($header.hasClass('sort-1') || $header.hasClass('sort-2')) {
+    $header.click(function (event) {
+
+      if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
+
+        x = event.pageX - $header.offset().left;
+
+        if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index - 1]) {
+          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
+          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+        }
+
+        if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index + 1]) {
+          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
+        }
+
+        width_header = $header.outerWidth();
+
+        diff = width_header - width_col1 - width_col2;
+
+        if (x < (width_col1 - diff)) {
+          if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index - 1]) {
+            overview_table.sort(event, $header, that, column_index);
+          }
+        } else if (x > (width_col1 + diff)) {
+          if (overview_table.myHeaderIndexLook[column_index] === overview_table.myHeaderIndexLook[column_index + 1]) {
+            overview_table.sort(event, $header, that, column_index);
+          }
+        }
+      } else if ($header.hasClass('sort-1')) {
+        overview_table.sort(event, $header, that, column_index);
+      } else if ($header.hasClass('sort-2')) {
+        overview_table.sort(event, $header, that, column_index);
+      }
     });
   }
 };

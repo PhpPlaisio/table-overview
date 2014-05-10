@@ -5,6 +5,7 @@
     <property name="COMBINED_JS_FILE_MIN" value="set_table_sorter_filter-min.js"/>
     <target name="build" depends="prepare, copy_files, combine_js, minify_js">
     </target>
+
     <target name="prepare">
         <echo msg="Preparing files…"/>
         <if>
@@ -23,6 +24,7 @@
             </else>
         </if>
     </target>
+
     <target name="copy_files">
         <echo msg="Copying main files…"/>
         <copy todir="${BUILD_DIR}" includeemptydirs="true" verbose="false">
@@ -33,6 +35,7 @@
             </fileset>
         </copy>
     </target>
+
     <target name="combine_js">
         <echo msg="Combining all js files into one…"/>
         <if>
@@ -67,6 +70,7 @@
             </else>
         </if>
     </target>
+
     <target name="minify_js">
         <echo msg="Minifying JavaScript files…"/>
         <exec command="java -jar vendor/bin/yuicompressor.jar ${COMBINED_JS_FILE} -o ${COMBINED_JS_FILE_MIN}"
@@ -95,5 +99,17 @@
                 </if>
             </else>
         </if>
+    </target>
+
+    <!-- Merges the current branch with a remote branch -->
+    <target name="git-merge">
+        <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="CURRENT_BRANCH"/>
+        <input message="Your current branch is '${CURRENT_BRANCH}'. Remote branch: " propertyName="BRANCH"/>
+        <gitbranch branchname="temp" repository="."/>
+        <gitcheckout repository="." branchname="temp"/>
+        <gitpull repository="." refspec="${BRANCH}" quiet="false"/>
+        <gitcheckout repository="." branchname="${CURRENT_BRANCH}"/>
+        <gitmerge repository="." remote="temp"/>
+        <gitbranch branchname="temp" repository="." delete="true"/>
     </target>
 </project>
