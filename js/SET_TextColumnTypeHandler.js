@@ -20,7 +20,7 @@ function SET_TextColumnTypeHandler() {
  */
 SET_TextColumnTypeHandler.prototype.startFilter = function () {
   "use strict";
-  this.myFilterValue = set_to_lower_case_no_accents(this.$myInput.val());
+  this.myFilterValue = SET_OverviewTable.toLowerCaseNoAccents(this.$myInput.val());
 
   // Note: this.myFilterValue might be undefined in case there is no input:text box for filtering in the column header.
 
@@ -144,7 +144,7 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, colum
  */
 SET_TextColumnTypeHandler.prototype.extractForFilter = function (table_cell) {
   "use strict";
-  return set_to_lower_case_no_accents($(table_cell).text());
+  return SET_OverviewTable.toLowerCaseNoAccents($(table_cell).text());
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ SET_TextColumnTypeHandler.prototype.extractForFilter = function (table_cell) {
  */
 SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   "use strict";
-  return set_to_lower_case_no_accents($(table_cell).text());
+  return SET_OverviewTable.toLowerCaseNoAccents($(table_cell).text());
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

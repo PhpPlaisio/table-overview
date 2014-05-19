@@ -5,120 +5,6 @@
 /*global SET_NoneColumnTypeHandler */
 /*global alert */
 
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Object with parameters which names equals values what use for replace specific characters.
- */
-var trans = {
-  'à': 'a',
-  'á': 'a',
-  'â': 'a',
-  'ã': 'a',
-  'ä': 'a',
-  'å': 'a',
-  'æ': 'ae',
-  'ç': 'c',
-  'è': 'e',
-  'é': 'e',
-  'ê': 'e',
-  'ë': 'e',
-  'ě': 'e',
-  'ę': 'e',
-  'ð': 'd',
-  'ì': 'i',
-  'í': 'i',
-  'î': 'i',
-  'ï': 'i',
-  'ł': 'l',
-  'ñ': 'n',
-  'ń': 'n',
-  'ň': 'n',
-  'ò': 'o',
-  'ó': 'o',
-  'ô': 'o',
-  'õ': 'o',
-  'ö': 'o',
-  'ø': 'o',
-  'ù': 'u',
-  'ú': 'u',
-  'û': 'u',
-  'ü': 'u',
-  'ş': 's',
-  'š': 's',
-  'ý': 'y',
-  'ÿ': 'y',
-  'ž': 'z',
-  'þ': 'th',
-  'ß': 'ss',
-  'À': 'A',
-  'Á': 'A',
-  'Â': 'A',
-  'Ã': 'A',
-  'Ä': 'A',
-  'Å': 'A',
-  'Æ': 'AE',
-  'Ç': 'C',
-  'È': 'E',
-  'É': 'E',
-  'Ê': 'E',
-  'Ë': 'E',
-  'Ě': 'E',
-  'Ę': 'E',
-  'Ð': 'D',
-  'Ì': 'I',
-  'Í': 'I',
-  'Î': 'I',
-  'Ï': 'I',
-  'Ł': 'L',
-  'Ñ': 'N',
-  'Ń': 'N',
-  'Ň': 'N',
-  'Ò': 'O',
-  'Ó': 'O',
-  'Ô': 'O',
-  'Õ': 'O',
-  'Ö': 'O',
-  'Ø': 'O',
-  'Ù': 'U',
-  'Ú': 'U',
-  'Û': 'U',
-  'Ü': 'U',
-  'Ş': 'S',
-  'Š': 'S',
-  'Ý': 'Y',
-  'Ÿ': 'Y',
-  'Ž': 'Z',
-  'Þ': 'TH'
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-/**
- * Replace all specific character to standard character.
- * @param text
- * @returns {string}
- */
-function set_to_lower_case_no_accents(text) {
-  "use strict";
-  var c;
-  var text_new = '';
-  var i;
-
-  if (text === null || text === undefined) {
-    return text;
-  }
-
-  for (i = 0; i < text.length; i = i + 1) {
-    c = text.substr(i, 1);
-    if (trans[c]) {
-      text_new += trans[c];
-    } else {
-      text_new += c;
-    }
-  }
-  return text_new.toLowerCase();
-}
-
 // ---------------------------------------------------------------------------------------------------------------------
 /**
  * Object constructor.
@@ -233,6 +119,119 @@ SET_OverviewTable.ourTables = {};
  * @type {{}}
  */
 SET_OverviewTable.ourColumnTypeHandlers = {};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Object with parameters which names equals values what use for replace specific characters.
+ */
+SET_OverviewTable.ourCharacterMap = {
+  'à': 'a',
+  'á': 'a',
+  'â': 'a',
+  'ã': 'a',
+  'ä': 'a',
+  'å': 'a',
+  'æ': 'ae',
+  'ç': 'c',
+  'è': 'e',
+  'é': 'e',
+  'ê': 'e',
+  'ë': 'e',
+  'ě': 'e',
+  'ę': 'e',
+  'ð': 'd',
+  'ì': 'i',
+  'í': 'i',
+  'î': 'i',
+  'ï': 'i',
+  'ł': 'l',
+  'ñ': 'n',
+  'ń': 'n',
+  'ň': 'n',
+  'ò': 'o',
+  'ó': 'o',
+  'ô': 'o',
+  'õ': 'o',
+  'ö': 'o',
+  'ø': 'o',
+  'ù': 'u',
+  'ú': 'u',
+  'û': 'u',
+  'ü': 'u',
+  'ş': 's',
+  'š': 's',
+  'ý': 'y',
+  'ÿ': 'y',
+  'ž': 'z',
+  'þ': 'th',
+  'ß': 'ss',
+  'À': 'A',
+  'Á': 'A',
+  'Â': 'A',
+  'Ã': 'A',
+  'Ä': 'A',
+  'Å': 'A',
+  'Æ': 'AE',
+  'Ç': 'C',
+  'È': 'E',
+  'É': 'E',
+  'Ê': 'E',
+  'Ë': 'E',
+  'Ě': 'E',
+  'Ę': 'E',
+  'Ð': 'D',
+  'Ì': 'I',
+  'Í': 'I',
+  'Î': 'I',
+  'Ï': 'I',
+  'Ł': 'L',
+  'Ñ': 'N',
+  'Ń': 'N',
+  'Ň': 'N',
+  'Ò': 'O',
+  'Ó': 'O',
+  'Ô': 'O',
+  'Õ': 'O',
+  'Ö': 'O',
+  'Ø': 'O',
+  'Ù': 'U',
+  'Ú': 'U',
+  'Û': 'U',
+  'Ü': 'U',
+  'Ş': 'S',
+  'Š': 'S',
+  'Ý': 'Y',
+  'Ÿ': 'Y',
+  'Ž': 'Z',
+  'Þ': 'TH'
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Replace all specific character to standard character.
+ * @param text
+ * @returns {string}
+ */
+SET_OverviewTable.toLowerCaseNoAccents = function (text) {
+  "use strict";
+  var c;
+  var text_new = '';
+  var i;
+
+  if (text === null || text === undefined) {
+    return text;
+  }
+
+  for (i = 0; i < text.length; i = i + 1) {
+    c = text.substr(i, 1);
+    if (SET_OverviewTable.ourCharacterMap[c]) {
+      text_new += SET_OverviewTable.ourCharacterMap[c];
+    } else {
+      text_new += c;
+    }
+  }
+  return text_new.toLowerCase();
+};
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
