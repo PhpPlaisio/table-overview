@@ -858,7 +858,7 @@ SET_OverviewTable.registerTable = function (selector, className) {
   "use strict";
 
   // Set name of class if this undefined.
-  if (className === 'undefined') {
+  if (className === undefined) {
     className = 'SET_OverviewTable';
   }
 
