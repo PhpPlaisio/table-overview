@@ -2,7 +2,6 @@
 /*global window */
 /*global $ */
 /*global SET_OverviewTable */
-/*global set_to_lower_case_no_accents */
 
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_TextColumnTypeHandler() {
