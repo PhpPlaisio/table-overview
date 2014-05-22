@@ -22,7 +22,7 @@ SET_DateTimeColumnTypeHandler.constructor = SET_DateTimeColumnTypeHandler;
 /**
  * Returns the numeric content of a table cell.
  *
- * @param {object} table_cell The table cell.
+ * @param {HTMLTableCellElement} table_cell The table cell.
  *
  * @returns {string}
  */

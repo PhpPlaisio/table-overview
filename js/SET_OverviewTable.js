@@ -79,7 +79,7 @@ function SET_OverviewTable($table) {
     }
 
     // Initialize the column handler.
-    that.myColumnHandlers[column_index].initColumnHandler(that, column_index);
+    that.myColumnHandlers[column_index].initHandler(that, column_index);
 
     // Initialize the filter.
     that.myColumnHandlers[column_index].initFilter(that, column_index);

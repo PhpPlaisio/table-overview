@@ -22,9 +22,9 @@ SET_NumericColumnTypeHandler.constructor = SET_NumericColumnTypeHandler;
 /**
  * Returns the numeric content of a table cell.
  *
- * @param {object} table_cell The table cell.
+ * @param {HTMLTableCellElement} table_cell The table cell.
  *
- * @returns {Number}
+ * @returns {number}
  */
 SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   "use strict";
@@ -39,6 +39,14 @@ SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Compares two values of the column of this column type handler.
+ *
+ * @param {number} value1
+ * @param {number} value2
+ *
+ * @returns {number}
+ */
 SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
   if (value1 === value2) {

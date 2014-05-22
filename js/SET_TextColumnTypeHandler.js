@@ -87,7 +87,7 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, colum
 /**
  * Returns the text content of a table_cell.
  *
- * @param table_cell
+ * @param {HTMLTableElement} table_cell The table cell.
  *
  * @returns {string}
  */
@@ -100,7 +100,7 @@ SET_TextColumnTypeHandler.prototype.extractForFilter = function (table_cell) {
 /**
  * Returns the text content of a table cell.
  *
- * @param {jquery} table_cell The table cell.
+ * @param {HTMLTableCellElement} table_cell The table cell.
  *
  * @returns {string}
  */
@@ -111,11 +111,14 @@ SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initColumnHandler = function (table, column_index) {
-  'use strict';
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Compares two values of the column of this column type handler.
+ *
+ * @param {string} value1
+ * @param {string} value2
+ *
+ * @returns {number}
+ */
 SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
   if (value1 < value2) {

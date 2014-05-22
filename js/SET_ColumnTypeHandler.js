@@ -21,6 +21,23 @@ SET_ColumnTypeHandler.prototype.startFilter = function () {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Must be redefined if the column type handler needs special initialization.
+ */
+SET_ColumnTypeHandler.prototype.initHandler = function () {
+  'use strict';
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Sets the appropriate classes of the column header and installs the appropriate event handlers on the column header of
+ * the column of this column type handler.
+ *
+ * @param {SET_OverviewTable} overview_table  The overview table object of the table of the column of this column type
+ *                                            handler.
+ * @param {int}               column_index    The column index of the column of the table of the column of this column
+ *                                            type handler.
+ */
 SET_ColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
   "use strict";
   var that = this;
