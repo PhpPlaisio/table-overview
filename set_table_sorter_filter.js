@@ -79,7 +79,7 @@ function SET_OverviewTable($table) {
     }
 
     // Initialize the column handler.
-    that.myColumnHandlers[column_index].initColumnHandler(that, column_index);
+    that.myColumnHandlers[column_index].initHandler(that, column_index);
 
     // Initialize the filter.
     that.myColumnHandlers[column_index].initFilter(that, column_index);
@@ -909,6 +909,23 @@ SET_ColumnTypeHandler.prototype.startFilter = function () {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Must be redefined if the column type handler needs special initialization.
+ */
+SET_ColumnTypeHandler.prototype.initHandler = function () {
+  'use strict';
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Sets the appropriate classes of the column header and installs the appropriate event handlers on the column header of
+ * the column of this column type handler.
+ *
+ * @param {SET_OverviewTable} overview_table  The overview table object of the table of the column of this column type
+ *                                            handler.
+ * @param {int}               column_index    The column index of the column of the table of the column of this column
+ *                                            type handler.
+ */
 SET_ColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
   "use strict";
   var that = this;
@@ -1100,7 +1117,7 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, colum
 /**
  * Returns the text content of a table_cell.
  *
- * @param table_cell
+ * @param {HTMLTableElement} table_cell The table cell.
  *
  * @returns {string}
  */
@@ -1113,7 +1130,7 @@ SET_TextColumnTypeHandler.prototype.extractForFilter = function (table_cell) {
 /**
  * Returns the text content of a table cell.
  *
- * @param {jquery} table_cell The table cell.
+ * @param {HTMLTableCellElement} table_cell The table cell.
  *
  * @returns {string}
  */
@@ -1124,11 +1141,14 @@ SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initColumnHandler = function (table, column_index) {
-  'use strict';
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Compares two values of the column of this column type handler.
+ *
+ * @param {string} value1
+ * @param {string} value2
+ *
+ * @returns {number}
+ */
 SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
   if (value1 < value2) {
@@ -1173,7 +1193,7 @@ SET_DateTimeColumnTypeHandler.constructor = SET_DateTimeColumnTypeHandler;
 /**
  * Returns the numeric content of a table cell.
  *
- * @param {object} table_cell The table cell.
+ * @param {HTMLTableCellElement} table_cell The table cell.
  *
  * @returns {string}
  */
@@ -1233,9 +1253,9 @@ SET_NumericColumnTypeHandler.constructor = SET_NumericColumnTypeHandler;
 /**
  * Returns the numeric content of a table cell.
  *
- * @param {object} table_cell The table cell.
+ * @param {HTMLTableCellElement} table_cell The table cell.
  *
- * @returns {Number}
+ * @returns {number}
  */
 SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   "use strict";
@@ -1250,6 +1270,14 @@ SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Compares two values of the column of this column type handler.
+ *
+ * @param {number} value1
+ * @param {number} value2
+ *
+ * @returns {number}
+ */
 SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";
   if (value1 === value2) {
