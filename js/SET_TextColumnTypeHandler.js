@@ -109,6 +109,12 @@ SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   return SET_OverviewTable.toLowerCaseNoAccents($(table_cell).text());
 };
 
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_TextColumnTypeHandler.prototype.initColumnHandler = function (table, column_index) {
+  'use strict';
+};
+
 // ---------------------------------------------------------------------------------------------------------------------
 SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) {
   "use strict";

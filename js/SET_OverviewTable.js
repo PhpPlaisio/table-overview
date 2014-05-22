@@ -78,6 +78,9 @@ function SET_OverviewTable($table) {
       that.myColumnHandlers[column_index] = new SET_NoneColumnTypeHandler();
     }
 
+    // Initialize the column handler.
+    that.myColumnHandlers[column_index].initColumnHandler(that, column_index);
+
     // Initialize the filter.
     that.myColumnHandlers[column_index].initFilter(that, column_index);
 

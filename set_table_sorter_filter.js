@@ -78,6 +78,9 @@ function SET_OverviewTable($table) {
       that.myColumnHandlers[column_index] = new SET_NoneColumnTypeHandler();
     }
 
+    // Initialize the column handler.
+    that.myColumnHandlers[column_index].initColumnHandler(that, column_index);
+
     // Initialize the filter.
     that.myColumnHandlers[column_index].initFilter(that, column_index);
 
@@ -1117,6 +1120,12 @@ SET_TextColumnTypeHandler.prototype.extractForFilter = function (table_cell) {
 SET_TextColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   "use strict";
   return SET_OverviewTable.toLowerCaseNoAccents($(table_cell).text());
+};
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_TextColumnTypeHandler.prototype.initColumnHandler = function (table, column_index) {
+  'use strict';
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
