@@ -7,10 +7,15 @@
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_NumericColumnTypeHandler() {
   "use strict";
+
+  // Use parent constructor.
+  SET_TextColumnTypeHandler.call(this);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Extend SET_NumericColumnTypeHandler from SET_TextColumnTypeHandler.
 SET_NumericColumnTypeHandler.prototype = Object.create(SET_TextColumnTypeHandler.prototype);
+// Set constructor for SET_NumericColumnTypeHandler.
 SET_NumericColumnTypeHandler.constructor = SET_NumericColumnTypeHandler;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -29,7 +34,8 @@ SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   regexp = /[\d\.,\-\+]*/;
   parts = regexp.exec($(table_cell).text());
 
-  return parseInt(parts[0].replace(',', '.'), 10);
+  // todo Better internationalisation.
+  return parseInt(parts[0].replace('.', '').replace(',', '.'), 10);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -50,7 +56,7 @@ SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (value1, value
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
- * Register column type handlers.
+ * Register column type handler.
  */
 SET_OverviewTable.registerColumnTypeHandler('numeric', SET_NumericColumnTypeHandler);
 

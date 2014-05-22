@@ -1,15 +1,24 @@
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
+/*global SET_ColumnTypeHandler */
 /*global SET_OverviewTable */
 
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_TextColumnTypeHandler() {
   "use strict";
+  // Use parent constructor.
+  SET_ColumnTypeHandler.call(this);
+
   this.$myInput = null;
   this.myFilterValue = null;
-
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Extend SET_TextColumnTypeHandler from SET_ColumnTypeHandler.
+SET_TextColumnTypeHandler.prototype = Object.create(SET_ColumnTypeHandler.prototype);
+// Set constructor for SET_TextColumnTypeHandler.
+SET_TextColumnTypeHandler.constructor = SET_TextColumnTypeHandler;
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
@@ -41,65 +50,6 @@ SET_TextColumnTypeHandler.prototype.simpleFilter = function (table_cell) {
   value = this.extractForFilter(table_cell);
 
   return (value.indexOf(this.myFilterValue) !== -1);
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
-  "use strict";
-  var that = this;
-  var $header;
-  var x;
-  var width_header;
-  var width_col1;
-  var width_col2;
-  var diff;
-
-  // Install event handler for click on sort icon.
-  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLookup[column_index]);
-
-  if ($header.hasClass('sort')) {
-    $header.click(function (event) {
-      overview_table.sort(event, $header, that, column_index);
-    });
-  } else if ($header.hasClass('sort-1') || $header.hasClass('sort-2')) {
-    $header.click(function (event) {
-
-      if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
-
-        x = event.pageX - $header.offset().left;
-
-        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-        }
-
-        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
-        }
-
-        width_header = $header.outerWidth();
-
-        diff = width_header - width_col1 - width_col2;
-
-        if (x > (width_col1 - diff / 2)) {
-          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
-            // Sort by right column.
-            overview_table.sort(event, $header, that, column_index);
-          }
-        } else if (x < (width_col1 + diff / 2)) {
-          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
-            // Sort by left column.
-            overview_table.sort(event, $header, that, column_index);
-          }
-        }
-      } else if ($header.hasClass('sort-1')) {
-        overview_table.sort(event, $header, that, column_index);
-      } else if ($header.hasClass('sort-2')) {
-        overview_table.sort(event, $header, that, column_index);
-      }
-    });
-  }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -179,3 +129,4 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
 
+// ---------------------------------------------------------------------------------------------------------------------

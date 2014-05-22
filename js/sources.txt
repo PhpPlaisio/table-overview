@@ -1,4 +1,5 @@
 SET_OverviewTable.js
+SET_ColumnTypeHandler.js
 SET_NoneColumnTypeHandler.js
 SET_TextColumnTypeHandler.js
 SET_DateTimeColumnTypeHandler.js

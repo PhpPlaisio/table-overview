@@ -7,10 +7,15 @@
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_DateTimeColumnTypeHandler() {
   "use strict";
+
+  // Use parent constructor.
+  SET_TextColumnTypeHandler.call(this);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Extend SET_DateTimeColumnTypeHandler from SET_TextColumnTypeHandler.
 SET_DateTimeColumnTypeHandler.prototype = Object.create(SET_TextColumnTypeHandler.prototype);
+// Set constructor for SET_DateTimeColumnTypeHandler.
 SET_DateTimeColumnTypeHandler.constructor = SET_DateTimeColumnTypeHandler;
 
 // ---------------------------------------------------------------------------------------------------------------------

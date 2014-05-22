@@ -889,40 +889,121 @@ SET_OverviewTable.registerTable = function (selector, className) {
 /*global SET_OverviewTable */
 
 // ---------------------------------------------------------------------------------------------------------------------
-function SET_NoneColumnTypeHandler() {
+function SET_ColumnTypeHandler() {
   "use strict";
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
- * Returns false
+ * Returns true if the row filter must take this column filter in to account. Returns false otherwise.
  *
  * @returns {boolean}
  */
-SET_NoneColumnTypeHandler.prototype.startFilter = function () {
+SET_ColumnTypeHandler.prototype.startFilter = function () {
   "use strict";
+
   return false;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_NoneColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
+SET_ColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
   "use strict";
-  return false;
+  var that = this;
+  var $header;
+  var x;
+  var width_header;
+  var width_col1;
+  var width_col2;
+  var diff;
+
+  // Install event handler for click on sort icon.
+  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLookup[column_index]);
+
+  if ($header.hasClass('sort')) {
+    $header.click(function (event) {
+      overview_table.sort(event, $header, that, column_index);
+    });
+  } else if ($header.hasClass('sort-1') || $header.hasClass('sort-2')) {
+    $header.click(function (event) {
+
+      if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
+
+        x = event.pageX - $header.offset().left;
+
+        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
+          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').
+            outerWidth();
+          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').
+            outerWidth();
+        }
+
+        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
+          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').
+            outerWidth();
+          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').
+            outerWidth();
+        }
+
+        width_header = $header.outerWidth();
+
+        diff = width_header - width_col1 - width_col2;
+
+        if (x > (width_col1 - diff / 2)) {
+          if (overview_table.myHeaderIndexLookup[column_index] ===
+              overview_table.myHeaderIndexLookup[column_index - 1]) {
+            // Sort by right column.
+            overview_table.sort(event, $header, that, column_index);
+          }
+        } else if (x < (width_col1 + diff / 2)) {
+          if (overview_table.myHeaderIndexLookup[column_index] ===
+              overview_table.myHeaderIndexLookup[column_index + 1]) {
+            // Sort by left column.
+            overview_table.sort(event, $header, that, column_index);
+          }
+        }
+      } else if ($header.hasClass('sort-1')) {
+        overview_table.sort(event, $header, that, column_index);
+      } else if ($header.hasClass('sort-2')) {
+        overview_table.sort(event, $header, that, column_index);
+      }
+    });
+  }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-SET_NoneColumnTypeHandler.prototype.initFilter = function (overview_table, column_index) {
-  "use strict";
-  var $cell;
+/*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
+/*global window */
+/*global $ */
+/*global SET_ColumnTypeHandler */
+/*global SET_OverviewTable */
 
-  $cell = overview_table.$myFilters.eq(column_index);
-  $cell.html('');
-  $cell.width($cell.css('width'));
+// ---------------------------------------------------------------------------------------------------------------------
+function SET_NoneColumnTypeHandler() {
+  "use strict";
+
+  // Use parent constructor.
+  SET_ColumnTypeHandler.call(this);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Extend SET_NoneColumnTypeHandler from SET_ColumnTypeHandler.
+SET_NoneColumnTypeHandler.prototype = Object.create(SET_ColumnTypeHandler.prototype);
+// Set constructor for SET_NoneColumnTypeHandler.
+SET_NoneColumnTypeHandler.constructor = SET_NoneColumnTypeHandler;
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_NoneColumnTypeHandler.prototype.initSort = function () {
+  "use strict";
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+SET_NoneColumnTypeHandler.prototype.initFilter = function () {
+  "use strict";
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
- * Register column type handlers.
+ * Register column type handler.
  */
 SET_OverviewTable.registerColumnTypeHandler('none', SET_NoneColumnTypeHandler);
 
@@ -930,15 +1011,24 @@ SET_OverviewTable.registerColumnTypeHandler('none', SET_NoneColumnTypeHandler);
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
+/*global SET_ColumnTypeHandler */
 /*global SET_OverviewTable */
 
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_TextColumnTypeHandler() {
   "use strict";
+  // Use parent constructor.
+  SET_ColumnTypeHandler.call(this);
+
   this.$myInput = null;
   this.myFilterValue = null;
-
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Extend SET_TextColumnTypeHandler from SET_ColumnTypeHandler.
+SET_TextColumnTypeHandler.prototype = Object.create(SET_ColumnTypeHandler.prototype);
+// Set constructor for SET_TextColumnTypeHandler.
+SET_TextColumnTypeHandler.constructor = SET_TextColumnTypeHandler;
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
@@ -970,65 +1060,6 @@ SET_TextColumnTypeHandler.prototype.simpleFilter = function (table_cell) {
   value = this.extractForFilter(table_cell);
 
   return (value.indexOf(this.myFilterValue) !== -1);
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-SET_TextColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
-  "use strict";
-  var that = this;
-  var $header;
-  var x;
-  var width_header;
-  var width_col1;
-  var width_col2;
-  var diff;
-
-  // Install event handler for click on sort icon.
-  $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLookup[column_index]);
-
-  if ($header.hasClass('sort')) {
-    $header.click(function (event) {
-      overview_table.sort(event, $header, that, column_index);
-    });
-  } else if ($header.hasClass('sort-1') || $header.hasClass('sort-2')) {
-    $header.click(function (event) {
-
-      if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
-
-        x = event.pageX - $header.offset().left;
-
-        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-        }
-
-        if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
-        }
-
-        width_header = $header.outerWidth();
-
-        diff = width_header - width_col1 - width_col2;
-
-        if (x > (width_col1 - diff / 2)) {
-          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
-            // Sort by right column.
-            overview_table.sort(event, $header, that, column_index);
-          }
-        } else if (x < (width_col1 + diff / 2)) {
-          if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
-            // Sort by left column.
-            overview_table.sort(event, $header, that, column_index);
-          }
-        }
-      } else if ($header.hasClass('sort-1')) {
-        overview_table.sort(event, $header, that, column_index);
-      } else if ($header.hasClass('sort-2')) {
-        overview_table.sort(event, $header, that, column_index);
-      }
-    });
-  }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1108,6 +1139,7 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
 
+// ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
@@ -1117,10 +1149,15 @@ SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_DateTimeColumnTypeHandler() {
   "use strict";
+
+  // Use parent constructor.
+  SET_TextColumnTypeHandler.call(this);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Extend SET_DateTimeColumnTypeHandler from SET_TextColumnTypeHandler.
 SET_DateTimeColumnTypeHandler.prototype = Object.create(SET_TextColumnTypeHandler.prototype);
+// Set constructor for SET_DateTimeColumnTypeHandler.
 SET_DateTimeColumnTypeHandler.constructor = SET_DateTimeColumnTypeHandler;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1172,10 +1209,15 @@ SET_OverviewTable.registerColumnTypeHandler('datetime', SET_DateTimeColumnTypeHa
 // ---------------------------------------------------------------------------------------------------------------------
 function SET_NumericColumnTypeHandler() {
   "use strict";
+
+  // Use parent constructor.
+  SET_TextColumnTypeHandler.call(this);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Extend SET_NumericColumnTypeHandler from SET_TextColumnTypeHandler.
 SET_NumericColumnTypeHandler.prototype = Object.create(SET_TextColumnTypeHandler.prototype);
+// Set constructor for SET_NumericColumnTypeHandler.
 SET_NumericColumnTypeHandler.constructor = SET_NumericColumnTypeHandler;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1194,7 +1236,8 @@ SET_NumericColumnTypeHandler.prototype.getSortKey = function (table_cell) {
   regexp = /[\d\.,\-\+]*/;
   parts = regexp.exec($(table_cell).text());
 
-  return parseInt(parts[0].replace(',', '.'), 10);
+  // todo Better internationalisation.
+  return parseInt(parts[0].replace('.', '').replace(',', '.'), 10);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1215,7 +1258,7 @@ SET_NumericColumnTypeHandler.prototype.compareSortKeys = function (value1, value
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
- * Register column type handlers.
+ * Register column type handler.
  */
 SET_OverviewTable.registerColumnTypeHandler('numeric', SET_NumericColumnTypeHandler);
 
