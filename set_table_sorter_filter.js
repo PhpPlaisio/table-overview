@@ -17,6 +17,12 @@ function SET_OverviewTable($table) {
   var that = this;
   var i;
 
+  if (SET_OverviewTable.ourDebug) {
+    SET_OverviewTable.log('Start create OverviewTable:');
+    SET_OverviewTable.myTimeStart = new Date();
+    SET_OverviewTable.myTimeIntermidiate = new Date();
+  }
+
   // The HTML table cells with filters of the HTML table.
   this.$myFilters = $table.find('thead tr.filter').find('td');
 
@@ -33,6 +39,7 @@ function SET_OverviewTable($table) {
   $table.find('thead tr.filter').each(function () {
     $(this).css('display', 'table-row');
   });
+  SET_OverviewTable.benchmark('Prepare table and table info');
 
   // Column headers can span 1 or 2 columns. Create lookup table from column_index to header_index.
   this.$myHeaders.each(function (header_index, th) {
@@ -50,12 +57,14 @@ function SET_OverviewTable($table) {
       that.myHeaderIndexLookup[that.myHeaderIndexLookup.length] = header_index;
     }
   });
+  SET_OverviewTable.benchmark('Create lookup table from column_index to header_index');
 
   // Get the column types and install the column handlers.
   this.myColumnHandlers = [];
   $table.find('colgroup').find('col').each(function (column_index, col) {
     var attr;
     var classes;
+    var column_type;
 
     that.myColumnHandlers[column_index] = null;
 
@@ -65,31 +74,42 @@ function SET_OverviewTable($table) {
       for (i = 0; i < classes.length; i = i + 1) {
         if (classes[i].substr(0, 10) === 'data-type-') {
 
-          var column_type = classes[i].substr(10);
-          if (SET_OverviewTable.ourColumnTypeHandlers[column_type]) {
-            that.myColumnHandlers[column_index] = new SET_OverviewTable.ourColumnTypeHandlers[column_type]();
+          column_type = classes[i].substr(10);
+          if (column_type === undefined || !SET_OverviewTable.ourColumnTypeHandlers[column_type]) {
+            column_type = 'none';
           }
+          break;
         }
       }
+    } else {
+      column_type = 'none';
     }
 
-    // If no handler for the column type can be found use SET_NoneColumnTypeHandler.
-    if (!that.myColumnHandlers[column_index]) {
-      that.myColumnHandlers[column_index] = new SET_NoneColumnTypeHandler();
-    }
+    that.myColumnHandlers[column_index] = new SET_OverviewTable.ourColumnTypeHandlers[column_type]();
+    SET_OverviewTable.benchmark('Install column handler with type "' + column_type + '"');
 
     // Initialize the column handler.
     that.myColumnHandlers[column_index].initHandler(that, column_index);
+    SET_OverviewTable.benchmark('Initialize column handler');
 
     // Initialize the filter.
     that.myColumnHandlers[column_index].initFilter(that, column_index);
+    SET_OverviewTable.benchmark('Initialize filter');
 
     // Initialize the sorter.
     that.myColumnHandlers[column_index].initSort(that, column_index);
+    SET_OverviewTable.benchmark('Initialize sorter');
   });
 
   // Execute additional initializations (if any)
   this.initHook();
+  SET_OverviewTable.benchmark('Execute additional initializations');
+
+  if (SET_OverviewTable.ourDebug) {
+    SET_OverviewTable.log('End of create OverviewTable ' +
+      (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
+      'ms');
+  }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1103,14 +1123,9 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, colum
   // Install event handler for changed filter value.
   this.$myInput.keyup({ table: overview_table, element: this.$myInput}, SET_OverviewTable.filterTrigger);
 
-
   // Resize the input box.
-  this.$myInput.width(this.$myInput.closest('td').width() -
-    parseInt(this.$myInput.css('margin-left'), 10) -
-    parseInt(this.$myInput.css('border-left-width'), 10) -
-    parseInt(this.$myInput.css('border-right-width'), 10) -
-    parseInt(this.$myInput.css('margin-right'), 10));
-  this.$myInput.css('visibility', 'visible');
+  this.$myInput.width(this.$myInput.width() +
+    (this.$myInput.closest('td').innerWidth() - this.$myInput.outerWidth(true)));
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1167,8 +1182,6 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
  */
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
-
-// ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */

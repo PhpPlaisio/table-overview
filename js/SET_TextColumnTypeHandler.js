@@ -73,14 +73,9 @@ SET_TextColumnTypeHandler.prototype.initFilter = function (overview_table, colum
   // Install event handler for changed filter value.
   this.$myInput.keyup({ table: overview_table, element: this.$myInput}, SET_OverviewTable.filterTrigger);
 
-
   // Resize the input box.
-  this.$myInput.width(this.$myInput.closest('td').width() -
-    parseInt(this.$myInput.css('margin-left'), 10) -
-    parseInt(this.$myInput.css('border-left-width'), 10) -
-    parseInt(this.$myInput.css('border-right-width'), 10) -
-    parseInt(this.$myInput.css('margin-right'), 10));
-  this.$myInput.css('visibility', 'visible');
+  this.$myInput.width(this.$myInput.width() +
+    (this.$myInput.closest('td').innerWidth() - this.$myInput.outerWidth(true)));
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -137,5 +132,3 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
  */
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
-
-// ---------------------------------------------------------------------------------------------------------------------
