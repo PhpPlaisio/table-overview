@@ -116,6 +116,6 @@
         <gitmerge repository="." remote="temp"/>
         <gitbranch branchname="temp" repository="." delete="true"/>
 
-        <echo message="Run phing before commiting"/>
+        <exec command="phing" checkreturn="true" passthru="true"></exec>
     </target>
 </project>
