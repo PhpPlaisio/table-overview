@@ -116,6 +116,6 @@
         <gitmerge repository="." remote="temp"/>
         <gitbranch branchname="temp" repository="." delete="true"/>
 
-        <exec command="phing" checkreturn="true" passthru="true"></exec>
+        <exec command="phing" checkreturn="true" passthru="true"/>
     </target>
 </project>
