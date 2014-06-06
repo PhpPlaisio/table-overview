@@ -113,10 +113,18 @@ function SET_OverviewTable($table) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-/** Does nothing. However, can be overridden are replaced for additional initializations.
- *
+/**
+ * Does nothing. However, can be overridden are replaced for additional initializations.
  */
 SET_OverviewTable.prototype.initHook = function () {
+  'use strict';
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Does nothing. However, can be overridden are replaced for additional actions after filtering.
+ */
+SET_OverviewTable.prototype.filterHook = function () {
   'use strict';
 };
 
@@ -831,6 +839,11 @@ SET_OverviewTable.prototype.filter = function () {
   // Apply zebra theme on visible rows.
   that.applyZebraTheme();
   SET_OverviewTable.benchmark('Apply zebra theme');
+
+  // Execute additional action after filtering.
+  that.filterHook();
+  SET_OverviewTable.benchmark('Execute additional action after filtering');
+
 
   if (SET_OverviewTable.ourDebug) {
     SET_OverviewTable.log('Finish, total time: ' +
