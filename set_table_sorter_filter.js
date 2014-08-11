@@ -24,10 +24,10 @@ function SET_OverviewTable($table) {
   }
 
   // The HTML table cells with filters of the HTML table.
-  this.$myFilters = $table.find('thead tr.filter').find('td');
+  this.$myFilters = $table.children('thead').children('tr.filter').find('td');
 
   // The HTML headers of the HTML table.
-  this.$myHeaders = $table.find('thead tr.header').find('th');
+  this.$myHeaders = $table.children('thead').children('tr.header').find('th');
 
   // Lookup from column index to header index.
   this.myHeaderIndexLookup = [];
@@ -36,7 +36,7 @@ function SET_OverviewTable($table) {
   this.$myTable = $table;
 
   // Display the row with table filters.
-  $table.find('thead tr.filter').each(function () {
+  $table.children('thead').children('tr.filter').each(function () {
     $(this).css('display', 'table-row');
   });
   SET_OverviewTable.benchmark('Prepare table and table info');
@@ -61,7 +61,7 @@ function SET_OverviewTable($table) {
 
   // Get the column types and install the column handlers.
   this.myColumnHandlers = [];
-  $table.find('colgroup').find('col').each(function (column_index, col) {
+  $table.children('colgroup').children('col').each(function (column_index, col) {
     var attr;
     var classes;
     var column_type;
@@ -113,10 +113,18 @@ function SET_OverviewTable($table) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-/** Does nothing. However, can be overridden are replaced for additional initializations.
- *
+/**
+ * Does nothing. However, can be overridden are replaced for additional initializations.
  */
 SET_OverviewTable.prototype.initHook = function () {
+  'use strict';
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+/**
+ * Does nothing. However, can be overridden are replaced for additional actions after filtering.
+ */
+SET_OverviewTable.prototype.filterHook = function () {
   'use strict';
 };
 
@@ -422,7 +430,7 @@ SET_OverviewTable.prototype.getSortInfo = function () {
   var colspan;
   var dual;
 
-  this.$myTable.find('colgroup').find('col').each(function (column_index) {
+  this.$myTable.children('colgroup').children('col').each(function (column_index) {
     var $th = that.$myHeaders.eq(that.myHeaderIndexLookup[column_index]);
 
     span = $th.attr('colspan');
@@ -524,14 +532,18 @@ SET_OverviewTable.prototype.getColumnSortInfo = function (event, $header, column
 
       if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index - 1]) {
         // User clicked right column of a dual column header.
-        width_col1 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
-        width_col2 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+        width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index - 1) + ')').
+          outerWidth();
+        width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').
+          outerWidth();
       }
 
       if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index + 1]) {
         // User clicked left column of a dual column header.
-        width_col1 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-        width_col2 = this.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
+        width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').
+          outerWidth();
+        width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index + 1) + ')').
+          outerWidth();
       }
 
       width_header = $header.outerWidth();
@@ -832,6 +844,11 @@ SET_OverviewTable.prototype.filter = function () {
   that.applyZebraTheme();
   SET_OverviewTable.benchmark('Apply zebra theme');
 
+  // Execute additional action after filtering.
+  that.filterHook();
+  SET_OverviewTable.benchmark('Execute additional action after filtering');
+
+
   if (SET_OverviewTable.ourDebug) {
     SET_OverviewTable.log('Finish, total time: ' +
       (new Date().getTime() - SET_OverviewTable.myTimeIntermidiate.getTime()) +
@@ -906,6 +923,8 @@ SET_OverviewTable.registerTable = function (selector, className) {
     }
   });
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
@@ -965,23 +984,21 @@ SET_ColumnTypeHandler.prototype.initSort = function (overview_table, column_inde
     });
   } else if ($header.hasClass('sort-1') || $header.hasClass('sort-2')) {
     $header.click(function (event) {
-
       if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
-
         x = event.pageX - $header.offset().left;
 
         if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').
-            outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').
-            outerWidth();
+          width_col1 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + (column_index - 1) + ')').outerWidth();
+          width_col2 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
         }
 
         if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').
-            outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').
-            outerWidth();
+          width_col1 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
+          width_col2 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + (column_index + 1) + ')').outerWidth();
         }
 
         width_header = $header.outerWidth();
@@ -1182,6 +1199,8 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
  */
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
+
+// ---------------------------------------------------------------------------------------------------------------------
 /*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global window */
 /*global $ */
@@ -1320,23 +1339,22 @@ SET_OverviewTable.registerColumnTypeHandler('numeric', SET_NumericColumnTypeHand
 /*global SET_OverviewTable */
 
 // ---------------------------------------------------------------------------------------------------------------------
-function SET_UuidColumnTypeHandler() {
-  "use strict";
-
-  // Use parent constructor.
-  SET_TextColumnTypeHandler.call(this);
-}
+/**
+ * Register column type handler.
+ */
+SET_OverviewTable.registerColumnTypeHandler('uuid', SET_TextColumnTypeHandler);
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Extend SET_UuidColumnTypeHandler from SET_TextColumnTypeHandler.
-SET_UuidColumnTypeHandler.prototype = Object.create(SET_TextColumnTypeHandler.prototype);
-// Set constructor for SET_UuidColumnTypeHandler.
-SET_UuidColumnTypeHandler.constructor = SET_UuidColumnTypeHandler;
+/*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
+/*global window */
+/*global $ */
+/*global SET_TextColumnTypeHandler */
+/*global SET_OverviewTable */
 
 // ---------------------------------------------------------------------------------------------------------------------
 /**
  * Register column type handler.
  */
-SET_OverviewTable.registerColumnTypeHandler('uuid', SET_UuidColumnTypeHandler);
+SET_OverviewTable.registerColumnTypeHandler('ipv4', SET_TextColumnTypeHandler);
 
 // ---------------------------------------------------------------------------------------------------------------------

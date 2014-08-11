@@ -57,23 +57,21 @@ SET_ColumnTypeHandler.prototype.initSort = function (overview_table, column_inde
     });
   } else if ($header.hasClass('sort-1') || $header.hasClass('sort-2')) {
     $header.click(function (event) {
-
       if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
-
         x = event.pageX - $header.offset().left;
 
         if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index - 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index - 1) + ')').
-            outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').
-            outerWidth();
+          width_col1 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + (column_index - 1) + ')').outerWidth();
+          width_col2 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
         }
 
         if (overview_table.myHeaderIndexLookup[column_index] === overview_table.myHeaderIndexLookup[column_index + 1]) {
-          width_col1 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + column_index + ')').
-            outerWidth();
-          width_col2 = overview_table.$myTable.find('tbody > tr:visible:first > td:eq(' + (column_index + 1) + ')').
-            outerWidth();
+          width_col1 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
+          width_col2 = overview_table.$myTable.children('tbody').
+            children('tr:visible:first').find('td:eq(' + (column_index + 1) + ')').outerWidth();
         }
 
         width_header = $header.outerWidth();

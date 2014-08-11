@@ -132,3 +132,5 @@ SET_TextColumnTypeHandler.prototype.compareSortKeys = function (value1, value2) 
  */
 SET_OverviewTable.registerColumnTypeHandler('text', SET_TextColumnTypeHandler);
 SET_OverviewTable.registerColumnTypeHandler('email', SET_TextColumnTypeHandler);
+
+// ---------------------------------------------------------------------------------------------------------------------

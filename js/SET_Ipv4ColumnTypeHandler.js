@@ -8,6 +8,6 @@
 /**
  * Register column type handler.
  */
-SET_OverviewTable.registerColumnTypeHandler('uuid', SET_TextColumnTypeHandler);
+SET_OverviewTable.registerColumnTypeHandler('ipv4', SET_TextColumnTypeHandler);
 
 // ---------------------------------------------------------------------------------------------------------------------
