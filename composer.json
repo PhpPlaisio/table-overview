@@ -21,7 +21,8 @@
   ],
   "require-dev": {
     "packagist/yuicompressor-bin": "dev-master",
-    "phing/phing": "2.*"
+    "phing/phing": "2.*",
+    "setbased/phing-extensions": "*"
   },
   "type": "component",
   "license": "MIT",

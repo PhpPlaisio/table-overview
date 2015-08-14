@@ -1,5 +1,6 @@
-.idea
+.idea/
+bin/
 composer.lock
-vendor
-components
-build
+vendor/
+components/
+build/

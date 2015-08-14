@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="js-table-sorter-filter" default="build" basedir=".">
+    <taskdef name="readSemanticVersion" classname="vendor.setbased.phing-extensions.lib.Task.readSemanticVersionTask"/>
     <property name="BUILD_DIR" value="build"/>
     <property name="COMBINED_JS_FILE" value="OverviewTable.js"/>
     <property name="COMBINED_JS_FILE_MIN" value="OverviewTable-min.js"/>
     <target name="build" depends="prepare, copy_files, combine_js, minify_js">
+    <property name="VERSION" value="0.0.0"/>
     </target>
 
     <target name="prepare">
@@ -137,5 +139,16 @@
         <gitcheckout repository="." branchname="${BRANCH}"/>
         <gitmerge repository="." remote="temp"/>
         <gitbranch branchname="temp" repository="." delete="true"/>
+    </target>
+
+    <!-- Creates a new version/release. -->
+    <target name="version">
+        <readSemanticVersion file=".version"
+                             versionProperty="VERSION"
+                             haltOnError="true"/>
+        <gitcommit repository="." message="Release: ${VERSION}" allFiles="true"/>
+        <gitpush repository="."/>
+        <gittag repository="." name="${VERSION}"/>
+        <gitpush repository="." refspec="${VERSION}" quiet="false"/>
     </target>
 </project>
