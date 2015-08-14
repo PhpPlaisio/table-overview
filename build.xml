@@ -119,7 +119,7 @@
         <gitmerge repository="." remote="temp"/>
         <gitbranch branchname="temp" repository="." delete="true"/>
 
-        <exec command="phing" checkreturn="true" passthru="true"/>
+        <exec command="bin/phing" checkreturn="true" passthru="true"/>
     </target>
 
     <!-- Merges the current branch with a remote branch in two steps: step 1 -->
