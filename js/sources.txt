@@ -1,8 +1,0 @@
-SET_OverviewTable.js
-SET_ColumnTypeHandler.js
-SET_NoneColumnTypeHandler.js
-SET_TextColumnTypeHandler.js
-SET_DateTimeColumnTypeHandler.js
-SET_NumericColumnTypeHandler.js
-SET_UuidColumnTypeHandler.js
-SET_Ipv4ColumnTypeHandler.js

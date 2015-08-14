@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="js-table-sorter-filter" default="build" basedir=".">
     <property name="BUILD_DIR" value="build"/>
-    <property name="COMBINED_JS_FILE" value="set_table_sorter_filter.js"/>
-    <property name="COMBINED_JS_FILE_MIN" value="set_table_sorter_filter-min.js"/>
+    <property name="COMBINED_JS_FILE" value="OverviewTable.js"/>
+    <property name="COMBINED_JS_FILE_MIN" value="OverviewTable-min.js"/>
     <target name="build" depends="prepare, copy_files, combine_js, minify_js">
     </target>
 
@@ -31,7 +31,6 @@
             <fileset dir=".">
                 <include name="**"/>
                 <exclude name="build.xml"/>
-                <exclude name="js/sources.txt"/>
             </fileset>
         </copy>
     </target>
@@ -45,7 +44,9 @@
             </then>
         </if>
         <append destFile="${BUILD_DIR}/${COMBINED_JS_FILE}">
-            <filelist dir="${BUILD_DIR}/js" listfile="js/sources.txt"/>
+            <fileset dir="${BUILD_DIR}/js">
+                <include name="**/*.js"/>
+            </fileset>
         </append>
 
         <!-- Copy the combined JavaScript file to the project's root directory if this file has changed only. -->
@@ -73,7 +74,7 @@
 
     <target name="minify_js">
         <echo msg="Minifying JavaScript files…"/>
-        <exec command="java -jar vendor/bin/yuicompressor.jar ${BUILD_DIR}/${COMBINED_JS_FILE} -o ${BUILD_DIR}/${COMBINED_JS_FILE_MIN}"
+        <exec command="java -jar bin/yuicompressor.jar ${BUILD_DIR}/${COMBINED_JS_FILE} -o ${BUILD_DIR}/${COMBINED_JS_FILE_MIN}"
               passthru="true" checkreturn="true"/>
 
         <!-- Copy the minimized combined JavaScript file to the project's root directory if this file has changed
@@ -104,8 +105,8 @@
     <!-- Merges the current branch with a remote branch -->
     <target name="git-merge">
         <!-- Prevent conflicts in auto generated files. -->
-        <delete file="set_table_sorter_filter.js"/>
-        <delete file="set_table_sorter_filter-min.js"/>
+        <delete file="OverviewTable.js"/>
+        <delete file="OverviewTable-min.js"/>
 
         <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="CURRENT_BRANCH"/>
         <input message="Your current branch is '${CURRENT_BRANCH}'. Remote branch: " propertyName="BRANCH"/>

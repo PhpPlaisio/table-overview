@@ -20,7 +20,8 @@
     }
   ],
   "require-dev": {
-    "packagist/yuicompressor-bin": "dev-master"
+    "packagist/yuicompressor-bin": "dev-master",
+    "phing/phing": "2.*"
   },
   "type": "component",
   "license": "MIT",
@@ -37,5 +38,8 @@
       "files": [
       ]
     }
+  },
+  "config": {
+    "bin-dir": "bin"
   }
 }
