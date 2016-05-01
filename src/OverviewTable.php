@@ -51,11 +51,11 @@ class OverviewTable extends HtmlElement
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Adds a $column to this table.
+   * Adds a column to this table.
    *
-   * @param TableColumn $column
+   * @param TableColumn $column The column to be added to this table.
    *
-   * @return TableColumn|DualTableColumn
+   * @return TableColumn|DualTableColumn The added column.
    */
   public function addColumn($column)
   {
@@ -66,6 +66,8 @@ class OverviewTable extends HtmlElement
 
     // Increase the index for the next added column.
     $this->columnIndex += $column->getColSpan();
+    
+    return $column;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
