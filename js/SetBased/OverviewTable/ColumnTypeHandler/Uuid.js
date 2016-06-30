@@ -3,10 +3,10 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTable/ColumnTypeHandler/Uuid',
+  'SetBased/Abc/Table/ColumnTypeHandler/Uuid',
 
-  ['SetBased/OverviewTable',
-    'SetBased/OverviewTable/ColumnTypeHandler/Text'],
+  ['SetBased/Abc/Table/OverviewTable',
+    'SetBased/Abc/Table/ColumnTypeHandler/Text'],
 
   function (OverviewTable, Text) {
     "use strict";

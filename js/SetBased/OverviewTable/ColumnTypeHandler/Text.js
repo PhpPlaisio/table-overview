@@ -3,11 +3,11 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTable/ColumnTypeHandler/Text',
+  'SetBased/Abc/Table/ColumnTypeHandler/Text',
 
   ['jquery',
-    'SetBased/OverviewTable',
-    'SetBased/OverviewTable/ColumnTypeHandler'],
+    'SetBased/Abc/Table/OverviewTable',
+    'SetBased/Abc/Table/ColumnTypeHandler/ColumnTypeHandler'],
 
   function ($, OverviewTable, ColumnTypeHandler) {
     "use strict";
@@ -106,7 +106,6 @@ define(
       return OverviewTable.toLowerCaseNoAccents($(table_cell).text());
     };
 
-
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Compares two values of the column of this column type handler.
@@ -136,6 +135,8 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     return Text;
+
+    //------------------------------------------------------------------------------------------------------------------
   }
 );
 

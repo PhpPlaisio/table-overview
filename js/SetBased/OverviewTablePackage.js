@@ -3,15 +3,16 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTablePackage',
+  'SetBased/Abc/Table/OverviewTablePackage',
 
-  ['SetBased/OverviewTable',
-    'SetBased/OverviewTable/ColumnTypeHandler/DateTime',
-    'SetBased/OverviewTable/ColumnTypeHandler/Ipv4',
-    'SetBased/OverviewTable/ColumnTypeHandler/None',
-    'SetBased/OverviewTable/ColumnTypeHandler/Numeric',
-    'SetBased/OverviewTable/ColumnTypeHandler/Text',
-    'SetBased/OverviewTable/ColumnTypeHandler/Uuid'],
+  ['SetBased/Abc/Table/OverviewTable',
+    'SetBased/Abc/Table/ColumnTypeHandler/Bool',
+    'SetBased/Abc/Table/ColumnTypeHandler/DateTime',
+    'SetBased/Abc/Table/ColumnTypeHandler/Ipv4',
+    'SetBased/Abc/Table/ColumnTypeHandler/None',
+    'SetBased/Abc/Table/ColumnTypeHandler/Numeric',
+    'SetBased/Abc/Table/ColumnTypeHandler/Text',
+    'SetBased/Abc/Table/ColumnTypeHandler/Uuid'],
 
   function (OverviewTable) {
     "use strict";

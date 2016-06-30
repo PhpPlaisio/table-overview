@@ -3,10 +3,10 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTable/ColumnTypeHandler/Ipv4',
+  'SetBased/Abc/Table/ColumnTypeHandler/Ipv4',
 
-  ['SetBased/OverviewTable',
-    'SetBased/OverviewTable/ColumnTypeHandler/Text'],
+  ['SetBased/Abc/Table/OverviewTable',
+    'SetBased/Abc/Table/ColumnTypeHandler/Text'],
 
   function (OverviewTable, Text) {
     "use strict";

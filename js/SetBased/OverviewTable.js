@@ -6,7 +6,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTable',
+  'SetBased/Abc/Table/OverviewTable',
 
   ['jquery'],
 
@@ -528,18 +528,14 @@ define(
 
           if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index - 1]) {
             // User clicked right column of a dual column header.
-            width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index - 1) + ')').
-              outerWidth();
-            width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').
-              outerWidth();
+            width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
+            width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').outerWidth();
           }
 
           if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index + 1]) {
             // User clicked left column of a dual column header.
-            width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').
-              outerWidth();
-            width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index + 1) + ')').
-              outerWidth();
+            width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+            width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
           }
 
           width_header = $header.outerWidth();
@@ -884,7 +880,7 @@ define(
     OverviewTable.registerTable = function (selector, className) {
       // Set name of class if this undefined.
       if (className === undefined) {
-        className = 'SetBased/OverviewTable';
+        className = 'SetBased/Abc/Table/OverviewTable';
       }
 
       $(selector).each(function () {
@@ -917,13 +913,9 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     return OverviewTable;
+
+    //------------------------------------------------------------------------------------------------------------------
   }
 );
 
 //----------------------------------------------------------------------------------------------------------------------
-require(['SetBased/OverviewTable/ColumnTypeHandler/DateTime']);
-require(['SetBased/OverviewTable/ColumnTypeHandler/Ipv4']);
-require(['SetBased/OverviewTable/ColumnTypeHandler/None']);
-require(['SetBased/OverviewTable/ColumnTypeHandler/Numeric']);
-require(['SetBased/OverviewTable/ColumnTypeHandler/Text']);
-require(['SetBased/OverviewTable/ColumnTypeHandler/Uuid']);

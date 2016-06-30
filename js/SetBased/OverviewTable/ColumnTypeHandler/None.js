@@ -3,10 +3,10 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTable/ColumnTypeHandler/None',
+  'SetBased/Abc/Table/ColumnTypeHandler/None',
 
-  ['SetBased/OverviewTable',
-    'SetBased/OverviewTable/ColumnTypeHandler'],
+  ['SetBased/Abc/Table/OverviewTable',
+    'SetBased/Abc/Table/ColumnTypeHandler/ColumnTypeHandler'],
 
   function (OverviewTable, ColumnTypeHandler) {
     "use strict";
@@ -40,6 +40,8 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     return None;
+
+    //------------------------------------------------------------------------------------------------------------------
   }
 );
 

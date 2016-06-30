@@ -3,7 +3,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTable/ColumnTypeHandler',
+  'SetBased/Abc/Table/ColumnTypeHandler/ColumnTypeHandler',
 
   [],
 
@@ -37,10 +37,10 @@ define(
      * Sets the appropriate classes of the column header and installs the appropriate event handlers on the column
      * header of the column of this column type handler.
      *
-     * @param {SET_OverviewTable} overview_table  The overview table object of the table of the column of this column
-     *                                            type handler.
-     * @param {int}               column_index    The column index of the column of the table of the column of this
-     *                                            column type handler.
+     * @param {OverviewTable} overview_table  The overview table object of the table of the column of this column
+     *                                        type handler.
+     * @param {int}           column_index    The column index of the column of the table of the column of this
+     *                                        column type handler.
      */
     ColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
       var that = this;
@@ -64,19 +64,15 @@ define(
             x = event.pageX - $header.offset().left;
 
             if (overview_table.myHeaderIndexLookup[column_index] ===
-                overview_table.myHeaderIndexLookup[column_index - 1]) {
-              width_col1 = overview_table.$myTable.children('tbody').
-                children('tr:visible:first').find('td:eq(' + (column_index - 1) + ')').outerWidth();
-              width_col2 = overview_table.$myTable.children('tbody').
-                children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
+              overview_table.myHeaderIndexLookup[column_index - 1]) {
+              width_col1 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (column_index - 1) + ')').outerWidth();
+              width_col2 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
             }
 
             if (overview_table.myHeaderIndexLookup[column_index] ===
-                overview_table.myHeaderIndexLookup[column_index + 1]) {
-              width_col1 = overview_table.$myTable.children('tbody').
-                children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
-              width_col2 = overview_table.$myTable.children('tbody').
-                children('tr:visible:first').find('td:eq(' + (column_index + 1) + ')').outerWidth();
+              overview_table.myHeaderIndexLookup[column_index + 1]) {
+              width_col1 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
+              width_col2 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (column_index + 1) + ')').outerWidth();
             }
 
             width_header = $header.outerWidth();
@@ -85,13 +81,13 @@ define(
 
             if (x > (width_col1 - diff / 2)) {
               if (overview_table.myHeaderIndexLookup[column_index] ===
-                  overview_table.myHeaderIndexLookup[column_index - 1]) {
+                overview_table.myHeaderIndexLookup[column_index - 1]) {
                 // Sort by right column.
                 overview_table.sort(event, $header, that, column_index);
               }
             } else if (x < (width_col1 + diff / 2)) {
               if (overview_table.myHeaderIndexLookup[column_index] ===
-                  overview_table.myHeaderIndexLookup[column_index + 1]) {
+                overview_table.myHeaderIndexLookup[column_index + 1]) {
                 // Sort by left column.
                 overview_table.sort(event, $header, that, column_index);
               }
@@ -107,6 +103,8 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     return ColumnTypeHandler;
+
+    //------------------------------------------------------------------------------------------------------------------
   }
 );
 

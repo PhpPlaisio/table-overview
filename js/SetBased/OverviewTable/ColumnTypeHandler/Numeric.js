@@ -3,11 +3,11 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 define(
-  'SetBased/OverviewTable/ColumnTypeHandler/Numeric',
+  'SetBased/Abc/Table/ColumnTypeHandler/Numeric',
 
   ['jquery',
-    'SetBased/OverviewTable',
-    'SetBased/OverviewTable/ColumnTypeHandler/Text'],
+    'SetBased/Abc/Table/OverviewTable',
+    'SetBased/Abc/Table/ColumnTypeHandler/Text'],
 
   function ($, OverviewTable, Text) {
     "use strict";
@@ -73,6 +73,8 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     return Numeric;
+
+    //------------------------------------------------------------------------------------------------------------------
   }
 );
 
