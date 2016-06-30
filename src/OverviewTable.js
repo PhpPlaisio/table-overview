@@ -20,8 +20,8 @@ define(
      * @constructor
      */
     function OverviewTable($table) {
-      var that = this;
       var i;
+      var that = this;
 
       if (OverviewTable.debug) {
         OverviewTable.log('Start create OverviewTable:');
@@ -250,8 +250,8 @@ define(
      */
     OverviewTable.toLowerCaseNoAccents = function (text) {
       var c;
-      var textNew = '';
       var i;
+      var textNew = '';
 
       if (text === null || typeof text === 'undefined') {
         return text;
@@ -316,9 +316,9 @@ define(
     OverviewTable.prototype.getSortOrder = function ($header, infix) {
       var attr;
       var classes;
-      var sortOrderClass;
       var i;
       var order = -1;
+      var sortOrderClass;
 
       attr = $header.attr('class');
       if (attr) {
@@ -365,8 +365,8 @@ define(
      * @param columnIndex
      */
     OverviewTable.prototype.sort = function (event, $header, column, columnIndex) {
-      var sortInfo;
       var sortColumnInfo;
+      var sortInfo;
 
       if (OverviewTable.debug) {
         OverviewTable.log('Start sort:');
@@ -421,10 +421,10 @@ define(
      */
     OverviewTable.prototype.getSortInfo = function () {
       var columnsInfo = [];
-      var span;
-      var sortOrder;
-      var that = this;
       var dual;
+      var sortOrder;
+      var span;
+      var that = this;
 
       this.$table.children('colgroup').children('col').each(function (columnIndex) {
         var $th = that.$headers.eq(that.headerIndexLookup[columnIndex]);
@@ -493,12 +493,12 @@ define(
      * @returns {{}}
      */
     OverviewTable.prototype.getColumnSortInfo = function (event, $header, columnIndex) {
-      var span;
       var columnInfo = {};
+      var diff;
+      var span;
       var widthCol1 = 0;
       var widthCol2 = 0;
       var widthHeader;
-      var diff;
       var x;
 
       function getFlipSortDirection($table, $header, infix) {
@@ -582,11 +582,11 @@ define(
      * Removes all classes concerning sorting from the column headers.
      */
     OverviewTable.prototype.cleanSortClasses = function () {
-      var that = this;
       var i;
+      var that = this;
 
       // Remove all orders for all columns.
-      for (i = 0; i < that.columnHandlers.length; i += + 1) {
+      for (i = 0; i < that.columnHandlers.length; i += +1) {
         that.$table.children('thead').find('th').removeClass('sort-order-' + i);
         that.$table.children('thead').find('th').removeClass('sort-order-1-' + i);
         that.$table.children('thead').find('th').removeClass('sort-order-2-' + i);
@@ -606,9 +606,9 @@ define(
      * @param sortInfo
      */
     OverviewTable.prototype.addSortInfo = function (sortInfo) {
-      var order;
       var $header;
       var i;
+      var order;
 
       for (i = 0; i < sortInfo.length; i += 1) {
         order = i + 1;
@@ -648,11 +648,11 @@ define(
      * @param column
      */
     OverviewTable.prototype.sortSingleColumn = function (sortingInfo, column) {
+      var cell;
+      var i;
       var rows;
       var sortDirection;
-      var i;
       var tbody;
-      var cell;
 
       if (!sortingInfo.infix) {
         // The use has clicked between two columns of a column header with colspan 2.
@@ -695,17 +695,20 @@ define(
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Sorts the table by two or more columns.
+     *
      * @param sortingInfo
      */
     OverviewTable.prototype.sortMultiColumn = function (sortingInfo) {
-      var dir;
-      var i, j;
-      var sortFunc = '';
-      var rows;
       var cell;
       var columnHandler;
-      var tbody;
+      var dir;
+      var i;
+      var j;
       var multiCmp = null;
+      var rows;
+      var sortFunc = '';
+      var tbody;
+      var this1 = this;  // Is required by multiCmp.
 
       // Get all the rows of the table.
       rows = this.$table.children('tbody').children('tr').get();
@@ -761,10 +764,10 @@ define(
      *
      */
     OverviewTable.prototype.filter = function () {
+      var count;
       var filters = [];
       var i;
       var that = this;
-      var count;
 
       if (OverviewTable.debug) {
         OverviewTable.log('Apply filters:');
@@ -831,7 +834,6 @@ define(
       // Execute additional action after filtering.
       that.filterHook();
       OverviewTable.benchmark('Execute additional action after filtering');
-
 
       if (OverviewTable.debug) {
         OverviewTable.log('Finish, total time: ' +
