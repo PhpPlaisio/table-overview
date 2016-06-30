@@ -1,6 +1,2 @@
 .idea/
-bin/
-composer.lock
-vendor/
 components/
-build/
