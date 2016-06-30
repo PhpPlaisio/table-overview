@@ -23,7 +23,7 @@ define(
     None.constructor = None;
 
     // -----------------------------------------------------------------------------------------------------------------
-    None.prototype.initSort = function (overview_table, column_index) {
+    None.prototype.initSort = function (overviewTable, columnIndex) {
       return null;
     };
 

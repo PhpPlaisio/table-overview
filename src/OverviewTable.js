@@ -47,7 +47,7 @@ define(
       });
       OverviewTable.benchmark('Prepare table and table info');
 
-      // Column headers can span 1 or 2 columns. Create lookup table from column_index to header_index.
+      // Column headers can span 1 or 2 columns. Create lookup table from columnIndex to header_index.
       this.$myHeaders.each(function (headerIndex, th) {
         var j;
         var span;
@@ -63,7 +63,7 @@ define(
           that.myHeaderIndexLookup[that.myHeaderIndexLookup.length] = headerIndex;
         }
       });
-      OverviewTable.benchmark('Create lookup table from column_index to header_index');
+      OverviewTable.benchmark('Create lookup table from columnIndex to header_index');
 
       // Get the column types and install the column handlers.
       this.myColumnHandlers = [];
@@ -82,7 +82,7 @@ define(
             if (classes[i].substr(0, 10) === 'data-type-') {
 
               columnType = classes[i].substr(10);
-              if (columnType === undefined || !OverviewTable.ourColumnTypeHandlers[columnType]) {
+              if (typeof columnType === 'undefined' || !OverviewTable.ourColumnTypeHandlers[columnType]) {
                 columnType = 'none';
               }
               break;
@@ -287,16 +287,16 @@ define(
     OverviewTable.prototype.mergeInfo = function (sortInfo, columnSortInfo) {
       if (sortInfo.length === 0) {
         // If selected only one column and sort info is empty, add column info
-        columnSortInfo.sort_order = 1;
+        columnSortInfo.sortOrder = 1;
         sortInfo[0] = columnSortInfo;
       } else {
-        if (columnSortInfo.sort_order !== -1 && sortInfo[columnSortInfo.sort_order - 1]) {
+        if (columnSortInfo.sortOrder !== -1 && sortInfo[columnSortInfo.sortOrder - 1]) {
           // If clicked column is already sorted and sort info contain info about this column,
           // change sort direction for it column.
-          sortInfo[columnSortInfo.sort_order - 1].sort_direction = columnSortInfo.sort_direction;
+          sortInfo[columnSortInfo.sortOrder - 1].sortDirection = columnSortInfo.sortDirection;
         } else {
           // If clicked column isn't sorted add this column info to sort info.
-          columnSortInfo.sort_order = sortInfo.length + 1;
+          columnSortInfo.sortOrder = sortInfo.length + 1;
           sortInfo[sortInfo.length] = columnSortInfo;
         }
       }
@@ -435,9 +435,9 @@ define(
           sortOrder = that.getSortOrder($th, '-');
           if (sortOrder !== -1) {
             columnsInfo[sortOrder - 1] = {
-              column_index: columnIndex,
-              sort_order: sortOrder,
-              sort_direction: that.getSortDirection($th, '-'),
+              columnIndex: columnIndex,
+              sortOrder: sortOrder,
+              sortDirection: that.getSortDirection($th, '-'),
               infix: '-',
               colspan: 1,
               offset: 0
@@ -454,9 +454,9 @@ define(
             sortOrder = that.getSortOrder($th, '-1-');
             if (sortOrder !== -1) {
               columnsInfo[sortOrder - 1] = {
-                column_index: columnIndex,
-                sort_order: sortOrder,
-                sort_direction: that.getSortDirection($th, '-1-'),
+                columnIndex: columnIndex,
+                sortOrder: sortOrder,
+                sortDirection: that.getSortDirection($th, '-1-'),
                 infix: '-1-',
                 colspan: 2,
                 offset: 0
@@ -468,9 +468,9 @@ define(
             sortOrder = that.getSortOrder($th, '-2-');
             if (sortOrder !== -1) {
               columnsInfo[sortOrder - 1] = {
-                column_index: columnIndex,
-                sort_order: sortOrder,
-                sort_direction: that.getSortDirection($th, '-2-'),
+                columnIndex: columnIndex,
+                sortOrder: sortOrder,
+                sortDirection: that.getSortDirection($th, '-2-'),
                 infix: '-2-',
                 colspan: 2,
                 offset: 1
@@ -503,25 +503,25 @@ define(
       var x;
 
       function getFlipSortDirection($table, $header, infix) {
-        var sort_direction;
+        var sortDirection;
 
-        sort_direction = $table.getSortDirection($header, infix);
-        if (sort_direction === 'desc' || sort_direction === '') {
+        sortDirection = $table.getSortDirection($header, infix);
+        if (sortDirection === 'desc' || sortDirection === '') {
           return 'asc';
         }
 
         return 'desc';
       }
 
-      columnInfo.column_index = columnIndex;
+      columnInfo.columnIndex = columnIndex;
 
       span = $header.attr('colspan');
       if (!span || span === '1') {
         columnInfo.infix = '-';
         columnInfo.colspan = 1;
         columnInfo.offset = 0;
-        columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
-        columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
+        columnInfo.sortOrder = this.getSortOrder($header, columnInfo.infix);
+        columnInfo.sortDirection = getFlipSortDirection(this, $header, columnInfo.infix);
       } else if (span === '2') {
         if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
           // Header spans two columns and both columns can be used for sorting.
@@ -548,29 +548,29 @@ define(
             columnInfo.infix = '-1-';
             columnInfo.colspan = 2;
             columnInfo.offset = 0;
-            columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
-            columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
+            columnInfo.sortOrder = this.getSortOrder($header, columnInfo.infix);
+            columnInfo.sortDirection = getFlipSortDirection(this, $header, columnInfo.infix);
           } else if (x > (widthCol1 + diff / 2)) {
             columnInfo.infix = '-2-';
             columnInfo.colspan = 2;
             columnInfo.offset = 1;
-            columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
-            columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
+            columnInfo.sortOrder = this.getSortOrder($header, columnInfo.infix);
+            columnInfo.sortDirection = getFlipSortDirection(this, $header, columnInfo.infix);
           }
         } else if ($header.hasClass('sort-1')) {
           // Header spans two columns but only the first/left column can used for sorting.
           columnInfo.infix = '-1-';
           columnInfo.colspan = 2;
           columnInfo.offset = 0;
-          columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
-          columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
+          columnInfo.sortOrder = this.getSortOrder($header, columnInfo.infix);
+          columnInfo.sortDirection = getFlipSortDirection(this, $header, columnInfo.infix);
         } else if ($header.hasClass('sort-2')) {
           // Header spans two columns but only the second/right column can used for sorting.
           columnInfo.infix = '-2-';
           columnInfo.colspan = 2;
           columnInfo.offset = 1;
-          columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
-          columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
+          columnInfo.sortOrder = this.getSortOrder($header, columnInfo.infix);
+          columnInfo.sortDirection = getFlipSortDirection(this, $header, columnInfo.infix);
         }
       }
       // Colspan greater than 2 is not supported.
@@ -587,7 +587,7 @@ define(
       var i;
 
       // Remove all orders for all columns.
-      for (i = 0; i < that.myColumnHandlers.length; i = i + 1) {
+      for (i = 0; i < that.myColumnHandlers.length; i += + 1) {
         that.$myTable.children('thead').find('th').removeClass('sort-order-' + i);
         that.$myTable.children('thead').find('th').removeClass('sort-order-1-' + i);
         that.$myTable.children('thead').find('th').removeClass('sort-order-2-' + i);
@@ -611,11 +611,11 @@ define(
       var $header;
       var i;
 
-      for (i = 0; i < sortInfo.length; i = i + 1) {
+      for (i = 0; i < sortInfo.length; i += 1) {
         order = i + 1;
-        $header = this.$myHeaders.eq(this.myHeaderIndexLookup[sortInfo[i].column_index]);
+        $header = this.$myHeaders.eq(this.myHeaderIndexLookup[sortInfo[i].columnIndex]);
         $header.addClass('sort-order' + sortInfo[i].infix + order);
-        $header.addClass('sorted' + sortInfo[i].infix + sortInfo[i].sort_direction);
+        $header.addClass('sorted' + sortInfo[i].infix + sortInfo[i].sortDirection);
       }
     };
 
@@ -662,7 +662,7 @@ define(
       }
 
       // Get the sort direction.
-      if (sortingInfo.sort_direction === 'asc') {
+      if (sortingInfo.sortDirection === 'asc') {
         sortDirection = 1;
       } else {
         sortDirection = -1;
@@ -672,8 +672,8 @@ define(
       rows = this.$myTable.children('tbody').children('tr').get();
 
       // Pull out the sort keys of the table cells.
-      for (i = 0; i < rows.length; i = i + 1) {
-        cell = rows[i].cells[sortingInfo.column_index];
+      for (i = 0; i < rows.length; i += 1) {
+        cell = rows[i].cells[sortingInfo.columnIndex];
         rows[i].sortKey = column.getSortKey(cell);
       }
       OverviewTable.benchmark('Extracting sort keys');
@@ -686,7 +686,7 @@ define(
 
       // Reappend the rows to the table body.
       tbody = this.$myTable.children('tbody')[0];
-      for (i = 0; i < rows.length; i = i + 1) {
+      for (i = 0; i < rows.length; i += 1) {
         rows[i].sortKey = null;
         tbody.appendChild(rows[i]);
       }
@@ -711,13 +711,13 @@ define(
       // Get all the rows of the table.
       rows = this.$myTable.children('tbody').children('tr').get();
 
-      for (i = 0; i < rows.length; i = i + 1) {
+      for (i = 0; i < rows.length; i += 1) {
         rows[i].sortKey = [];
-        for (j = 0; j < sortingInfo.length; j = j + 1) {
-          columnHandler = this.myColumnHandlers[sortingInfo[j].column_index];
+        for (j = 0; j < sortingInfo.length; j += 1) {
+          columnHandler = this.myColumnHandlers[sortingInfo[j].columnIndex];
 
           // Pull out the sort keys of the table cells.
-          cell = rows[i].cells[sortingInfo[j].column_index];
+          cell = rows[i].cells[sortingInfo[j].columnIndex];
           rows[i].sortKey[j] = columnHandler.getSortKey(cell);
         }
       }
@@ -725,13 +725,13 @@ define(
 
       sortFunc += 'multiCmp = function (row1, row2) {\n';
       sortFunc += '  var cmp;\n';
-      for (i = 0; i < sortingInfo.length; i = i + 1) {
+      for (i = 0; i < sortingInfo.length; i += 1) {
         dir = 1;
-        if (sortingInfo[i].sort_direction === 'desc') {
+        if (sortingInfo[i].sortDirection === 'desc') {
           dir = -1;
         }
         sortFunc += '  cmp = this1.myColumnHandlers[' +
-          sortingInfo[i].column_index +
+          sortingInfo[i].columnIndex +
           '].compareSortKeys(row1.sortKey[' +
           i + '], row2.sortKey[' +
           i + ']);\n';
@@ -750,7 +750,7 @@ define(
 
       // Reappend the rows to the table body.
       tbody = this.$myTable.children('tbody')[0];
-      for (i = 0; i < rows.length; i = i + 1) {
+      for (i = 0; i < rows.length; i += 1) {
         rows[i].sortKey = null;
         tbody.appendChild(rows[i]);
       }
@@ -854,14 +854,14 @@ define(
     //------------------------------------------------------------------------------------------------------------------
     OverviewTable.benchmark = function (message) {
       if (OverviewTable.ourDebug === true) {
-        OverviewTable.log(message + ' ' + (new Date().getTime() - OverviewTable.myTimeStart.getTime()) + " ms");
+        OverviewTable.log(message + ' ' + (new Date().getTime() - OverviewTable.myTimeStart.getTime()) + ' ms');
         OverviewTable.myTimeStart = new Date();
       }
     };
 
     //------------------------------------------------------------------------------------------------------------------
     OverviewTable.log = function (s) {
-      if (typeof console !== "undefined" && typeof console.debug !== "undefined") {
+      if (typeof console !== 'undefined' && typeof console.debug !== 'undefined') {
         console.log(s);
       } else {
         alert(s);

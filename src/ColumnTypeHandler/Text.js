@@ -16,8 +16,8 @@ define(
       // Use parent constructor.
       ColumnTypeHandler.call(this);
 
-      this.$myInput = null;
-      this.myFilterValue = null;
+      this.$input = null;
+      this.filterValue = null;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -33,12 +33,12 @@ define(
      * @returns {boolean}
      */
     Text.prototype.startFilter = function () {
-      this.myFilterValue = OverviewTable.toLowerCaseNoAccents(this.$myInput.val());
+      this.filterValue = OverviewTable.toLowerCaseNoAccents(this.$input.val());
 
-      // Note: this.myFilterValue might be undefined in case there is no input:text box for filtering in the column 
+      // Note: this.filterValue might be undefined in case there is no input:text box for filtering in the column 
       // header.
 
-      return (this.myFilterValue !== undefined && this.myFilterValue !== '');
+      return (typeof this.filterValue !== 'undefined' && this.filterValue !== '');
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -54,32 +54,32 @@ define(
 
       value = this.extractForFilter(tableCell);
 
-      return (value.indexOf(this.myFilterValue) !== -1);
+      return (value.indexOf(this.filterValue) !== -1);
     };
 
     //------------------------------------------------------------------------------------------------------------------
     Text.prototype.initFilter = function (overviewTable, columnIndex) {
       var that = this;
 
-      this.$myInput = overviewTable.$myFilters.eq(columnIndex).find('input');
+      this.$input = overviewTable.$myFilters.eq(columnIndex).find('input');
 
       // Clear the filter box (some browsers preserve the values on page reload).
-      this.$myInput.val('');
+      this.$input.val('');
 
       // Install event handler for ESC-key pressed in filter.
-      this.$myInput.keyup(function (event) {
+      this.$input.keyup(function (event) {
         // If the ESC-key was pressed or nothing is entered clear the value of the search box.
         if (event.keyCode === 27) {
-          that.$myInput.val('');
+          that.$input.val('');
         }
       });
 
       // Install event handler for changed filter value.
-      this.$myInput.keyup({table: overviewTable, element: this.$myInput}, OverviewTable.filterTrigger);
+      this.$input.keyup({table: overviewTable, element: this.$input}, OverviewTable.filterTrigger);
 
       // Resize the input box.
-      this.$myInput.width(this.$myInput.width() +
-        (this.$myInput.closest('td').innerWidth() - this.$myInput.outerWidth(true)));
+      this.$input.width(this.$input.width() +
+        (this.$input.closest('td').innerWidth() - this.$input.outerWidth(true)));
     };
 
     //------------------------------------------------------------------------------------------------------------------

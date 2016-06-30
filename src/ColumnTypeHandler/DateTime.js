@@ -27,12 +27,12 @@ define(
     /**
      * Returns the date or datetime content of a table cell.
      *
-     * @param {HTMLTableCellElement} table_cell The table cell.
+     * @param {HTMLTableCellElement} tableCell The table cell.
      *
      * @returns {string}
      */
-    DateTime.prototype.getSortKey = function (table_cell) {
-      return $(table_cell).data('value');
+    DateTime.prototype.getSortKey = function (tableCell) {
+      return $(tableCell).data('value');
     };
 
     //------------------------------------------------------------------------------------------------------------------
