@@ -23,23 +23,23 @@ define(
       var that = this;
       var i;
 
-      if (OverviewTable.ourDebug) {
+      if (OverviewTable.debug) {
         OverviewTable.log('Start create OverviewTable:');
-        OverviewTable.myTimeStart = new Date();
-        OverviewTable.myTimeIntermidiate = new Date();
+        OverviewTable.timeStart = new Date();
+        OverviewTable.timeIntermidiate = new Date();
       }
 
       // The HTML table cells with filters of the HTML table.
-      this.$myFilters = $table.children('thead').children('tr.filter').find('td');
+      this.$filters = $table.children('thead').children('tr.filter').find('td');
 
       // The HTML headers of the HTML table.
-      this.$myHeaders = $table.children('thead').children('tr.header').find('th');
+      this.$headers = $table.children('thead').children('tr.header').find('th');
 
       // Lookup from column index to header index.
-      this.myHeaderIndexLookup = [];
+      this.headerIndexLookup = [];
 
       // The HTML table associated with the JavaScript object.
-      this.$myTable = $table;
+      this.$table = $table;
 
       // Display the row with table filters.
       $table.children('thead').children('tr.filter').each(function () {
@@ -48,7 +48,7 @@ define(
       OverviewTable.benchmark('Prepare table and table info');
 
       // Column headers can span 1 or 2 columns. Create lookup table from columnIndex to header_index.
-      this.$myHeaders.each(function (headerIndex, th) {
+      this.$headers.each(function (headerIndex, th) {
         var j;
         var span;
 
@@ -60,19 +60,19 @@ define(
         }
 
         for (j = 0; j < span; j += 1) {
-          that.myHeaderIndexLookup[that.myHeaderIndexLookup.length] = headerIndex;
+          that.headerIndexLookup[that.headerIndexLookup.length] = headerIndex;
         }
       });
       OverviewTable.benchmark('Create lookup table from columnIndex to header_index');
 
       // Get the column types and install the column handlers.
-      this.myColumnHandlers = [];
+      this.columnHandlers = [];
       $table.children('colgroup').children('col').each(function (columnIndex, col) {
         var attr;
         var classes;
         var columnType;
 
-        that.myColumnHandlers[columnIndex] = null;
+        that.columnHandlers[columnIndex] = null;
 
         attr = $(col).attr('class');
         columnType = 'none';
@@ -82,7 +82,7 @@ define(
             if (classes[i].substr(0, 10) === 'data-type-') {
 
               columnType = classes[i].substr(10);
-              if (typeof columnType === 'undefined' || !OverviewTable.ourColumnTypeHandlers[columnType]) {
+              if (typeof columnType === 'undefined' || !OverviewTable.columnTypeHandlers[columnType]) {
                 columnType = 'none';
               }
               break;
@@ -90,19 +90,19 @@ define(
           }
         }
 
-        that.myColumnHandlers[columnIndex] = new OverviewTable.ourColumnTypeHandlers[columnType]();
+        that.columnHandlers[columnIndex] = new OverviewTable.columnTypeHandlers[columnType]();
         OverviewTable.benchmark('Install column handler with type "' + columnType + '"');
 
         // Initialize the column handler.
-        that.myColumnHandlers[columnIndex].initHandler(that, columnIndex);
+        that.columnHandlers[columnIndex].initHandler(that, columnIndex);
         OverviewTable.benchmark('Initialize column handler');
 
         // Initialize the filter.
-        that.myColumnHandlers[columnIndex].initFilter(that, columnIndex);
+        that.columnHandlers[columnIndex].initFilter(that, columnIndex);
         OverviewTable.benchmark('Initialize filter');
 
         // Initialize the sorter.
-        that.myColumnHandlers[columnIndex].initSort(that, columnIndex);
+        that.columnHandlers[columnIndex].initSort(that, columnIndex);
         OverviewTable.benchmark('Initialize sorter');
       });
 
@@ -110,9 +110,9 @@ define(
       this.initHook();
       OverviewTable.benchmark('Execute additional initializations');
 
-      if (OverviewTable.ourDebug) {
+      if (OverviewTable.debug) {
         OverviewTable.log('End of create OverviewTable ' +
-          (new Date().getTime() - OverviewTable.myTimeIntermidiate.getTime()) +
+          (new Date().getTime() - OverviewTable.timeIntermidiate.getTime()) +
           'ms');
       }
     }
@@ -138,7 +138,7 @@ define(
      * Set to true for debugging and performance improvement.
      * @type {boolean}
      */
-    OverviewTable.ourDebug = false;
+    OverviewTable.debug = false;
 
     //------------------------------------------------------------------------------------------------------------------
     /**
@@ -146,7 +146,7 @@ define(
      *
      * @type {{OverviewTable}}
      */
-    OverviewTable.ourTables = {};
+    OverviewTable.tables = {};
 
     //------------------------------------------------------------------------------------------------------------------
     /**
@@ -154,13 +154,13 @@ define(
      *
      * @type {{}}
      */
-    OverviewTable.ourColumnTypeHandlers = {};
+    OverviewTable.columnTypeHandlers = {};
 
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Object with parameters which names equals values what use for replace specific characters.
      */
-    OverviewTable.ourCharacterMap = {
+    OverviewTable.characterMap = {
       'à': 'a',
       'á': 'a',
       'â': 'a',
@@ -259,8 +259,8 @@ define(
 
       for (i = 0; i < text.length; i += 1) {
         c = text.substr(i, 1);
-        if (OverviewTable.ourCharacterMap[c]) {
-          textNew += OverviewTable.ourCharacterMap[c];
+        if (OverviewTable.characterMap[c]) {
+          textNew += OverviewTable.characterMap[c];
         } else {
           textNew += c;
         }
@@ -273,7 +273,7 @@ define(
      * Enables profiling and debugging console messages.
      */
     OverviewTable.enableDebug = function () {
-      OverviewTable.ourDebug = true;
+      OverviewTable.debug = true;
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -324,7 +324,7 @@ define(
       if (attr) {
         classes = attr.split(' ');
 
-        for (i = 0; i < classes.length; i = i + 1) {
+        for (i = 0; i < classes.length; i += 1) {
           sortOrderClass = 'sort-order' + infix;
           if (classes[i].substr(0, sortOrderClass.length) === sortOrderClass) {
             order = parseInt(classes[i].substr(sortOrderClass.length), 10);
@@ -368,10 +368,10 @@ define(
       var sortInfo;
       var sortColumnInfo;
 
-      if (OverviewTable.ourDebug) {
+      if (OverviewTable.debug) {
         OverviewTable.log('Start sort:');
-        OverviewTable.myTimeStart = new Date();
-        OverviewTable.myTimeIntermidiate = new Date();
+        OverviewTable.timeStart = new Date();
+        OverviewTable.timeIntermidiate = new Date();
       }
 
       // Get info about all currently sorted columns.
@@ -408,9 +408,9 @@ define(
       this.applyZebraTheme();
       OverviewTable.benchmark('Apply zebra theme');
 
-      if (OverviewTable.ourDebug) {
+      if (OverviewTable.debug) {
         OverviewTable.log('Finish sort ' +
-          (new Date().getTime() - OverviewTable.myTimeIntermidiate.getTime()) +
+          (new Date().getTime() - OverviewTable.timeIntermidiate.getTime()) +
           'ms');
       }
     };
@@ -427,8 +427,8 @@ define(
       var colspan;
       var dual;
 
-      this.$myTable.children('colgroup').children('col').each(function (columnIndex) {
-        var $th = that.$myHeaders.eq(that.myHeaderIndexLookup[columnIndex]);
+      this.$table.children('colgroup').children('col').each(function (columnIndex) {
+        var $th = that.$headers.eq(that.headerIndexLookup[columnIndex]);
 
         span = $th.attr('colspan');
         if (!span || span === '1') {
@@ -527,16 +527,16 @@ define(
           // Header spans two columns and both columns can be used for sorting.
           x = event.pageX - $header.offset().left;
 
-          if (this.myHeaderIndexLookup[columnIndex] === this.myHeaderIndexLookup[columnIndex - 1]) {
+          if (this.headerIndexLookup[columnIndex] === this.headerIndexLookup[columnIndex - 1]) {
             // User clicked right column of a dual column header.
-            widthCol1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex - 1) + ')').outerWidth();
-            widthCol2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
+            widthCol1 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex - 1) + ')').outerWidth();
+            widthCol2 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
           }
 
-          if (this.myHeaderIndexLookup[columnIndex] === this.myHeaderIndexLookup[columnIndex + 1]) {
+          if (this.headerIndexLookup[columnIndex] === this.headerIndexLookup[columnIndex + 1]) {
             // User clicked left column of a dual column header.
-            widthCol1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
-            widthCol2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex + 1) + ')').outerWidth();
+            widthCol1 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
+            widthCol2 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex + 1) + ')').outerWidth();
           }
 
           widthHeader = $header.outerWidth();
@@ -587,17 +587,17 @@ define(
       var i;
 
       // Remove all orders for all columns.
-      for (i = 0; i < that.myColumnHandlers.length; i += + 1) {
-        that.$myTable.children('thead').find('th').removeClass('sort-order-' + i);
-        that.$myTable.children('thead').find('th').removeClass('sort-order-1-' + i);
-        that.$myTable.children('thead').find('th').removeClass('sort-order-2-' + i);
+      for (i = 0; i < that.columnHandlers.length; i += + 1) {
+        that.$table.children('thead').find('th').removeClass('sort-order-' + i);
+        that.$table.children('thead').find('th').removeClass('sort-order-1-' + i);
+        that.$table.children('thead').find('th').removeClass('sort-order-2-' + i);
       }
 
       // Remove the asc and desc sort classes from all headers.
-      that.$myTable.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
+      that.$table.children('thead').find('th').removeClass('sorted-asc').removeClass('sorted-desc');
 
-      that.$myTable.children('thead').find('th').removeClass('sorted-1-asc').removeClass('sorted-1-desc');
-      that.$myTable.children('thead').find('th').removeClass('sorted-2-asc').removeClass('sorted-2-desc');
+      that.$table.children('thead').find('th').removeClass('sorted-1-asc').removeClass('sorted-1-desc');
+      that.$table.children('thead').find('th').removeClass('sorted-2-asc').removeClass('sorted-2-desc');
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -613,7 +613,7 @@ define(
 
       for (i = 0; i < sortInfo.length; i += 1) {
         order = i + 1;
-        $header = this.$myHeaders.eq(this.myHeaderIndexLookup[sortInfo[i].columnIndex]);
+        $header = this.$headers.eq(this.headerIndexLookup[sortInfo[i].columnIndex]);
         $header.addClass('sort-order' + sortInfo[i].infix + order);
         $header.addClass('sorted' + sortInfo[i].infix + sortInfo[i].sortDirection);
       }
@@ -627,7 +627,7 @@ define(
       var even = true;
 
       // Note: Using this.style.display is faster than using children('tr:visible').
-      this.$myTable.children('tbody').children('tr').each(function () {
+      this.$table.children('tbody').children('tr').each(function () {
         var $this = $(this);
 
         if (this.style.display !== 'none') {
@@ -669,7 +669,7 @@ define(
       }
 
       // Get all the rows of the table.
-      rows = this.$myTable.children('tbody').children('tr').get();
+      rows = this.$table.children('tbody').children('tr').get();
 
       // Pull out the sort keys of the table cells.
       for (i = 0; i < rows.length; i += 1) {
@@ -685,7 +685,7 @@ define(
       OverviewTable.benchmark('Sorted by one column');
 
       // Reappend the rows to the table body.
-      tbody = this.$myTable.children('tbody')[0];
+      tbody = this.$table.children('tbody')[0];
       for (i = 0; i < rows.length; i += 1) {
         rows[i].sortKey = null;
         tbody.appendChild(rows[i]);
@@ -709,12 +709,12 @@ define(
       var multiCmp = null;
 
       // Get all the rows of the table.
-      rows = this.$myTable.children('tbody').children('tr').get();
+      rows = this.$table.children('tbody').children('tr').get();
 
       for (i = 0; i < rows.length; i += 1) {
         rows[i].sortKey = [];
         for (j = 0; j < sortingInfo.length; j += 1) {
-          columnHandler = this.myColumnHandlers[sortingInfo[j].columnIndex];
+          columnHandler = this.columnHandlers[sortingInfo[j].columnIndex];
 
           // Pull out the sort keys of the table cells.
           cell = rows[i].cells[sortingInfo[j].columnIndex];
@@ -730,7 +730,7 @@ define(
         if (sortingInfo[i].sortDirection === 'desc') {
           dir = -1;
         }
-        sortFunc += '  cmp = this1.myColumnHandlers[' +
+        sortFunc += '  cmp = this1.columnHandlers[' +
           sortingInfo[i].columnIndex +
           '].compareSortKeys(row1.sortKey[' +
           i + '], row2.sortKey[' +
@@ -749,7 +749,7 @@ define(
       OverviewTable.benchmark('Sorted by ' + sortingInfo.length + ' columns');
 
       // Reappend the rows to the table body.
-      tbody = this.$myTable.children('tbody')[0];
+      tbody = this.$table.children('tbody')[0];
       for (i = 0; i < rows.length; i += 1) {
         rows[i].sortKey = null;
         tbody.appendChild(rows[i]);
@@ -767,17 +767,17 @@ define(
       var that = this;
       var count;
 
-      if (OverviewTable.ourDebug) {
+      if (OverviewTable.debug) {
         OverviewTable.log('Apply filters:');
-        OverviewTable.myTimeStart = new Date();
-        OverviewTable.myTimeIntermidiate = new Date();
+        OverviewTable.timeStart = new Date();
+        OverviewTable.timeIntermidiate = new Date();
       }
 
       // Create a list of effective filters.
       count = 0;
-      for (i = 0; i < this.myColumnHandlers.length; i += 1) {
-        if (this.myColumnHandlers[i] && this.myColumnHandlers[i].startFilter()) {
-          filters[i] = this.myColumnHandlers[i];
+      for (i = 0; i < this.columnHandlers.length; i += 1) {
+        if (this.columnHandlers[i] && this.columnHandlers[i].startFilter()) {
+          filters[i] = this.columnHandlers[i];
           count += 1;
         } else {
           filters[i] = null;
@@ -787,23 +787,23 @@ define(
 
 
       if (count === 0) {
-        if (OverviewTable.ourDebug) {
+        if (OverviewTable.debug) {
           OverviewTable.log('Filters list is empty.');
         }
 
         // All filters are ineffective. Show all rows.
-        this.$myTable.children('tbody').children('tr').show();
+        this.$table.children('tbody').children('tr').show();
         OverviewTable.benchmark('Show all rows');
 
       } else {
         // One or more filters are effective.
 
         // Hide all rows.
-        this.$myTable.children('tbody').children('tr').hide();
+        this.$table.children('tbody').children('tr').hide();
         OverviewTable.benchmark('Hide all rows');
 
         // Apply all effective filters.
-        this.$myTable.children('tbody').children('tr').each(function () {
+        this.$table.children('tbody').children('tr').each(function () {
           var j;
           var show = 1;
           var $this = $(this);
@@ -834,16 +834,16 @@ define(
       OverviewTable.benchmark('Execute additional action after filtering');
 
 
-      if (OverviewTable.ourDebug) {
+      if (OverviewTable.debug) {
         OverviewTable.log('Finish, total time: ' +
-          (new Date().getTime() - OverviewTable.myTimeIntermidiate.getTime()) +
+          (new Date().getTime() - OverviewTable.timeIntermidiate.getTime()) +
           ' ms');
       }
     };
 
     //------------------------------------------------------------------------------------------------------------------
     OverviewTable.registerColumnTypeHandler = function (columnType, handler) {
-      OverviewTable.ourColumnTypeHandlers[columnType] = handler;
+      OverviewTable.columnTypeHandlers[columnType] = handler;
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -853,9 +853,9 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     OverviewTable.benchmark = function (message) {
-      if (OverviewTable.ourDebug === true) {
-        OverviewTable.log(message + ' ' + (new Date().getTime() - OverviewTable.myTimeStart.getTime()) + ' ms');
-        OverviewTable.myTimeStart = new Date();
+      if (OverviewTable.debug === true) {
+        OverviewTable.log(message + ' ' + (new Date().getTime() - OverviewTable.timeStart.getTime()) + ' ms');
+        OverviewTable.timeStart = new Date();
       }
     };
 
@@ -889,7 +889,7 @@ define(
           if (!$this1.hasClass('registered')) {
             require([className],
               function (Constructor) {
-                OverviewTable.ourTables[OverviewTable.ourTables.length] = new Constructor($this1);
+                OverviewTable.tables[OverviewTable.tables.length] = new Constructor($this1);
               });
             $this1.addClass('registered');
           }
@@ -900,7 +900,7 @@ define(
             if (!$this2.hasClass('registered')) {
               require([className],
                 function (Constructor) {
-                  OverviewTable.ourTables[OverviewTable.ourTables.length] = new Constructor($this2);
+                  OverviewTable.tables[OverviewTable.tables.length] = new Constructor($this2);
                 });
               $this2.addClass('registered');
             }

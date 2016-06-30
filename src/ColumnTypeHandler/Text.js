@@ -61,7 +61,7 @@ define(
     Text.prototype.initFilter = function (overviewTable, columnIndex) {
       var that = this;
 
-      this.$input = overviewTable.$myFilters.eq(columnIndex).find('input');
+      this.$input = overviewTable.$filters.eq(columnIndex).find('input');
 
       // Clear the filter box (some browsers preserve the values on page reload).
       this.$input.val('');

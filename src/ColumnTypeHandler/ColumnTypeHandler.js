@@ -52,7 +52,7 @@ define(
       var diff;
 
       // Install event handler for click on sort icon.
-      $header = overviewTable.$myHeaders.eq(overviewTable.myHeaderIndexLookup[columnIndex]);
+      $header = overviewTable.$headers.eq(overviewTable.headerIndexLookup[columnIndex]);
 
       if ($header.hasClass('sort')) {
         $header.click(function (event) {
@@ -63,16 +63,16 @@ define(
           if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
             x = event.pageX - $header.offset().left;
 
-            if (overviewTable.myHeaderIndexLookup[columnIndex] ===
-              overviewTable.myHeaderIndexLookup[columnIndex - 1]) {
-              widthCol1 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (columnIndex - 1) + ')').outerWidth();
-              widthCol2 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + columnIndex + ')').outerWidth();
+            if (overviewTable.headerIndexLookup[columnIndex] ===
+              overviewTable.headerIndexLookup[columnIndex - 1]) {
+              widthCol1 = overviewTable.$table.children('tbody').children('tr:visible:first').find('td:eq(' + (columnIndex - 1) + ')').outerWidth();
+              widthCol2 = overviewTable.$table.children('tbody').children('tr:visible:first').find('td:eq(' + columnIndex + ')').outerWidth();
             }
 
-            if (overviewTable.myHeaderIndexLookup[columnIndex] ===
-              overviewTable.myHeaderIndexLookup[columnIndex + 1]) {
-              widthCol1 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + columnIndex + ')').outerWidth();
-              widthCol2 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (columnIndex + 1) + ')').outerWidth();
+            if (overviewTable.headerIndexLookup[columnIndex] ===
+              overviewTable.headerIndexLookup[columnIndex + 1]) {
+              widthCol1 = overviewTable.$table.children('tbody').children('tr:visible:first').find('td:eq(' + columnIndex + ')').outerWidth();
+              widthCol2 = overviewTable.$table.children('tbody').children('tr:visible:first').find('td:eq(' + (columnIndex + 1) + ')').outerWidth();
             }
 
             widthHeader = $header.outerWidth();
@@ -80,14 +80,14 @@ define(
             diff = widthHeader - widthCol1 - widthCol2;
 
             if (x > (widthCol1 - diff / 2)) {
-              if (overviewTable.myHeaderIndexLookup[columnIndex] ===
-                overviewTable.myHeaderIndexLookup[columnIndex - 1]) {
+              if (overviewTable.headerIndexLookup[columnIndex] ===
+                overviewTable.headerIndexLookup[columnIndex - 1]) {
                 // Sort by right column.
                 overviewTable.sort(event, $header, that, columnIndex);
               }
             } else if (x < (widthCol1 + diff / 2)) {
-              if (overviewTable.myHeaderIndexLookup[columnIndex] ===
-                overviewTable.myHeaderIndexLookup[columnIndex + 1]) {
+              if (overviewTable.headerIndexLookup[columnIndex] ===
+                overviewTable.headerIndexLookup[columnIndex + 1]) {
                 // Sort by left column.
                 overviewTable.sort(event, $header, that, columnIndex);
               }
