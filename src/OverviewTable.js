@@ -59,7 +59,7 @@ define(
           span = 1;
         }
 
-        for (j = 0; j < span; j = j + 1) {
+        for (j = 0; j < span; j += 1) {
           that.myHeaderIndexLookup[that.myHeaderIndexLookup.length] = headerIndex;
         }
       });
@@ -78,7 +78,7 @@ define(
         columnType = 'none';
         if (attr) {
           classes = attr.split(' ');
-          for (i = 0; i < classes.length; i = i + 1) {
+          for (i = 0; i < classes.length; i += 1) {
             if (classes[i].substr(0, 10) === 'data-type-') {
 
               columnType = classes[i].substr(10);
@@ -253,11 +253,11 @@ define(
       var textNew = '';
       var i;
 
-      if (text === null || text === undefined) {
+      if (text === null || typeof text === 'undefined') {
         return text;
       }
 
-      for (i = 0; i < text.length; i = i + 1) {
+      for (i = 0; i < text.length; i += 1) {
         c = text.substr(i, 1);
         if (OverviewTable.ourCharacterMap[c]) {
           textNew += OverviewTable.ourCharacterMap[c];
@@ -736,7 +736,7 @@ define(
           i + '], row2.sortKey[' +
           i + ']);\n';
         sortFunc += '  if (cmp !== 0) {\n';
-        sortFunc += '    return cmp * ' + dir + ";\n";
+        sortFunc += '    return cmp * ' + dir + ';\n';
         sortFunc += '  }\n';
       }
       sortFunc += '  return 0;\n';
@@ -877,7 +877,7 @@ define(
      */
     OverviewTable.registerTable = function (selector, className) {
       // Set name of class if this undefined.
-      if (className === undefined) {
+      if (typeof className === 'undefined') {
         className = 'SetBased/Abc/Table/OverviewTable';
       }
 

@@ -55,10 +55,10 @@ define(
       if (value1 === value2) {
         return 0;
       }
-      if (value1 === "" && !isNaN(value2)) {
+      if (value1 === '' && !isNaN(value2)) {
         return -1;
       }
-      if (value2 === "" && !isNaN(value1)) {
+      if (value2 === '' && !isNaN(value1)) {
         return 1;
       }
 
