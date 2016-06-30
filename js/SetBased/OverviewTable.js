@@ -496,8 +496,8 @@ define(
     OverviewTable.prototype.getColumnSortInfo = function (event, $header, column_index) {
       var span;
       var column_info = {};
-      var width_col1;
-      var width_col2;
+      var width_col1 = 0;
+      var width_col2 = 0;
       var width_header;
       var diff;
       var x;
