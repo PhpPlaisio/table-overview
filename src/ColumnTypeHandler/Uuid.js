@@ -9,7 +9,7 @@ define(
     'SetBased/Abc/Table/ColumnTypeHandler/Text'],
 
   function (OverviewTable, Text) {
-    "use strict";
+    'use strict';
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Register column type handler.

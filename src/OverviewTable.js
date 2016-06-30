@@ -11,7 +11,7 @@ define(
   ['jquery'],
 
   function ($) {
-    "use strict";
+    'use strict';
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Object constructor.
@@ -70,28 +70,28 @@ define(
       $table.children('colgroup').children('col').each(function (column_index, col) {
         var attr;
         var classes;
-        var column_type;
+        var columnType;
 
         that.myColumnHandlers[column_index] = null;
 
         attr = $(col).attr('class');
-        column_type = 'none';
+        columnType = 'none';
         if (attr) {
           classes = attr.split(' ');
           for (i = 0; i < classes.length; i = i + 1) {
             if (classes[i].substr(0, 10) === 'data-type-') {
 
-              column_type = classes[i].substr(10);
-              if (column_type === undefined || !OverviewTable.ourColumnTypeHandlers[column_type]) {
-                column_type = 'none';
+              columnType = classes[i].substr(10);
+              if (columnType === undefined || !OverviewTable.ourColumnTypeHandlers[columnType]) {
+                columnType = 'none';
               }
               break;
             }
           }
         }
 
-        that.myColumnHandlers[column_index] = new OverviewTable.ourColumnTypeHandlers[column_type]();
-        OverviewTable.benchmark('Install column handler with type "' + column_type + '"');
+        that.myColumnHandlers[column_index] = new OverviewTable.ourColumnTypeHandlers[columnType]();
+        OverviewTable.benchmark('Install column handler with type "' + columnType + '"');
 
         // Initialize the column handler.
         that.myColumnHandlers[column_index].initHandler(that, column_index);
@@ -250,7 +250,7 @@ define(
      */
     OverviewTable.toLowerCaseNoAccents = function (text) {
       var c;
-      var text_new = '';
+      var textNew = '';
       var i;
 
       if (text === null || text === undefined) {
@@ -260,12 +260,12 @@ define(
       for (i = 0; i < text.length; i = i + 1) {
         c = text.substr(i, 1);
         if (OverviewTable.ourCharacterMap[c]) {
-          text_new += OverviewTable.ourCharacterMap[c];
+          textNew += OverviewTable.ourCharacterMap[c];
         } else {
-          text_new += c;
+          textNew += c;
         }
       }
-      return text_new.toLowerCase();
+      return textNew.toLowerCase();
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -280,28 +280,28 @@ define(
     /**
      * Merge info about columns.
      *
-     * @param sort_info
-     * @param column_sort_info
+     * @param sortInfo
+     * @param columnSortInfo
      * @returns {{}}
      */
-    OverviewTable.prototype.mergeInfo = function (sort_info, column_sort_info) {
-      if (sort_info.length === 0) {
+    OverviewTable.prototype.mergeInfo = function (sortInfo, columnSortInfo) {
+      if (sortInfo.length === 0) {
         // If selected only one column and sort info is empty, add column info
-        column_sort_info.sort_order = 1;
-        sort_info[0] = column_sort_info;
+        columnSortInfo.sort_order = 1;
+        sortInfo[0] = columnSortInfo;
       } else {
-        if (column_sort_info.sort_order !== -1 && sort_info[column_sort_info.sort_order - 1]) {
+        if (columnSortInfo.sort_order !== -1 && sortInfo[columnSortInfo.sort_order - 1]) {
           // If clicked column is already sorted and sort info contain info about this column,
           // change sort direction for it column.
-          sort_info[column_sort_info.sort_order - 1].sort_direction = column_sort_info.sort_direction;
+          sortInfo[columnSortInfo.sort_order - 1].sort_direction = columnSortInfo.sort_direction;
         } else {
           // If clicked column isn't sorted add this column info to sort info.
-          column_sort_info.sort_order = sort_info.length + 1;
-          sort_info[sort_info.length] = column_sort_info;
+          columnSortInfo.sort_order = sortInfo.length + 1;
+          sortInfo[sortInfo.length] = columnSortInfo;
         }
       }
 
-      return sort_info;
+      return sortInfo;
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -316,7 +316,7 @@ define(
     OverviewTable.prototype.getSortOrder = function ($header, infix) {
       var attr;
       var classes;
-      var sort_order_class;
+      var sortOrderClass;
       var i;
       var order = -1;
 
@@ -325,9 +325,9 @@ define(
         classes = attr.split(' ');
 
         for (i = 0; i < classes.length; i = i + 1) {
-          sort_order_class = 'sort-order' + infix;
-          if (classes[i].substr(0, sort_order_class.length) === sort_order_class) {
-            order = parseInt(classes[i].substr(sort_order_class.length), 10);
+          sortOrderClass = 'sort-order' + infix;
+          if (classes[i].substr(0, sortOrderClass.length) === sortOrderClass) {
+            order = parseInt(classes[i].substr(sortOrderClass.length), 10);
           }
         }
       }
@@ -362,11 +362,11 @@ define(
      * @param event
      * @param $header
      * @param column
-     * @param column_index
+     * @param columnIndex
      */
-    OverviewTable.prototype.sort = function (event, $header, column, column_index) {
-      var sort_info;
-      var sort_column_info;
+    OverviewTable.prototype.sort = function (event, $header, column, columnIndex) {
+      var sortInfo;
+      var sortColumnInfo;
 
       if (OverviewTable.ourDebug) {
         OverviewTable.log('Start sort:');
@@ -375,11 +375,11 @@ define(
       }
 
       // Get info about all currently sorted columns.
-      sort_info = this.getSortInfo();
+      sortInfo = this.getSortInfo();
       OverviewTable.benchmark('Get all sort info');
 
       // Get info about column what was selected for sort.
-      sort_column_info = this.getColumnSortInfo(event, $header, column_index);
+      sortColumnInfo = this.getColumnSortInfo(event, $header, columnIndex);
       OverviewTable.benchmark('Get info about current column');
 
       // Remove all classes concerning sorting from the column headers.
@@ -387,21 +387,21 @@ define(
       OverviewTable.benchmark('Reset column headers');
 
       if (!event.ctrlKey) {
-        sort_info = this.mergeInfo([], sort_column_info);
+        sortInfo = this.mergeInfo([], sortColumnInfo);
         OverviewTable.benchmark('Merge info');
-        this.sortSingleColumn(sort_info[0], column);
+        this.sortSingleColumn(sortInfo[0], column);
       } else {
-        sort_info = this.mergeInfo(sort_info, sort_column_info);
+        sortInfo = this.mergeInfo(sortInfo, sortColumnInfo);
         OverviewTable.benchmark('Merge info');
-        if (sort_info.length === 1) {
-          this.sortSingleColumn(sort_info[0], column);
+        if (sortInfo.length === 1) {
+          this.sortSingleColumn(sortInfo[0], column);
         } else {
-          this.sortMultiColumn(sort_info);
+          this.sortMultiColumn(sortInfo);
         }
       }
 
       // Add classes concerning sorting to the column headers.
-      this.addSortInfo(sort_info);
+      this.addSortInfo(sortInfo);
       OverviewTable.benchmark('Added info to table head');
 
       // Apply zebra theme for the table.
@@ -420,23 +420,23 @@ define(
      * Returns an array indexed by the sort order with objects holding sorting information of the column.
      */
     OverviewTable.prototype.getSortInfo = function () {
-      var columns_info = [];
+      var columnsInfo = [];
       var span;
-      var sort_order;
+      var sortOrder;
       var that = this;
       var colspan;
       var dual;
 
-      this.$myTable.children('colgroup').children('col').each(function (column_index) {
-        var $th = that.$myHeaders.eq(that.myHeaderIndexLookup[column_index]);
+      this.$myTable.children('colgroup').children('col').each(function (columnIndex) {
+        var $th = that.$myHeaders.eq(that.myHeaderIndexLookup[columnIndex]);
 
         span = $th.attr('colspan');
         if (!span || span === '1') {
-          sort_order = that.getSortOrder($th, '-');
-          if (sort_order !== -1) {
-            columns_info[sort_order - 1] = {
-              column_index: column_index,
-              sort_order: sort_order,
+          sortOrder = that.getSortOrder($th, '-');
+          if (sortOrder !== -1) {
+            columnsInfo[sortOrder - 1] = {
+              column_index: columnIndex,
+              sort_order: sortOrder,
               sort_direction: that.getSortDirection($th, '-'),
               infix: '-',
               colspan: 1,
@@ -451,11 +451,11 @@ define(
           }
 
           if (dual === 'left' && $th.hasClass('sort-1')) {
-            sort_order = that.getSortOrder($th, '-1-');
-            if (sort_order !== -1) {
-              columns_info[sort_order - 1] = {
-                column_index: column_index,
-                sort_order: sort_order,
+            sortOrder = that.getSortOrder($th, '-1-');
+            if (sortOrder !== -1) {
+              columnsInfo[sortOrder - 1] = {
+                column_index: columnIndex,
+                sort_order: sortOrder,
                 sort_direction: that.getSortDirection($th, '-1-'),
                 infix: '-1-',
                 colspan: 2,
@@ -465,11 +465,11 @@ define(
           }
 
           if (dual === 'right' && $th.hasClass('sort-2')) {
-            sort_order = that.getSortOrder($th, '-2-');
-            if (sort_order !== -1) {
-              columns_info[sort_order - 1] = {
-                column_index: column_index,
-                sort_order: sort_order,
+            sortOrder = that.getSortOrder($th, '-2-');
+            if (sortOrder !== -1) {
+              columnsInfo[sortOrder - 1] = {
+                column_index: columnIndex,
+                sort_order: sortOrder,
                 sort_direction: that.getSortDirection($th, '-2-'),
                 infix: '-2-',
                 colspan: 2,
@@ -480,7 +480,7 @@ define(
         }
       });
 
-      return columns_info;
+      return columnsInfo;
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -489,16 +489,16 @@ define(
      *
      * @param event
      * @param $header
-     * @param column_index
+     * @param columnIndex
      *
      * @returns {{}}
      */
-    OverviewTable.prototype.getColumnSortInfo = function (event, $header, column_index) {
+    OverviewTable.prototype.getColumnSortInfo = function (event, $header, columnIndex) {
       var span;
-      var column_info = {};
-      var width_col1 = 0;
-      var width_col2 = 0;
-      var width_header;
+      var columnInfo = {};
+      var widthCol1 = 0;
+      var widthCol2 = 0;
+      var widthHeader;
       var diff;
       var x;
 
@@ -513,69 +513,69 @@ define(
         return 'desc';
       }
 
-      column_info.column_index = column_index;
+      columnInfo.column_index = columnIndex;
 
       span = $header.attr('colspan');
       if (!span || span === '1') {
-        column_info.infix = '-';
-        column_info.colspan = 1;
-        column_info.offset = 0;
-        column_info.sort_order = this.getSortOrder($header, column_info.infix);
-        column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+        columnInfo.infix = '-';
+        columnInfo.colspan = 1;
+        columnInfo.offset = 0;
+        columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
+        columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
       } else if (span === '2') {
         if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
           // Header spans two columns and both columns can be used for sorting.
           x = event.pageX - $header.offset().left;
 
-          if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index - 1]) {
+          if (this.myHeaderIndexLookup[columnIndex] === this.myHeaderIndexLookup[columnIndex - 1]) {
             // User clicked right column of a dual column header.
-            width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index - 1) + ')').outerWidth();
-            width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').outerWidth();
+            widthCol1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex - 1) + ')').outerWidth();
+            widthCol2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
           }
 
-          if (this.myHeaderIndexLookup[column_index] === this.myHeaderIndexLookup[column_index + 1]) {
+          if (this.myHeaderIndexLookup[columnIndex] === this.myHeaderIndexLookup[columnIndex + 1]) {
             // User clicked left column of a dual column header.
-            width_col1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + column_index + ')').outerWidth();
-            width_col2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (column_index + 1) + ')').outerWidth();
+            widthCol1 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
+            widthCol2 = this.$myTable.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex + 1) + ')').outerWidth();
           }
 
-          width_header = $header.outerWidth();
+          widthHeader = $header.outerWidth();
 
-          diff = width_header - width_col1 - width_col2;
+          diff = widthHeader - widthCol1 - widthCol2;
 
           // We account diff due to cell separation.
-          if (x < (width_col1 - diff / 2)) {
-            column_info.infix = '-1-';
-            column_info.colspan = 2;
-            column_info.offset = 0;
-            column_info.sort_order = this.getSortOrder($header, column_info.infix);
-            column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
-          } else if (x > (width_col1 + diff / 2)) {
-            column_info.infix = '-2-';
-            column_info.colspan = 2;
-            column_info.offset = 1;
-            column_info.sort_order = this.getSortOrder($header, column_info.infix);
-            column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+          if (x < (widthCol1 - diff / 2)) {
+            columnInfo.infix = '-1-';
+            columnInfo.colspan = 2;
+            columnInfo.offset = 0;
+            columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
+            columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
+          } else if (x > (widthCol1 + diff / 2)) {
+            columnInfo.infix = '-2-';
+            columnInfo.colspan = 2;
+            columnInfo.offset = 1;
+            columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
+            columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
           }
         } else if ($header.hasClass('sort-1')) {
           // Header spans two columns but only the first/left column can used for sorting.
-          column_info.infix = '-1-';
-          column_info.colspan = 2;
-          column_info.offset = 0;
-          column_info.sort_order = this.getSortOrder($header, column_info.infix);
-          column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+          columnInfo.infix = '-1-';
+          columnInfo.colspan = 2;
+          columnInfo.offset = 0;
+          columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
+          columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
         } else if ($header.hasClass('sort-2')) {
           // Header spans two columns but only the second/right column can used for sorting.
-          column_info.infix = '-2-';
-          column_info.colspan = 2;
-          column_info.offset = 1;
-          column_info.sort_order = this.getSortOrder($header, column_info.infix);
-          column_info.sort_direction = getFlipSortDirection(this, $header, column_info.infix);
+          columnInfo.infix = '-2-';
+          columnInfo.colspan = 2;
+          columnInfo.offset = 1;
+          columnInfo.sort_order = this.getSortOrder($header, columnInfo.infix);
+          columnInfo.sort_direction = getFlipSortDirection(this, $header, columnInfo.infix);
         }
       }
       // Colspan greater than 2 is not supported.
 
-      return column_info;
+      return columnInfo;
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -604,18 +604,18 @@ define(
     /**
      * Adds classes concerning sorting to the column headers.
      *
-     * @param sort_info
+     * @param sortInfo
      */
-    OverviewTable.prototype.addSortInfo = function (sort_info) {
+    OverviewTable.prototype.addSortInfo = function (sortInfo) {
       var order;
       var $header;
       var i;
 
-      for (i = 0; i < sort_info.length; i = i + 1) {
+      for (i = 0; i < sortInfo.length; i = i + 1) {
         order = i + 1;
-        $header = this.$myHeaders.eq(this.myHeaderIndexLookup[sort_info[i].column_index]);
-        $header.addClass('sort-order' + sort_info[i].infix + order);
-        $header.addClass('sorted' + sort_info[i].infix + sort_info[i].sort_direction);
+        $header = this.$myHeaders.eq(this.myHeaderIndexLookup[sortInfo[i].column_index]);
+        $header.addClass('sort-order' + sortInfo[i].infix + order);
+        $header.addClass('sorted' + sortInfo[i].infix + sortInfo[i].sort_direction);
       }
     };
 
@@ -645,24 +645,24 @@ define(
     /**
      * Sorts the table by one column.
      *
-     * @param sorting_info
+     * @param sortingInfo
      * @param column
      */
-    OverviewTable.prototype.sortSingleColumn = function (sorting_info, column) {
+    OverviewTable.prototype.sortSingleColumn = function (sortingInfo, column) {
       var rows;
       var sort_direction;
       var i;
       var tbody;
       var cell;
 
-      if (!sorting_info.infix) {
+      if (!sortingInfo.infix) {
         // The use has clicked between two columns of a column header with colspan 2.
         // Don't sort and return immediately.
         return;
       }
 
       // Get the sort direction.
-      if (sorting_info.sort_direction === 'asc') {
+      if (sortingInfo.sort_direction === 'asc') {
         sort_direction = 1;
       } else {
         sort_direction = -1;
@@ -673,7 +673,7 @@ define(
 
       // Pull out the sort keys of the table cells.
       for (i = 0; i < rows.length; i = i + 1) {
-        cell = rows[i].cells[sorting_info.column_index];
+        cell = rows[i].cells[sortingInfo.column_index];
         rows[i].sortKey = column.getSortKey(cell);
       }
       OverviewTable.benchmark('Extracting sort keys');
@@ -696,9 +696,9 @@ define(
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Sorts the table by two or more columns.
-     * @param sorting_info
+     * @param sortingInfo
      */
-    OverviewTable.prototype.sortMultiColumn = function (sorting_info) {
+    OverviewTable.prototype.sortMultiColumn = function (sortingInfo) {
       var dir;
       var i, j;
       var sort_func = '';
@@ -713,11 +713,11 @@ define(
 
       for (i = 0; i < rows.length; i = i + 1) {
         rows[i].sortKey = [];
-        for (j = 0; j < sorting_info.length; j = j + 1) {
-          column_handler = this.myColumnHandlers[sorting_info[j].column_index];
+        for (j = 0; j < sortingInfo.length; j = j + 1) {
+          column_handler = this.myColumnHandlers[sortingInfo[j].column_index];
 
           // Pull out the sort keys of the table cells.
-          cell = rows[i].cells[sorting_info[j].column_index];
+          cell = rows[i].cells[sortingInfo[j].column_index];
           rows[i].sortKey[j] = column_handler.getSortKey(cell);
         }
       }
@@ -725,13 +725,13 @@ define(
 
       sort_func += "multi_cmp = function (row1, row2) {\n";
       sort_func += "  var cmp;\n";
-      for (i = 0; i < sorting_info.length; i = i + 1) {
+      for (i = 0; i < sortingInfo.length; i = i + 1) {
         dir = 1;
-        if (sorting_info[i].sort_direction === 'desc') {
+        if (sortingInfo[i].sort_direction === 'desc') {
           dir = -1;
         }
         sort_func += "  cmp = this1.myColumnHandlers[" +
-          sorting_info[i].column_index +
+          sortingInfo[i].column_index +
           "].compareSortKeys(row1.sortKey[" +
           i + "], row2.sortKey[" +
           i + "]);\n";
@@ -746,7 +746,7 @@ define(
 
       // Actually sort the rows.
       rows.sort(multi_cmp);
-      OverviewTable.benchmark('Sorted by ' + sorting_info.length + ' columns');
+      OverviewTable.benchmark('Sorted by ' + sortingInfo.length + ' columns');
 
       // Reappend the rows to the table body.
       tbody = this.$myTable.children('tbody')[0];
@@ -842,8 +842,8 @@ define(
     };
 
     //------------------------------------------------------------------------------------------------------------------
-    OverviewTable.registerColumnTypeHandler = function (column_type, handler) {
-      OverviewTable.ourColumnTypeHandlers[column_type] = handler;
+    OverviewTable.registerColumnTypeHandler = function (columnType, handler) {
+      OverviewTable.ourColumnTypeHandlers[columnType] = handler;
     };
 
     //------------------------------------------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ define(
     'SetBased/Abc/Table/ColumnTypeHandler/Text'],
 
   function ($, OverviewTable, Text) {
-    "use strict";
+    'use strict';
     //------------------------------------------------------------------------------------------------------------------
     function Numeric() {
       // Use parent constructor.
@@ -27,16 +27,16 @@ define(
     /**
      * Returns the numeric content of a table cell.
      *
-     * @param {HTMLTableCellElement} table_cell The table cell.
+     * @param {HTMLTableCellElement} tableCell The table cell.
      *
      * @returns {number}
      */
-    Numeric.prototype.getSortKey = function (table_cell) {
+    Numeric.prototype.getSortKey = function (tableCell) {
       var regexp;
       var parts;
 
       regexp = /[\d\.,\-\+]*/;
-      parts = regexp.exec($(table_cell).text());
+      parts = regexp.exec($(tableCell).text());
 
       // todo Better internationalisation.
       return parseInt(parts[0].replace('.', '').replace(',', '.'), 10);

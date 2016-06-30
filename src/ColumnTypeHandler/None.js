@@ -9,7 +9,7 @@ define(
     'SetBased/Abc/Table/ColumnTypeHandler/ColumnTypeHandler'],
 
   function (OverviewTable, ColumnTypeHandler) {
-    "use strict";
+    'use strict';
     //------------------------------------------------------------------------------------------------------------------
     function None() {
       // Use parent constructor.

@@ -10,7 +10,7 @@ define(
     'SetBased/Abc/Table/ColumnTypeHandler/Text'],
 
   function ($, OverviewTable, Text) {
-    "use strict";
+    'use strict';
     //------------------------------------------------------------------------------------------------------------------
     function DateTime() {
       // Use parent constructor.

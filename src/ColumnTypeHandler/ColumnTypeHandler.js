@@ -8,7 +8,7 @@ define(
   [],
 
   function () {
-    "use strict";
+    'use strict';
     //------------------------------------------------------------------------------------------------------------------
     function ColumnTypeHandler() {
       return this;
@@ -37,65 +37,65 @@ define(
      * Sets the appropriate classes of the column header and installs the appropriate event handlers on the column
      * header of the column of this column type handler.
      *
-     * @param {OverviewTable} overview_table  The overview table object of the table of the column of this column
-     *                                        type handler.
-     * @param {int}           column_index    The column index of the column of the table of the column of this
-     *                                        column type handler.
+     * @param {OverviewTable} overviewTable  The overview table object of the table of the column of this column
+     *                                       type handler.
+     * @param {int}           columnIndex    The column index of the column of the table of the column of this
+     *                                       column type handler.
      */
-    ColumnTypeHandler.prototype.initSort = function (overview_table, column_index) {
+    ColumnTypeHandler.prototype.initSort = function (overviewTable, columnIndex) {
       var that = this;
       var $header;
       var x;
-      var width_header;
-      var width_col1 = 0;
-      var width_col2 = 0;
+      var widthHeader;
+      var widthCol1 = 0;
+      var widthCol2 = 0;
       var diff;
 
       // Install event handler for click on sort icon.
-      $header = overview_table.$myHeaders.eq(overview_table.myHeaderIndexLookup[column_index]);
+      $header = overviewTable.$myHeaders.eq(overviewTable.myHeaderIndexLookup[columnIndex]);
 
       if ($header.hasClass('sort')) {
         $header.click(function (event) {
-          overview_table.sort(event, $header, that, column_index);
+          overviewTable.sort(event, $header, that, columnIndex);
         });
       } else if ($header.hasClass('sort-1') || $header.hasClass('sort-2')) {
         $header.click(function (event) {
           if ($header.hasClass('sort-1') && $header.hasClass('sort-2')) {
             x = event.pageX - $header.offset().left;
 
-            if (overview_table.myHeaderIndexLookup[column_index] ===
-              overview_table.myHeaderIndexLookup[column_index - 1]) {
-              width_col1 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (column_index - 1) + ')').outerWidth();
-              width_col2 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
+            if (overviewTable.myHeaderIndexLookup[columnIndex] ===
+              overviewTable.myHeaderIndexLookup[columnIndex - 1]) {
+              widthCol1 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (columnIndex - 1) + ')').outerWidth();
+              widthCol2 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + columnIndex + ')').outerWidth();
             }
 
-            if (overview_table.myHeaderIndexLookup[column_index] ===
-              overview_table.myHeaderIndexLookup[column_index + 1]) {
-              width_col1 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + column_index + ')').outerWidth();
-              width_col2 = overview_table.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (column_index + 1) + ')').outerWidth();
+            if (overviewTable.myHeaderIndexLookup[columnIndex] ===
+              overviewTable.myHeaderIndexLookup[columnIndex + 1]) {
+              widthCol1 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + columnIndex + ')').outerWidth();
+              widthCol2 = overviewTable.$myTable.children('tbody').children('tr:visible:first').find('td:eq(' + (columnIndex + 1) + ')').outerWidth();
             }
 
-            width_header = $header.outerWidth();
+            widthHeader = $header.outerWidth();
 
-            diff = width_header - width_col1 - width_col2;
+            diff = widthHeader - widthCol1 - widthCol2;
 
-            if (x > (width_col1 - diff / 2)) {
-              if (overview_table.myHeaderIndexLookup[column_index] ===
-                overview_table.myHeaderIndexLookup[column_index - 1]) {
+            if (x > (widthCol1 - diff / 2)) {
+              if (overviewTable.myHeaderIndexLookup[columnIndex] ===
+                overviewTable.myHeaderIndexLookup[columnIndex - 1]) {
                 // Sort by right column.
-                overview_table.sort(event, $header, that, column_index);
+                overviewTable.sort(event, $header, that, columnIndex);
               }
-            } else if (x < (width_col1 + diff / 2)) {
-              if (overview_table.myHeaderIndexLookup[column_index] ===
-                overview_table.myHeaderIndexLookup[column_index + 1]) {
+            } else if (x < (widthCol1 + diff / 2)) {
+              if (overviewTable.myHeaderIndexLookup[columnIndex] ===
+                overviewTable.myHeaderIndexLookup[columnIndex + 1]) {
                 // Sort by left column.
-                overview_table.sort(event, $header, that, column_index);
+                overviewTable.sort(event, $header, that, columnIndex);
               }
             }
           } else if ($header.hasClass('sort-1')) {
-            overview_table.sort(event, $header, that, column_index);
+            overviewTable.sort(event, $header, that, columnIndex);
           } else if ($header.hasClass('sort-2')) {
-            overview_table.sort(event, $header, that, column_index);
+            overviewTable.sort(event, $header, that, columnIndex);
           }
         });
       }

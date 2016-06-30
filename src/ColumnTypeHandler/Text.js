@@ -10,7 +10,7 @@ define(
     'SetBased/Abc/Table/ColumnTypeHandler/ColumnTypeHandler'],
 
   function ($, OverviewTable, ColumnTypeHandler) {
-    "use strict";
+    'use strict';
     //------------------------------------------------------------------------------------------------------------------
     function Text() {
       // Use parent constructor.
@@ -45,23 +45,23 @@ define(
     /**
      * Returns true if the table (based on this column filter) must be shown. Returns false otherwise.
      *
-     * @param table_cell
+     * @param tableCell
      *
      * @returns {boolean}
      */
-    Text.prototype.simpleFilter = function (table_cell) {
+    Text.prototype.simpleFilter = function (tableCell) {
       var value;
 
-      value = this.extractForFilter(table_cell);
+      value = this.extractForFilter(tableCell);
 
       return (value.indexOf(this.myFilterValue) !== -1);
     };
 
     //------------------------------------------------------------------------------------------------------------------
-    Text.prototype.initFilter = function (overview_table, column_index) {
+    Text.prototype.initFilter = function (overviewTable, columnIndex) {
       var that = this;
 
-      this.$myInput = overview_table.$myFilters.eq(column_index).find('input');
+      this.$myInput = overviewTable.$myFilters.eq(columnIndex).find('input');
 
       // Clear the filter box (some browsers preserve the values on page reload).
       this.$myInput.val('');
@@ -75,7 +75,7 @@ define(
       });
 
       // Install event handler for changed filter value.
-      this.$myInput.keyup({table: overview_table, element: this.$myInput}, OverviewTable.filterTrigger);
+      this.$myInput.keyup({table: overviewTable, element: this.$myInput}, OverviewTable.filterTrigger);
 
       // Resize the input box.
       this.$myInput.width(this.$myInput.width() +
@@ -86,24 +86,24 @@ define(
     /**
      * Returns the text content of a table_cell.
      *
-     * @param {HTMLTableElement} table_cell The table cell.
+     * @param {HTMLTableElement} tableCell The table cell.
      *
      * @returns {string}
      */
-    Text.prototype.extractForFilter = function (table_cell) {
-      return OverviewTable.toLowerCaseNoAccents($(table_cell).text());
+    Text.prototype.extractForFilter = function (tableCell) {
+      return OverviewTable.toLowerCaseNoAccents($(tableCell).text());
     };
 
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Returns the text content of a table cell.
      *
-     * @param {HTMLTableCellElement} table_cell The table cell.
+     * @param {HTMLTableCellElement} tableCell The table cell.
      *
      * @returns {string}
      */
-    Text.prototype.getSortKey = function (table_cell) {
-      return OverviewTable.toLowerCaseNoAccents($(table_cell).text());
+    Text.prototype.getSortKey = function (tableCell) {
+      return OverviewTable.toLowerCaseNoAccents($(tableCell).text());
     };
 
     //------------------------------------------------------------------------------------------------------------------

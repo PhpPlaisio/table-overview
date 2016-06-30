@@ -15,7 +15,7 @@ define(
     'SetBased/Abc/Table/ColumnTypeHandler/Uuid'],
 
   function (OverviewTable) {
-    "use strict";
+    'use strict';
 
     return OverviewTable;
   }
