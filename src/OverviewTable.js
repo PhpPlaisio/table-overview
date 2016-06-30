@@ -424,7 +424,6 @@ define(
       var span;
       var sortOrder;
       var that = this;
-      var colspan;
       var dual;
 
       this.$table.children('colgroup').children('col').each(function (columnIndex) {
