@@ -48,7 +48,7 @@ define(
       OverviewTable.benchmark('Prepare table and table info');
 
       // Column headers can span 1 or 2 columns. Create lookup table from column_index to header_index.
-      this.$myHeaders.each(function (header_index, th) {
+      this.$myHeaders.each(function (headerIndex, th) {
         var j;
         var span;
 
@@ -60,19 +60,19 @@ define(
         }
 
         for (j = 0; j < span; j = j + 1) {
-          that.myHeaderIndexLookup[that.myHeaderIndexLookup.length] = header_index;
+          that.myHeaderIndexLookup[that.myHeaderIndexLookup.length] = headerIndex;
         }
       });
       OverviewTable.benchmark('Create lookup table from column_index to header_index');
 
       // Get the column types and install the column handlers.
       this.myColumnHandlers = [];
-      $table.children('colgroup').children('col').each(function (column_index, col) {
+      $table.children('colgroup').children('col').each(function (columnIndex, col) {
         var attr;
         var classes;
         var columnType;
 
-        that.myColumnHandlers[column_index] = null;
+        that.myColumnHandlers[columnIndex] = null;
 
         attr = $(col).attr('class');
         columnType = 'none';
@@ -90,19 +90,19 @@ define(
           }
         }
 
-        that.myColumnHandlers[column_index] = new OverviewTable.ourColumnTypeHandlers[columnType]();
+        that.myColumnHandlers[columnIndex] = new OverviewTable.ourColumnTypeHandlers[columnType]();
         OverviewTable.benchmark('Install column handler with type "' + columnType + '"');
 
         // Initialize the column handler.
-        that.myColumnHandlers[column_index].initHandler(that, column_index);
+        that.myColumnHandlers[columnIndex].initHandler(that, columnIndex);
         OverviewTable.benchmark('Initialize column handler');
 
         // Initialize the filter.
-        that.myColumnHandlers[column_index].initFilter(that, column_index);
+        that.myColumnHandlers[columnIndex].initFilter(that, columnIndex);
         OverviewTable.benchmark('Initialize filter');
 
         // Initialize the sorter.
-        that.myColumnHandlers[column_index].initSort(that, column_index);
+        that.myColumnHandlers[columnIndex].initSort(that, columnIndex);
         OverviewTable.benchmark('Initialize sorter');
       });
 
@@ -650,7 +650,7 @@ define(
      */
     OverviewTable.prototype.sortSingleColumn = function (sortingInfo, column) {
       var rows;
-      var sort_direction;
+      var sortDirection;
       var i;
       var tbody;
       var cell;
@@ -663,9 +663,9 @@ define(
 
       // Get the sort direction.
       if (sortingInfo.sort_direction === 'asc') {
-        sort_direction = 1;
+        sortDirection = 1;
       } else {
-        sort_direction = -1;
+        sortDirection = -1;
       }
 
       // Get all the rows of the table.
@@ -680,7 +680,7 @@ define(
 
       // Actually sort the rows.
       rows.sort(function (row1, row2) {
-        return sort_direction * column.compareSortKeys(row1.sortKey, row2.sortKey);
+        return sortDirection * column.compareSortKeys(row1.sortKey, row2.sortKey);
       });
       OverviewTable.benchmark('Sorted by one column');
 
@@ -701,12 +701,12 @@ define(
     OverviewTable.prototype.sortMultiColumn = function (sortingInfo) {
       var dir;
       var i, j;
-      var sort_func = '';
+      var sortFunc = '';
       var rows;
       var cell;
-      var column_handler;
+      var columnHandler;
       var tbody;
-      var multi_cmp = null;
+      var multiCmp = null;
 
       // Get all the rows of the table.
       rows = this.$myTable.children('tbody').children('tr').get();
@@ -714,38 +714,38 @@ define(
       for (i = 0; i < rows.length; i = i + 1) {
         rows[i].sortKey = [];
         for (j = 0; j < sortingInfo.length; j = j + 1) {
-          column_handler = this.myColumnHandlers[sortingInfo[j].column_index];
+          columnHandler = this.myColumnHandlers[sortingInfo[j].column_index];
 
           // Pull out the sort keys of the table cells.
           cell = rows[i].cells[sortingInfo[j].column_index];
-          rows[i].sortKey[j] = column_handler.getSortKey(cell);
+          rows[i].sortKey[j] = columnHandler.getSortKey(cell);
         }
       }
       OverviewTable.benchmark('Extracting sort keys');
 
-      sort_func += "multi_cmp = function (row1, row2) {\n";
-      sort_func += "  var cmp;\n";
+      sortFunc += 'multiCmp = function (row1, row2) {\n';
+      sortFunc += '  var cmp;\n';
       for (i = 0; i < sortingInfo.length; i = i + 1) {
         dir = 1;
         if (sortingInfo[i].sort_direction === 'desc') {
           dir = -1;
         }
-        sort_func += "  cmp = this1.myColumnHandlers[" +
+        sortFunc += '  cmp = this1.myColumnHandlers[' +
           sortingInfo[i].column_index +
-          "].compareSortKeys(row1.sortKey[" +
-          i + "], row2.sortKey[" +
-          i + "]);\n";
-        sort_func += "  if (cmp !== 0) {\n";
-        sort_func += "    return cmp * " + dir + ";\n";
-        sort_func += "  }\n";
+          '].compareSortKeys(row1.sortKey[' +
+          i + '], row2.sortKey[' +
+          i + ']);\n';
+        sortFunc += '  if (cmp !== 0) {\n';
+        sortFunc += '    return cmp * ' + dir + ";\n";
+        sortFunc += '  }\n';
       }
-      sort_func += "  return 0;\n";
-      sort_func += "};\n";
-      eval(sort_func);
+      sortFunc += '  return 0;\n';
+      sortFunc += '};\n';
+      eval(sortFunc);
       OverviewTable.benchmark('Prepare multi sort function');
 
       // Actually sort the rows.
-      rows.sort(multi_cmp);
+      rows.sort(multiCmp);
       OverviewTable.benchmark('Sorted by ' + sortingInfo.length + ' columns');
 
       // Reappend the rows to the table body.
@@ -775,7 +775,7 @@ define(
 
       // Create a list of effective filters.
       count = 0;
-      for (i = 0; i < this.myColumnHandlers.length; i = i + 1) {
+      for (i = 0; i < this.myColumnHandlers.length; i += 1) {
         if (this.myColumnHandlers[i] && this.myColumnHandlers[i].startFilter()) {
           filters[i] = this.myColumnHandlers[i];
           count += 1;
@@ -861,7 +861,7 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     OverviewTable.log = function (s) {
-      if (console !== "undefined" && console.debug !== "undefined") {
+      if (typeof console !== "undefined" && typeof console.debug !== "undefined") {
         console.log(s);
       } else {
         alert(s);
