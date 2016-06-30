@@ -47,8 +47,8 @@ define(
       var $header;
       var x;
       var width_header;
-      var width_col1;
-      var width_col2;
+      var width_col1 = 0;
+      var width_col2 = 0;
       var diff;
 
       // Install event handler for click on sort icon.

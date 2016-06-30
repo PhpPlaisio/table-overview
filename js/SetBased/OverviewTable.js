@@ -75,6 +75,7 @@ define(
         that.myColumnHandlers[column_index] = null;
 
         attr = $(col).attr('class');
+        column_type = 'none';
         if (attr) {
           classes = attr.split(' ');
           for (i = 0; i < classes.length; i = i + 1) {
@@ -87,8 +88,6 @@ define(
               break;
             }
           }
-        } else {
-          column_type = 'none';
         }
 
         that.myColumnHandlers[column_index] = new OverviewTable.ourColumnTypeHandlers[column_type]();
@@ -339,10 +338,11 @@ define(
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Get and return sort direction for current column.
+     *
      * @param $header
      * @param infix
-     * @returns {string}
      *
+     * @returns {string}
      */
     OverviewTable.prototype.getSortDirection = function ($header, infix) {
       if ($header.hasClass('sorted' + infix + 'desc')) {
@@ -352,6 +352,7 @@ define(
       if ($header.hasClass('sorted' + infix + 'asc')) {
         return 'asc';
       }
+
       return '';
     };
 
@@ -422,7 +423,6 @@ define(
       var columns_info = [];
       var span;
       var sort_order;
-      var sort_direction;
       var that = this;
       var colspan;
       var dual;
@@ -469,8 +469,8 @@ define(
             if (sort_order !== -1) {
               columns_info[sort_order - 1] = {
                 column_index: column_index,
-                sort_order: that.getSortDirection($th, '-2-'),
-                sort_direction: sort_direction,
+                sort_order: sort_order,
+                sort_direction: that.getSortDirection($th, '-2-'),
                 infix: '-2-',
                 colspan: 2,
                 offset: 1
@@ -490,6 +490,7 @@ define(
      * @param event
      * @param $header
      * @param column_index
+     *
      * @returns {{}}
      */
     OverviewTable.prototype.getColumnSortInfo = function (event, $header, column_index) {
@@ -579,7 +580,7 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     /**
-     * Remove all classes concerning sorting from the column headers.
+     * Removes all classes concerning sorting from the column headers.
      */
     OverviewTable.prototype.cleanSortClasses = function () {
       var that = this;
@@ -601,7 +602,7 @@ define(
 
     //------------------------------------------------------------------------------------------------------------------
     /**
-     * Add classes concerning sorting to the column headers.
+     * Adds classes concerning sorting to the column headers.
      *
      * @param sort_info
      */
@@ -699,16 +700,13 @@ define(
      */
     OverviewTable.prototype.sortMultiColumn = function (sorting_info) {
       var dir;
-      var cmp = null;
       var i, j;
       var sort_func = '';
       var rows;
       var cell;
       var column_handler;
       var tbody;
-      var this1 = this;
       var multi_cmp = null;
-
 
       // Get all the rows of the table.
       rows = this.$myTable.children('tbody').children('tr').get();
