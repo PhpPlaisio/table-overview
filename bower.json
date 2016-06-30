@@ -5,7 +5,7 @@
     "Set Based IT Consultancy <info@setbased.nl>"
   ],
   "description": "Sorting and filtering in overview tables",
-  "main": "js/SetBased/OverviewTablePackage.js",
+  "main": "src/OverviewTablePackage.js",
   "moduleType": [
     "amd"
   ],
