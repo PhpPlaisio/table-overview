@@ -98,6 +98,20 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
   }
 
   //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Test with a none numeric value with HTML entities.
+   */
+  public function testHtmlEntitiesFormat()
+  {
+    // Actually, NumericTableColumn should not be used with a format specifier like this.
+    $column = new NumericTableColumn('header', 'number', "&<'\"%s\"'>&");
+    $row    = ['number' => 1234];
+    $ret    = $column->getHtmlCell($row);
+
+    $this->assertSame('<td class="number">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------------------------------------------
