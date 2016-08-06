@@ -50,15 +50,20 @@ class NumericTableColumn extends TableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value!==false && $value!==null && $value!=='')
-    {
-      return '<td class="number">'.Html::txt2Html(sprintf($this->format, $value)).'</td>';
-    }
-    else
+    if ($value==false || $value===null || $value==='')
     {
       // The value is empty.
       return '<td></td>';
     }
+
+    if (!is_numeric($value))
+    {
+      // Value is not numeric. Just show the value as is.
+      return '<td>'.Html::txt2Html($value).'</td>';
+    }
+
+    // Value is a number. Use the format specifier for showing the value.
+    return '<td class="number">'.Html::txt2Html(sprintf($this->format, $value)).'</td>';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
