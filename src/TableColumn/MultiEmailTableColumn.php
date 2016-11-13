@@ -68,7 +68,7 @@ class MultiEmailTableColumn extends TableColumn
       foreach ($addresses as $i => $address)
       {
         if ($i) $html .= $this->htmlSeparator;
-        $html .= Html::generateElement('a', ['mailto' => $address], $address);
+        $html .= Html::generateElement('a', ['href' => 'mailto:'.$address], $address);
       }
       $html .= '</td>';
 
