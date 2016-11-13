@@ -245,7 +245,7 @@ class OverviewTable extends HtmlElement
         if ($mode==3)
         {
           if ($colspan==1) $colspan = null;
-          $ret .= '<th'.Html::generateAttribute('colspan', $colspan).'>'.Html::txt2Html($this->title).'</th>';
+          $ret .= Html::generateElement('th', ['colspan' => $colspan], $this->title);
           $mode = 4;
         }
 
@@ -258,7 +258,7 @@ class OverviewTable extends HtmlElement
       if ($mode==2)
       {
         if ($colspan==1) $colspan = null;
-        $ret .= '<th'.Html::generateAttribute('colspan', $colspan).'>'.Html::txt2Html($this->title).'</th>';
+        $ret .= Html::generateElement('th', ['colspan' => $colspan], $this->title);
       }
 
       $ret .= '</tr>';

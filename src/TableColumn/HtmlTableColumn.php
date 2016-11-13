@@ -21,7 +21,7 @@ class HtmlTableColumn extends TableColumn
    * Object constructor.
    *
    * @param string|int|null $headerText The header text of this table column.
-   * @param string          $fieldName  The field name of the data row used for generating this table column.
+   * @param string          $fieldName  The key to be used for getting the value from the data row.
    */
   public function __construct($headerText, $fieldName)
   {

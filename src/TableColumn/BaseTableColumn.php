@@ -16,7 +16,7 @@ abstract class BaseTableColumn
   /**
    * The type of the data that this table column holds.
    *
-   * @var string
+   * @var string|null
    */
   protected $dataType;
 
@@ -86,17 +86,7 @@ abstract class BaseTableColumn
    */
   public function getHtmlColumn()
   {
-    // Add class indicating the type of data of this column.
-    if ($this->dataType)
-    {
-      $class = 'data-type-'.$this->dataType;
-    }
-    else
-    {
-      $class = null;
-    }
-
-    return '<col'.Html::generateAttribute('class', $class).'/>';
+    return Html::generateVoidElement('col', ['data-type' => $this->dataType]);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -159,7 +149,7 @@ abstract class BaseTableColumn
       }
     }
 
-    return '<th'.Html::generateAttribute('class', $class).'>'.Html::txt2Html($header_text).'</th>';
+    return Html::generateElement('th', ['class' => $class], $header_text);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

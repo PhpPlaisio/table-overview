@@ -37,7 +37,7 @@ class MultiEmailTableColumn extends TableColumn
    * Object constructor.
    *
    * @param string|int|null $headerText     The header text of this table column.
-   * @param string          $fieldName      The field name of the data rows used for generating this table column.
+   * @param string          $fieldName      The key to be used for getting the value from the data row.
    * @param string          $dataSeparator  The character for separating multiple email addresses in the input data.
    * @param string          $htmlSeparator  The HTML snippet for separating multiple email addresses in the generated
    *                                        HTML code.
@@ -68,13 +68,7 @@ class MultiEmailTableColumn extends TableColumn
       foreach ($addresses as $i => $address)
       {
         if ($i) $html .= $this->htmlSeparator;
-        $address = Html::txt2Html($address);
-
-        $html .= '<a href="mailto:';
-        $html .= $address;
-        $html .= '">';
-        $html .= $address;
-        $html .= '</a>';
+        $html .= Html::generateElement('a', ['mailto' => $address], $address);
       }
       $html .= '</td>';
 

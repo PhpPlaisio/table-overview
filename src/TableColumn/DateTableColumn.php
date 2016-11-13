@@ -45,7 +45,7 @@ class DateTableColumn extends TableColumn
    * Object constructor.
    *
    * @param string|int|null $headerText The header text of this table column.
-   * @param string          $fieldName  The field name of the data row used for generating this table column.
+   * @param string          $fieldName  The key to be used for getting the value from the data row.
    * @param string|null     $format     The format specifier for formatting the content of this table column. If null
    *                                    the default format is used.
    */
@@ -71,13 +71,9 @@ class DateTableColumn extends TableColumn
 
       if ($date)
       {
-        $cell = '<td class="date" data-value="';
-        $cell .= $date->format('Y-m-d');
-        $cell .= '">';
-        $cell .= Html::txt2Html($date->format($this->format));
-        $cell .= '</td>';
-
-        return $cell;
+        return Html::generateElement('td',
+                                     ['class' => 'date', 'data-value' => $date->format('Y-m-d')],
+                                     $date->format($this->format));
       }
       else
       {

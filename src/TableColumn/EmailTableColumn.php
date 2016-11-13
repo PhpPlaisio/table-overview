@@ -23,7 +23,7 @@ class EmailTableColumn extends TableColumn
    * Object constructor.
    *
    * @param string|int|null $headerText The header text of this table column.
-   * @param string          $fieldName  The field name of the data rows used for generating this table column.
+   * @param string          $fieldName  The key to be used for getting the value from the data row.
    */
   public function __construct($headerText, $fieldName)
   {
@@ -42,14 +42,9 @@ class EmailTableColumn extends TableColumn
 
     if ($value!==false && $value!==null && $value!=='')
     {
-      // The value holds an email address.
-      $address = Html::txt2Html($value);
-
-      $html = '<td class="email"><a href="mailto:';
-      $html .= $address;
-      $html .= '">';
-      $html .= $address;
-      $html .= '</a></td>';
+      $html = '<td class="email">';
+      $html .= Html::generateElement('a', ['mailto' => $value], $value);
+      $html .= '</td>';
 
       return $html;
     }

@@ -37,7 +37,7 @@ class DateTimeTableColumn extends TableColumn
    * Object constructor.
    *
    * @param string|int|null $headerText The header text of this table column.
-   * @param string          $fieldName  The field name of the data row used for generating this table column.
+   * @param string          $fieldName  The key to be used for getting the value from the data row.
    * @param string|null     $format     The format specifier for formatting the content of this table column. If null
    *                                    the default format is used.
    */
@@ -63,13 +63,9 @@ class DateTimeTableColumn extends TableColumn
 
       if ($datetime)
       {
-        $cell = '<td class="datetime" data-value="';
-        $cell .= $datetime->format('Y-m-d H:i:s');
-        $cell .= '">';
-        $cell .= Html::txt2Html($datetime->format($this->format));
-        $cell .= '</td>';
-
-        return $cell;
+        return Html::generateElement('td',
+                                     ['class' => 'datetime', 'data-value' => $datetime->format('Y-m-d H:i:s')],
+                                     $datetime->format($this->format));
       }
       else
       {

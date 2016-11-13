@@ -60,27 +60,10 @@ abstract class DualTableColumn extends TableColumn
    */
   public function getHtmlColumn()
   {
-    // Add class indicating the type of data of the first column.
-    if ($this->dataType)
-    {
-      $class1 = 'data-type-'.$this->dataType;
-    }
-    else
-    {
-      $class1 = null;
-    }
+    $html = Html::generateVoidElement('col', ['data-type' => $this->dataType]);
+    $html .= Html::generateVoidElement('col', ['data-type' => $this->dataType2]);
 
-    // Add class indicating the type of data of the second column.
-    if ($this->dataType2)
-    {
-      $class2 = 'data-type-'.$this->dataType2;
-    }
-    else
-    {
-      $class2 = null;
-    }
-
-    return '<col'.Html::generateAttribute('class', $class1).'/><col'.Html::generateAttribute('class', $class2).'/>';
+    return $html;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
