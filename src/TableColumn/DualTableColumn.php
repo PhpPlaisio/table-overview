@@ -30,7 +30,7 @@ abstract class DualTableColumn extends TableColumn
    * If set the data in the table of the second column is sorted or must be sorted by this column (and possible by other
    * columns) and its value determines the order in which the data of the table is sorted.
    *
-   * @var int
+   * @var int|null
    */
   protected $sortOrder2;
 
@@ -88,49 +88,42 @@ abstract class DualTableColumn extends TableColumn
    */
   public function getHtmlColumnHeader()
   {
-    $class = '';
+    $classes = [];
+    $attributes = [];
 
     // Add class indicating this column can be used for sorting.
     if ($this->sortable)
     {
-      if ($class) $class .= ' ';
-      $class .= 'sort-1';
-    }
+      $classes[] = 'sort-1';
 
-    // Add class indicating the sort order of this column.
-    if ($this->sortable && $this->sortDirection)
-    {
-      if ($class) $class .= ' ';
+      // Add attributes indicating the sort order of this column and direction.
+      if ($this->sortOrder!==null)
+      {
+        $attributes['data-sort-order-1'] = $this->sortOrder;
 
-      // Add class indicating this column can be used for sorting.
-      $class .= 'sort-order-1-';
-      $class .= $this->sortOrder;
-
-      $class .= ($this->sortDirection=='desc') ? ' sorted-1-desc' : ' sorted-1-asc';
+        $classes[] = ($this->sortDirection=='desc') ? 'sorted-1-desc' : 'sorted-1-asc';
+      }
     }
 
     // Add class indicating this column can be used for sorting.
     if ($this->sortable2)
     {
-      if ($class) $class .= ' ';
-      $class .= 'sort-2';
+      $classes[] = 'sort-2';
 
-      // Add class indicating the sort order of this column.
-      if ($this->sortOrder2)
+      // Add attributes indicating the sort order of this column and direction.
+      if ($this->sortOrder2!==null)
       {
-        if ($class) $class .= ' ';
+        $attributes['data-sort-order-2'] = $this->sortOrder2;
 
-        // Add class indicating this column can be used for sorting.
-        $class .= 'sort-order-2-';
-        $class .= $this->sortOrder2;
-
-        $class .= ($this->sortDirection2=='desc') ? ' sorted-2-desc' : ' sorted-2-asc';
+        $classes[] = ($this->sortDirection2=='desc') ? 'sorted-2-desc' : 'sorted-2-asc';
       }
     }
 
     $header_text = (is_int($this->headerText)) ? Babel::getWord($this->headerText) : $this->headerText;
 
-    return '<th colspan="2" class="'.$class.'"><span>&nbsp;</span>'.Html::txt2Html($header_text).'</th>';
+    $attributes['class'] = implode(' ', $classes);
+
+    return Html::generateElement('th', $attributes, $header_text);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

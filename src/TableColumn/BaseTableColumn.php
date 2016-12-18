@@ -45,7 +45,7 @@ abstract class BaseTableColumn
    * If set the data in the table of this column is sorted or must be sorted by this column (and possible by other
    * columns) and its value determines the order in which the data of the table is sorted.
    *
-   * @var int
+   * @var int|null
    */
   protected $sortOrder;
 
@@ -118,10 +118,13 @@ abstract class BaseTableColumn
    */
   public function getHtmlColumnHeader()
   {
+    $classes    = [];
+    $attributes = [];
+
     if ($this->headerText===null)
     {
       $header_text = '';
-      $class       = 'empty';
+      $classes[]   = 'empty';
     }
     else
     {
@@ -129,27 +132,21 @@ abstract class BaseTableColumn
       if ($this->sortable)
       {
         // Add class indicating this column can be used for sorting.
-        $class = 'sort';
+        $classes[] = 'sort';
 
-        // Add class indicating the sort order of this column.
-        if ($this->sortOrder)
+        // Add attributes indicating the sort order of this column and direction.
+        if ($this->sortOrder!==null)
         {
-          if ($class) $class .= ' ';
+          $attributes['data-sort-order'] = $this->sortOrder;
 
-          // Add class indicating this column can be used for sorting.
-          $class .= 'sort-order-';
-          $class .= $this->sortOrder;
-
-          $class .= ($this->sortDirection=='desc') ? ' sorted-desc' : ' sorted-asc';
+          $classes[] = ($this->sortDirection=='desc') ? ' sorted-desc' : ' sorted-asc';
         }
-      }
-      else
-      {
-        $class = null;
       }
     }
 
-    return Html::generateElement('th', ['class' => $class], $header_text);
+    $attributes['class'] = implode(' ', $classes);
+
+    return Html::generateElement('th', $attributes, $header_text);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
