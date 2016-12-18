@@ -118,8 +118,8 @@ abstract class BaseTableColumn
    */
   public function getHtmlColumnHeader()
   {
-    $classes    = [];
     $attributes = [];
+    $classes    = [];
 
     if ($this->headerText===null)
     {

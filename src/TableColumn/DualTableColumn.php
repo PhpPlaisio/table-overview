@@ -88,8 +88,8 @@ abstract class DualTableColumn extends TableColumn
    */
   public function getHtmlColumnHeader()
   {
-    $classes = [];
     $attributes = [];
+    $classes    = [];
 
     // Add class indicating this column can be used for sorting.
     if ($this->sortable)
@@ -121,7 +121,8 @@ abstract class DualTableColumn extends TableColumn
 
     $header_text = (is_int($this->headerText)) ? Babel::getWord($this->headerText) : $this->headerText;
 
-    $attributes['class'] = implode(' ', $classes);
+    $attributes['class']   = implode(' ', $classes);
+    $attributes['colspan'] = 2;
 
     return Html::generateElement('th', $attributes, $header_text);
   }
