@@ -1,4 +1,3 @@
-/*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global define */
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -33,7 +32,7 @@ define(
      * @returns {boolean}
      */
     Text.prototype.startFilter = function () {
-      this.filterValue = OverviewTable.toLowerCaseNoAccents(this.$input.val());
+      this.filterValue = OverviewTable.toLowerCaseNoDiacritics(this.$input.val());
 
       // Note: this.filterValue might be undefined in case there is no input:text box for filtering in the column 
       // header.
@@ -91,7 +90,7 @@ define(
      * @returns {string}
      */
     Text.prototype.extractForFilter = function (tableCell) {
-      return OverviewTable.toLowerCaseNoAccents($(tableCell).text());
+      return OverviewTable.toLowerCaseNoDiacritics($(tableCell).text());
     };
 
     //------------------------------------------------------------------------------------------------------------------
@@ -103,15 +102,15 @@ define(
      * @returns {string}
      */
     Text.prototype.getSortKey = function (tableCell) {
-      return OverviewTable.toLowerCaseNoAccents($(tableCell).text());
+      return OverviewTable.toLowerCaseNoDiacritics($(tableCell).text());
     };
 
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Compares two values of the column of this column type handler.
      *
-     * @param {string} value1
-     * @param {string} value2
+     * @param {string} value1 The first value.
+     * @param {string} value2 The second value.
      *
      * @returns {number}
      */

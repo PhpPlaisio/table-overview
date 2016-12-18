@@ -1,4 +1,3 @@
-/*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global define */
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -32,7 +31,7 @@ define(
      * @returns {string}
      */
     DateTime.prototype.getSortKey = function (tableCell) {
-      return $(tableCell).data('value');
+      return $(tableCell).attr('data-value');
     };
 
     //------------------------------------------------------------------------------------------------------------------

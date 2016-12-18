@@ -1,4 +1,3 @@
-/*jslint browser: true, vars: true, indent: 2, maxlen: 120 */
 /*global define */
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -35,7 +34,7 @@ define(
       var regexp;
       var parts;
 
-      regexp = /[\d\.,\-\+]*/;
+      regexp = /[\d.,\-+]*/;
       parts = regexp.exec($(tableCell).text());
 
       // todo Better internationalisation.

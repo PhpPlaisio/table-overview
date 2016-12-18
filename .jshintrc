@@ -1,0 +1,18 @@
+{
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "esversion": 5,
+  "forin": true,
+  "freeze": true,
+  "futurehostile": true,
+  "nocomma": true,
+  "nonbsp": true,
+  "nonew": true,
+  "undef": true,
+  "unused": true,
+
+  "browser": true,
+  "devel": true,
+  "jquery": true
+}
