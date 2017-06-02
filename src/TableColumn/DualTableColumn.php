@@ -124,7 +124,7 @@ abstract class DualTableColumn extends TableColumn
     $attributes['class']   = implode(' ', $classes);
     $attributes['colspan'] = 2;
 
-    return Html::generateElement('th', $attributes, $header_text);
+    return Html::generateElement('th', $attributes, '<span>&nbsp;</span>'.Html::txt2Html($header_text), true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
