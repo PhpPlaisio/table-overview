@@ -16,7 +16,7 @@ abstract class BaseTableColumn
   /**
    * The attributes of the col element of this table column.
    *
-   * @var array
+   * @var ColElement
    */
   protected $col;
 

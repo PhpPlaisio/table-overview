@@ -15,7 +15,7 @@ abstract class DualTableColumn extends TableColumn
   /**
    * The attributes of the second col element of this table column.
    *
-   * @var array
+   * @var ColElement
    */
   protected $col2;
 
