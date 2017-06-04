@@ -51,6 +51,18 @@ class NumericTableColumnTest extends TestCase
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Test data type.
+   */
+  public function testGetDataType()
+  {
+    $column   = new NumericTableColumn('header', 'number');
+    $dataType = $column->getDataType();
+
+    self::assertEquals('numeric', $dataType);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Test with a none numeric value with HTML entities.
    */
   public function testHtmlEntitiesFormat()

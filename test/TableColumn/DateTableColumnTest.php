@@ -38,6 +38,18 @@ class DateTableColumnTest extends TestCase
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Test data type.
+   */
+  public function testGetDataType()
+  {
+    $column   = new DateTableColumn('header', 'date');
+    $dataType = $column->getDataType();
+
+    self::assertEquals('date', $dataType);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Test with an invalid date.
    */
   public function testInvalidDate1()

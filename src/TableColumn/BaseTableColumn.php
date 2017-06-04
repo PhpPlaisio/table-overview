@@ -57,10 +57,11 @@ abstract class BaseTableColumn
   protected $sortable = true;
 
   //--------------------------------------------------------------------------------------------------------------------
+
   /**
-   * BaseTableColumn constructor.
+   * Object  constructor.
    *
-   * @param $dataType
+   * @param string $dataType The data type of this table column.
    */
   public function __construct($dataType)
   {
@@ -77,6 +78,17 @@ abstract class BaseTableColumn
   public function getColSpan()
   {
     return 1;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the data type of this table column.
+   *
+   * @return string
+   */
+  public function getDataType()
+  {
+    return $this->col->getAttribute('data-type');
   }
 
   //--------------------------------------------------------------------------------------------------------------------

@@ -38,6 +38,18 @@ class EmailTableColumnTest extends TestCase
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Test data type.
+   */
+  public function testGetDataType()
+  {
+    $column   = new EmailTableColumn('header', 'mail');
+    $dataType = $column->getDataType();
+
+    self::assertEquals('email', $dataType);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Test with a valid email address.
    */
   public function testValidAddress1()

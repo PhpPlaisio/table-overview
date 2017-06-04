@@ -38,6 +38,18 @@ class MultiEmailTableColumnTest extends TestCase
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Test data type.
+   */
+  public function testGetDataType()
+  {
+    $column   = new MultiEmailTableColumn('header', 'mail');
+    $dataType = $column->getDataType();
+
+    self::assertEquals('email', $dataType);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Test with a valid email addresses.
    */
   public function testValidAddress1()
@@ -47,7 +59,7 @@ class MultiEmailTableColumnTest extends TestCase
     $ret    = $column->getHtmlCell($row);
 
     self::assertEquals('<td class="email"><a href="mailto:info@setbased.nl">info@setbased.nl</a><br/>'.
-                        '<a href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a></td>', $ret);
+                       '<a href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
