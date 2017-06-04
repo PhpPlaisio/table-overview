@@ -1,9 +1,15 @@
 <?php
 //----------------------------------------------------------------------------------------------------------------------
+namespace SetBased\Abc\Table\Test\TableColumn;
+
+use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\EmailTableColumn;
 
 //----------------------------------------------------------------------------------------------------------------------
-class EmailTableColumnTest extends PHPUnit_Framework_TestCase
+/**
+ * Test cases for class EmailTableColumn.
+ */
+class EmailTableColumnTest extends TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -14,7 +20,7 @@ class EmailTableColumnTest extends PHPUnit_Framework_TestCase
     $column = new EmailTableColumn('header', 'date');
     $col    = $column->getHtmlCol();
 
-    $this->assertEquals('<col data-type="email"/>', $col);
+    self::assertEquals('<col data-type="email"/>', $col);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -27,7 +33,7 @@ class EmailTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['mail' => ''];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td></td>', $ret);
+    self::assertEquals('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -40,7 +46,7 @@ class EmailTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['mail' => 'info@setbased.nl'];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="email"><a href="mailto:info@setbased.nl">info@setbased.nl</a></td>', $ret);
+    self::assertEquals('<td class="email"><a href="mailto:info@setbased.nl">info@setbased.nl</a></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

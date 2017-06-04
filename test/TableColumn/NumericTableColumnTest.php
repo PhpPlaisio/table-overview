@@ -1,9 +1,15 @@
 <?php
 //----------------------------------------------------------------------------------------------------------------------
+namespace SetBased\Abc\Table\Test\TableColumn;
+
+use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\NumericTableColumn;
 
 //----------------------------------------------------------------------------------------------------------------------
-class NumericTableColumnTest extends PHPUnit_Framework_TestCase
+/**
+ * Test cases for class NumericTableColumn.
+ */
+class NumericTableColumnTest extends TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -14,7 +20,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $column = new NumericTableColumn('header', 'number');
     $col    = $column->getHtmlCol();
 
-    $this->assertEquals('<col data-type="numeric"/>', $col);
+    self::assertEquals('<col data-type="numeric"/>', $col);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -27,7 +33,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['number' => ''];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertSame('<td></td>', $ret);
+    self::assertSame('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -40,7 +46,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['number' => null];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertSame('<td></td>', $ret);
+    self::assertSame('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -54,7 +60,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['number' => 1234];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertSame('<td class="number">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
+    self::assertSame('<td class="number">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -67,7 +73,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['number' => 'qwerty'];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertSame('<td>qwerty</td>', $ret);
+    self::assertSame('<td>qwerty</td>', $ret);
   }
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -79,7 +85,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['number' => "<'\">& "];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertSame('<td>&lt;&#039;&quot;&gt;&amp; </td>', $ret);
+    self::assertSame('<td>&lt;&#039;&quot;&gt;&amp; </td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -92,7 +98,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['number' => 123];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertSame('<td class="number">123</td>', $ret);
+    self::assertSame('<td class="number">123</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -105,7 +111,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['number' => M_PI];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertSame('<td class="number">3.14</td>', $ret);
+    self::assertSame('<td class="number">3.14</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -119,7 +125,7 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $ret    = $column->getHtmlCell($row);
 
     // sprintf does not do any rounding!
-    $this->assertSame('<td class="number">1.00</td>', $ret);
+    self::assertSame('<td class="number">1.00</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

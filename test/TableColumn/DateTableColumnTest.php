@@ -1,9 +1,15 @@
 <?php
 //----------------------------------------------------------------------------------------------------------------------
+namespace SetBased\Abc\Table\Test\TableColumn;
+
+use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\DateTableColumn;
 
 //----------------------------------------------------------------------------------------------------------------------
-class DateTableColumnTest extends PHPUnit_Framework_TestCase
+/**
+ * Test cases for class DateTableColumn.
+ */
+class DateTableColumnTest extends TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -14,7 +20,7 @@ class DateTableColumnTest extends PHPUnit_Framework_TestCase
     $column = new DateTableColumn('header', 'date');
     $col    = $column->getHtmlCol();
 
-    $this->assertEquals('<col data-type="date"/>', $col);
+    self::assertEquals('<col data-type="date"/>', $col);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -27,7 +33,7 @@ class DateTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => ''];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="date"></td>', $ret);
+    self::assertEquals('<td class="date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -40,7 +46,7 @@ class DateTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => 'not a date'];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td>not a date</td>', $ret);
+    self::assertEquals('<td>not a date</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -53,7 +59,7 @@ class DateTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => '9999-12-31'];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="date"></td>', $ret);
+    self::assertEquals('<td class="date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -68,7 +74,7 @@ class DateTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => '8888-88-88'];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="date"></td>', $ret);
+    self::assertEquals('<td class="date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -81,7 +87,7 @@ class DateTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => '2004-07-13'];  // PHP 5.0.0 release date.
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="date" data-value="2004-07-13">Tuesday 13th of July 2004</td>', $ret);
+    self::assertEquals('<td class="date" data-value="2004-07-13">Tuesday 13th of July 2004</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

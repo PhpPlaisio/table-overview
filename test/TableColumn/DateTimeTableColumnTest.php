@@ -1,9 +1,15 @@
 <?php
 //----------------------------------------------------------------------------------------------------------------------
+namespace SetBased\Abc\Table\Test\TableColumn;
+
+use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\DateTimeTableColumn;
 
 //----------------------------------------------------------------------------------------------------------------------
-class DateTimeTableColumnTest extends PHPUnit_Framework_TestCase
+/**
+ * Test cases for class DateTimeTableColumn.
+ */
+class DateTimeTableColumnTest extends TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -15,7 +21,7 @@ class DateTimeTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => '2004-07-13 12:13:14'];  // PHP 5.0.0 release date and some random time.
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="datetime" data-value="2004-07-13 12:13:14">Tuesday 13th of July 2004 12:13:14 PM</td>', $ret);
+    self::assertEquals('<td class="datetime" data-value="2004-07-13 12:13:14">Tuesday 13th of July 2004 12:13:14 PM</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -28,7 +34,7 @@ class DateTimeTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => 'not a date and time'];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td>not a date and time</td>', $ret);
+    self::assertEquals('<td>not a date and time</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -41,7 +47,7 @@ class DateTimeTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['date' => ''];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="datetime"></td>', $ret);
+    self::assertEquals('<td class="datetime"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -53,7 +59,7 @@ class DateTimeTableColumnTest extends PHPUnit_Framework_TestCase
     $column = new DateTimeTableColumn('header', 'date');
     $col    = $column->getHtmlCol();
 
-    $this->assertEquals('<col data-type="datetime"/>', $col);
+    self::assertEquals('<col data-type="datetime"/>', $col);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

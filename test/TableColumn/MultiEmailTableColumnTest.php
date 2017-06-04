@@ -1,9 +1,15 @@
 <?php
 //----------------------------------------------------------------------------------------------------------------------
+namespace SetBased\Abc\Table\Test\TableColumn;
+
+use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\MultiEmailTableColumn;
 
 //----------------------------------------------------------------------------------------------------------------------
-class MultiEmailTableColumnTest extends PHPUnit_Framework_TestCase
+/**
+ * Test cases for class MultiEmailTableColumn.
+ */
+class MultiEmailTableColumnTest extends TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -14,7 +20,7 @@ class MultiEmailTableColumnTest extends PHPUnit_Framework_TestCase
     $column = new MultiEmailTableColumn('header', 'mail');
     $col    = $column->getHtmlCol();
 
-    $this->assertEquals('<col data-type="email"/>', $col);
+    self::assertEquals('<col data-type="email"/>', $col);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -27,7 +33,7 @@ class MultiEmailTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['mail' => ''];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td></td>', $ret);
+    self::assertEquals('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -40,7 +46,7 @@ class MultiEmailTableColumnTest extends PHPUnit_Framework_TestCase
     $row    = ['mail' => 'info@setbased.nl,webmaster@setbased.nl'];
     $ret    = $column->getHtmlCell($row);
 
-    $this->assertEquals('<td class="email"><a href="mailto:info@setbased.nl">info@setbased.nl</a><br/>'.
+    self::assertEquals('<td class="email"><a href="mailto:info@setbased.nl">info@setbased.nl</a><br/>'.
                         '<a href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a></td>', $ret);
   }
 
