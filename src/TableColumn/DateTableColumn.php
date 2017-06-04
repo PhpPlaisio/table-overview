@@ -51,7 +51,8 @@ class DateTableColumn extends TableColumn
    */
   public function __construct($headerText, $fieldName, $format = null)
   {
-    $this->dataType   = 'date';
+    parent::__construct('date');
+
     $this->headerText = $headerText;
     $this->fieldName  = $fieldName;
     $this->format     = ($format) ? $format : self::$defaultFormat;

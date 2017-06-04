@@ -45,6 +45,18 @@ class DateTimeTableColumnTest extends PHPUnit_Framework_TestCase
   }
 
   //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Test the col element.
+   */
+  public function testColElement()
+  {
+    $column = new DateTimeTableColumn('header', 'date');
+    $col    = $column->getHtmlCol();
+
+    $this->assertEquals('<col data-type="datetime"/>', $col);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------------------------------------------

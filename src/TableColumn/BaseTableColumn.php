@@ -14,11 +14,11 @@ abstract class BaseTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * The type of the data that this table column holds.
+   * The attributes of the col element of this table column.
    *
-   * @var string|null
+   * @var array
    */
-  protected $dataType;
+  protected $col;
 
   /**
    * The header of this column. We distinguish 3 types:
@@ -58,6 +58,18 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * BaseTableColumn constructor.
+   *
+   * @param $dataType
+   */
+  public function __construct($dataType)
+  {
+    $this->col = new ColElement();
+    $this->col->setAttrData('type', $dataType);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Returns the number of columns spanned by this object.
    *
    * @return int
@@ -69,24 +81,13 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns the data type of this table column.
+   * Returns HTML code for the col element of this table column.
    *
    * @return string
    */
-  public function getDataType()
+  public function getHtmlCol()
   {
-    return $this->dataType;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns HTML code for col element for this table column.
-   *
-   * @return string
-   */
-  public function getHtmlColumn()
-  {
-    return Html::generateVoidElement('col', ['data-type' => $this->dataType]);
+    return $this->col->getHtmlCol();
   }
 
   //--------------------------------------------------------------------------------------------------------------------

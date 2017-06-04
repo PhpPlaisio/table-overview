@@ -27,7 +27,8 @@ class Ipv4TableColumn extends TableColumn
    */
   public function __construct($headerText, $fieldName)
   {
-    $this->dataType   = 'ipv4';
+    parent::__construct('ipv4');
+
     $this->headerText = $headerText;
     $this->fieldName  = $fieldName;
   }

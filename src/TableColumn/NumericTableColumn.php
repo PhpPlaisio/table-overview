@@ -36,7 +36,8 @@ class NumericTableColumn extends TableColumn
    */
   public function __construct($headerText, $fieldName, $format = '%d')
   {
-    $this->dataType   = 'numeric';
+    parent::__construct('numeric');
+
     $this->headerText = $headerText;
     $this->fieldName  = $fieldName;
     $this->format     = $format;

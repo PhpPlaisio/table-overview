@@ -27,7 +27,8 @@ class UuidTableColumn extends TableColumn
    */
   public function __construct($headerText, $fieldName)
   {
-    $this->dataType   = 'uuid';
+    parent::__construct('uuid');
+
     $this->headerText = $headerText;
     $this->fieldName  = $fieldName;
   }

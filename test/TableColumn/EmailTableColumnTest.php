@@ -7,6 +7,18 @@ class EmailTableColumnTest extends PHPUnit_Framework_TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Test the col element.
+   */
+  public function testColElement()
+  {
+    $column = new EmailTableColumn('header', 'date');
+    $col    = $column->getHtmlCol();
+
+    $this->assertEquals('<col data-type="email"/>', $col);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Test with an empty email address.
    */
   public function testEmptyAddress()

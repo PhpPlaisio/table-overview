@@ -13,11 +13,11 @@ abstract class DualTableColumn extends TableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * The type of the data that second column holds.
+   * The attributes of the second col element of this table column.
    *
-   * @var string
+   * @var array
    */
-  protected $dataType2;
+  protected $col2;
 
   /**
    * The sort direction of the data in the second column.
@@ -43,6 +43,21 @@ abstract class DualTableColumn extends TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Object constructor.
+   *
+   * @param string $dataType1 The data type of the first column.
+   * @param string $dataType2 The data type of the second column.
+   */
+  public function __construct($dataType1, $dataType2)
+  {
+    parent::__construct($dataType1);
+
+    $this->col2 = new ColElement();
+    $this->col2->setAttrData('type', $dataType2);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Returns the number of columns spanned, i.e. 2.
    *
    * @return int
@@ -54,16 +69,13 @@ abstract class DualTableColumn extends TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code for col element for this table columns.
+   * Returns HTML code for the col elements for this table columns.
    *
    * @return string
    */
-  public function getHtmlColumn()
+  public function getHtmlCol()
   {
-    $html = Html::generateVoidElement('col', ['data-type' => $this->dataType]);
-    $html .= Html::generateVoidElement('col', ['data-type' => $this->dataType2]);
-
-    return $html;
+    return parent::getHtmlCol().$this->col2->getHtmlCol();
   }
 
   //--------------------------------------------------------------------------------------------------------------------

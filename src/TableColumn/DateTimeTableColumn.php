@@ -43,7 +43,8 @@ class DateTimeTableColumn extends TableColumn
    */
   public function __construct($headerText, $fieldName, $format = null)
   {
-    $this->dataType   = 'datetime';
+    parent::__construct('datetime');
+
     $this->headerText = $headerText;
     $this->fieldName  = $fieldName;
     $this->format     = ($format) ? $format : self::$defaultFormat;

@@ -7,6 +7,18 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Test the col element.
+   */
+  public function testColElement()
+  {
+    $column = new NumericTableColumn('header', 'number');
+    $col    = $column->getHtmlCol();
+
+    $this->assertEquals('<col data-type="numeric"/>', $col);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Test with an empty value.
    */
   public function testEmptyValue01()
@@ -29,6 +41,45 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
     $ret    = $column->getHtmlCell($row);
 
     $this->assertSame('<td></td>', $ret);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Test with a none numeric value with HTML entities.
+   */
+  public function testHtmlEntitiesFormat()
+  {
+    // Actually, NumericTableColumn should not be used with a format specifier like this.
+    $column = new NumericTableColumn('header', 'number', "&<'\"%s\"'>&");
+    $row    = ['number' => 1234];
+    $ret    = $column->getHtmlCell($row);
+
+    $this->assertSame('<td class="number">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Test with a none numeric value.
+   */
+  public function testInvalidValue01()
+  {
+    $column = new NumericTableColumn('header', 'number', '%.2f');
+    $row    = ['number' => 'qwerty'];
+    $ret    = $column->getHtmlCell($row);
+
+    $this->assertSame('<td>qwerty</td>', $ret);
+  }
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Test with a none numeric value with HTML entities.
+   */
+  public function testInvalidValue02()
+  {
+    $column = new NumericTableColumn('header', 'number', '%.2f');
+    $row    = ['number' => "<'\">& "];
+    $ret    = $column->getHtmlCell($row);
+
+    $this->assertSame('<td>&lt;&#039;&quot;&gt;&amp; </td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -69,46 +120,6 @@ class NumericTableColumnTest extends PHPUnit_Framework_TestCase
 
     // sprintf does not do any rounding!
     $this->assertSame('<td class="number">1.00</td>', $ret);
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Test with a none numeric value.
-   */
-  public function testInvalidValue01()
-  {
-    $column = new NumericTableColumn('header', 'number', '%.2f');
-    $row    = ['number' => 'qwerty'];
-    $ret    = $column->getHtmlCell($row);
-
-    $this->assertSame('<td>qwerty</td>', $ret);
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Test with a none numeric value with HTML entities.
-   */
-  public function testInvalidValue02()
-  {
-    $column = new NumericTableColumn('header', 'number', '%.2f');
-    $row    = ['number' => "<'\">& "];
-    $ret    = $column->getHtmlCell($row);
-
-    $this->assertSame('<td>&lt;&#039;&quot;&gt;&amp; </td>', $ret);
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Test with a none numeric value with HTML entities.
-   */
-  public function testHtmlEntitiesFormat()
-  {
-    // Actually, NumericTableColumn should not be used with a format specifier like this.
-    $column = new NumericTableColumn('header', 'number', "&<'\"%s\"'>&");
-    $row    = ['number' => 1234];
-    $ret    = $column->getHtmlCell($row);
-
-    $this->assertSame('<td class="number">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

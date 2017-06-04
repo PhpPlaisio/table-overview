@@ -7,6 +7,18 @@ class DateTableColumnTest extends PHPUnit_Framework_TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Test the col element.
+   */
+  public function testColElement()
+  {
+    $column = new DateTableColumn('header', 'date');
+    $col    = $column->getHtmlCol();
+
+    $this->assertEquals('<col data-type="date"/>', $col);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Test with an empty date.
    */
   public function testEmptyDate1()

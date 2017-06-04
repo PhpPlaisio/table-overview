@@ -119,7 +119,7 @@ class OverviewTable extends HtmlElement
       if (!$this->sortable) $column->notSortable();
 
       // Generate column element.
-      $ret .= $column->getHtmlColumn();
+      $ret .= $column->getHtmlCol();
     }
     $ret .= '</colgroup>';
 
