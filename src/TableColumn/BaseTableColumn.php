@@ -2,11 +2,10 @@
 //----------------------------------------------------------------------------------------------------------------------
 namespace SetBased\Abc\Table\TableColumn;
 
-use SetBased\Abc\Babel;
+use SetBased\Abc\Babel\Babel;
 use SetBased\Abc\Helper\Html;
 use SetBased\Abc\Table\OverviewTable;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Abstract parent class for generating HTML code for table cells in an overview table.
  */
@@ -57,7 +56,6 @@ abstract class BaseTableColumn
   protected $sortable = true;
 
   //--------------------------------------------------------------------------------------------------------------------
-
   /**
    * Object  constructor.
    *
@@ -141,7 +139,7 @@ abstract class BaseTableColumn
     }
     else
     {
-      $header_text = (is_int($this->headerText)) ? Babel::getWord($this->headerText) : $this->headerText;
+      $header_text = (is_int($this->headerText)) ? Babel::getInstance()->getWord($this->headerText) : $this->headerText;
       if ($this->sortable)
       {
         // Add class indicating this column can be used for sorting.

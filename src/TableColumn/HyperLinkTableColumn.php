@@ -19,6 +19,7 @@ class HyperLinkTableColumn extends TableColumn
   protected $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
+
   /**
    * Object constructor.
    *
@@ -46,7 +47,7 @@ class HyperLinkTableColumn extends TableColumn
       return '<td></td>';
     }
 
-    return '<td>'.Html::generateElement('a', ['href'=> $url], $url).'</td>';
+    return '<td>'.Html::generateElement('a', ['href' => $url], $url).'</td>';
   }
 
   //--------------------------------------------------------------------------------------------------------------------

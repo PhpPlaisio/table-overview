@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 namespace SetBased\Abc\Table\TableColumn;
 
-use SetBased\Abc\Babel;
+use SetBased\Abc\Babel\Babel;
 use SetBased\Abc\Helper\Html;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ abstract class DualTableColumn extends TableColumn
       }
     }
 
-    $header_text = (is_int($this->headerText)) ? Babel::getWord($this->headerText) : $this->headerText;
+    $header_text = (is_int($this->headerText)) ? Babel::getInstance()->getWord($this->headerText) : $this->headerText;
 
     $attributes['class']   = implode(' ', $classes);
     $attributes['colspan'] = 2;
