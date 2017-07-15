@@ -51,7 +51,7 @@ class NumericTableColumn extends TableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value==false || $value===null || $value==='')
+    if ($value===false || $value===null || $value==='')
     {
       // The value is empty.
       return '<td></td>';

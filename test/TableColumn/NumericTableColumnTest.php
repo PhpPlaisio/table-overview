@@ -25,28 +25,56 @@ class NumericTableColumnTest extends TestCase
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with an empty value.
+   * Test with empty values.
    */
   public function testEmptyValue01()
   {
     $column = new NumericTableColumn('header', 'number');
-    $row    = ['number' => ''];
-    $ret    = $column->getHtmlCell($row);
 
-    self::assertSame('<td></td>', $ret);
+    $values = [null, false, ''];
+    foreach ($values as $value)
+    {
+      $row = ['number' => $value];
+      $ret = $column->getHtmlCell($row);
+
+      self::assertSame('<td></td>', $ret, var_export($value, true));
+    }
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with an empty value.
+   * Test with zero values.
    */
-  public function testEmptyValue02()
+  public function testZeroValues01()
   {
     $column = new NumericTableColumn('header', 'number');
-    $row    = ['number' => null];
-    $ret    = $column->getHtmlCell($row);
 
-    self::assertSame('<td></td>', $ret);
+    $values = ['0', 0, 0.0];
+    foreach ($values as $value)
+    {
+      $row = ['number' => $value];
+      $ret = $column->getHtmlCell($row);
+
+      self::assertSame('<td class="number">0</td>', $ret, var_export($value, true));
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Test with zero values.
+   */
+  public function testZeroValues02()
+  {
+    $column = new NumericTableColumn('header', 'number', '%.2f');
+
+    $values = ['0', 0, 0.0];
+    foreach ($values as $value)
+    {
+      $row = ['number' => $value];
+      $ret = $column->getHtmlCell($row);
+
+      self::assertSame('<td class="number">0.00</td>', $ret, var_export($value, true));
+    }
   }
 
   //--------------------------------------------------------------------------------------------------------------------
