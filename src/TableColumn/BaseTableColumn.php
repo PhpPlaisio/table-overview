@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 namespace SetBased\Abc\Table\TableColumn;
 
-use SetBased\Abc\Babel\Babel;
+use SetBased\Abc\Abc;
 use SetBased\Abc\Helper\Html;
 use SetBased\Abc\Table\OverviewTable;
 
@@ -139,7 +139,7 @@ abstract class BaseTableColumn
     }
     else
     {
-      $header_text = (is_int($this->headerText)) ? Babel::getInstance()->getWord($this->headerText) : $this->headerText;
+      $header_text = (is_int($this->headerText)) ? Abc::$babel->getWord($this->headerText) : $this->headerText;
       if ($this->sortable)
       {
         // Add class indicating this column can be used for sorting.

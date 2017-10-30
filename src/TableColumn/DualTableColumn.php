@@ -2,10 +2,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 namespace SetBased\Abc\Table\TableColumn;
 
-use SetBased\Abc\Babel\Babel;
+use SetBased\Abc\Abc;
 use SetBased\Abc\Helper\Html;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Abstract class for classes for generating HTML code for two columns in an overview table with a single header.
  */
@@ -131,7 +130,7 @@ abstract class DualTableColumn extends TableColumn
       }
     }
 
-    $header_text = (is_int($this->headerText)) ? Babel::getInstance()->getWord($this->headerText) : $this->headerText;
+    $header_text = (is_int($this->headerText)) ? Abc::$babel->getWord($this->headerText) : $this->headerText;
 
     $attributes['class']   = implode(' ', $classes);
     $attributes['colspan'] = 2;
