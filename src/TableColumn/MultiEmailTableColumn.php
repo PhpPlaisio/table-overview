@@ -1,10 +1,9 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Helper\Html;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Table column for table cells with multiple email addresses.
  */
@@ -42,7 +41,7 @@ class MultiEmailTableColumn extends TableColumn
    * @param string          $htmlSeparator  The HTML snippet for separating multiple email addresses in the generated
    *                                        HTML code.
    */
-  public function __construct($headerText, $fieldName, $dataSeparator = ',', $htmlSeparator = '<br/>')
+  public function __construct($headerText, string $fieldName, string $dataSeparator = ',', string $htmlSeparator = '<br/>')
   {
     parent::__construct('email');
 
@@ -56,7 +55,7 @@ class MultiEmailTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell($row)
+  public function getHtmlCell(array $row): string
   {
     $value = $row[$this->fieldName];
 

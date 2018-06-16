@@ -1,5 +1,5 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Abc;
@@ -61,7 +61,7 @@ abstract class DualTableColumn extends TableColumn
    *
    * @return int
    */
-  public function getColSpan()
+  public function getColSpan(): int
   {
     return 2;
   }
@@ -72,7 +72,7 @@ abstract class DualTableColumn extends TableColumn
    *
    * @return string
    */
-  public function getHtmlCol()
+  public function getHtmlCol(): string
   {
     return parent::getHtmlCol().$this->col2->getHtmlCol();
   }
@@ -83,7 +83,7 @@ abstract class DualTableColumn extends TableColumn
    *
    * @return string
    */
-  public function getHtmlColumnFilter()
+  public function getHtmlColumnFilter(): string
   {
     $ret = '<td><input type="text"/></td>';
     $ret .= '<td><input type="text"/></td>';
@@ -97,7 +97,7 @@ abstract class DualTableColumn extends TableColumn
    *
    * @return string
    */
-  public function getHtmlColumnHeader()
+  public function getHtmlColumnHeader(): string
   {
     $attributes = [];
     $classes    = [];
@@ -142,7 +142,7 @@ abstract class DualTableColumn extends TableColumn
   /**
    * Sets the first and the second column as not sortable (overriding the default behaviour a child class).
    */
-  public function notSortable()
+  public function notSortable(): void
   {
     $this->sortable  = false;
     $this->sortable2 = false;
@@ -152,7 +152,7 @@ abstract class DualTableColumn extends TableColumn
   /**
    * Sets the first column as not sortable (overriding the default behaviour a child class).
    */
-  public function notSortable1()
+  public function notSortable1(): void
   {
     $this->sortable = false;
   }
@@ -161,7 +161,7 @@ abstract class DualTableColumn extends TableColumn
   /**
    * Sets the second column as not sortable (overriding the default behaviour a child class).
    */
-  public function notSortable2()
+  public function notSortable2(): void
   {
     $this->sortable2 = false;
   }
@@ -173,7 +173,7 @@ abstract class DualTableColumn extends TableColumn
    * @param int  $sortOrder      The sorting order.
    * @param bool $descendingFlag If set the data is sorted descending, otherwise ascending.
    */
-  public function sortOrder1($sortOrder, $descendingFlag = false)
+  public function sortOrder1(int $sortOrder, bool $descendingFlag = false): void
   {
     $this->sortDirection = ($descendingFlag) ? 'desc' : 'asc';
     $this->sortOrder     = $sortOrder;
@@ -186,7 +186,7 @@ abstract class DualTableColumn extends TableColumn
    * @param int  $sortOrder      The sorting order.
    * @param bool $descendingFlag If set the data is sorted descending, otherwise ascending.
    */
-  public function sortOrder2($sortOrder, $descendingFlag = false)
+  public function sortOrder2(int $sortOrder, bool $descendingFlag = false): void
   {
     $this->sortDirection2 = ($descendingFlag) ? 'desc' : 'asc';
     $this->sortOrder2     = $sortOrder;

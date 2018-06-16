@@ -1,13 +1,11 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table;
 
 use SetBased\Abc\Helper\Html;
 use SetBased\Abc\HtmlElement;
-use SetBased\Abc\Table\TableColumn\DualTableColumn;
 use SetBased\Abc\Table\TableColumn\TableColumn;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Class for generating tables with an overview of a list of entities.
  */
@@ -54,10 +52,8 @@ class OverviewTable extends HtmlElement
    * Adds a column to this table.
    *
    * @param TableColumn $column The column to be added to this table.
-   *
-   * @return TableColumn|DualTableColumn The added column.
    */
-  public function addColumn($column)
+  public function addColumn(TableColumn $column): void
   {
     // Add the column to our array of columns.
     $this->columns[$this->columnIndex] = $column;
@@ -66,15 +62,13 @@ class OverviewTable extends HtmlElement
 
     // Increase the index for the next added column.
     $this->columnIndex += $column->getColSpan();
-    
-    return $column;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Disables table filtering.
    */
-  public function disableFilter()
+  public function disableFilter(): void
   {
     $this->filter = false;
   }
@@ -83,7 +77,7 @@ class OverviewTable extends HtmlElement
   /**
    * Disables sorting for all columns in table.
    */
-  public function disableSorting()
+  public function disableSorting(): void
   {
     $this->sortable = false;
   }
@@ -92,7 +86,7 @@ class OverviewTable extends HtmlElement
   /**
    * Enables table filtering.
    */
-  public function enableFilter()
+  public function enableFilter(): void
   {
     $this->filter = true;
   }
@@ -101,11 +95,11 @@ class OverviewTable extends HtmlElement
   /**
    * Returns the HTML code of this table
    *
-   * @param array $rows The data shown in the table.
+   * @param array[] $rows The data shown in the table.
    *
    * @return string
    */
-  public function getHtmlTable($rows)
+  public function getHtmlTable(array $rows): string
   {
     $ret = $this->getHtmlPrefix();
 
@@ -146,7 +140,7 @@ class OverviewTable extends HtmlElement
    *
    * @return int
    */
-  public function getNumberOfColumns()
+  public function getNumberOfColumns(): int
   {
     return $this->columnIndex - 1;
   }
@@ -155,7 +149,7 @@ class OverviewTable extends HtmlElement
   /**
    * Returns the title of this table.
    */
-  public function getTitle()
+  public function getTitle(): string
   {
     return $this->title;
   }
@@ -166,7 +160,7 @@ class OverviewTable extends HtmlElement
    *
    * @param string $title The title.
    */
-  public function setTitle($title)
+  public function setTitle(string $title): void
   {
     $this->title = $title;
   }
@@ -175,11 +169,11 @@ class OverviewTable extends HtmlElement
   /**
    * Returns the inner HTML code of the body for this table holding @a $rows as data.
    *
-   * @param array $rows
+   * @param array[] $rows
    *
    * @return string
    */
-  protected function getHtmlBody($rows)
+  protected function getHtmlBody(array $rows): string
   {
     $ret = '';
     $i   = 0;
@@ -204,7 +198,7 @@ class OverviewTable extends HtmlElement
    *
    * @return string
    */
-  protected function getHtmlHeader()
+  protected function getHtmlHeader(): string
   {
     $ret = '';
 
@@ -245,7 +239,7 @@ class OverviewTable extends HtmlElement
         if ($mode==3)
         {
           if ($colspan==1) $colspan = null;
-          $ret .= Html::generateElement('th', ['colspan' => $colspan], $this->title);
+          $ret  .= Html::generateElement('th', ['colspan' => $colspan], $this->title);
           $mode = 4;
         }
 
@@ -290,7 +284,7 @@ class OverviewTable extends HtmlElement
    *
    * @return string
    */
-  protected function getHtmlPostfix()
+  protected function getHtmlPostfix(): string
   {
     return '';
   }
@@ -301,7 +295,7 @@ class OverviewTable extends HtmlElement
    *
    * @return string
    */
-  protected function getHtmlPrefix()
+  protected function getHtmlPrefix(): string
   {
     return '';
   }

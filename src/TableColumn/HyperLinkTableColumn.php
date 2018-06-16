@@ -1,10 +1,9 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Helper\Html;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Table column for table cells with a hyper link.
  */
@@ -19,14 +18,13 @@ class HyperLinkTableColumn extends TableColumn
   protected $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
-
   /**
    * Object constructor.
    *
    * @param string|int|null $headerText The header text of this table column.
    * @param string          $fieldName  The key to be used for getting the value from the data row.
    */
-  public function __construct($headerText, $fieldName)
+  public function __construct($headerText, string $fieldName)
   {
     parent::__construct('text');
 
@@ -38,7 +36,7 @@ class HyperLinkTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell($row)
+  public function getHtmlCell(array $row): string
   {
     $url = $row[$this->fieldName];
 

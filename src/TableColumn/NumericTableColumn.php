@@ -1,10 +1,9 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Helper\Html;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Table column for table cells with numbers.
  */
@@ -34,7 +33,7 @@ class NumericTableColumn extends TableColumn
    * @param string          $format     The format specifier for formatting the content of this table column. See
    *                                    sprintf.
    */
-  public function __construct($headerText, $fieldName, $format = '%d')
+  public function __construct($headerText, string $fieldName, string $format = '%d')
   {
     parent::__construct('numeric');
 
@@ -47,7 +46,7 @@ class NumericTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell($row)
+  public function getHtmlCell(array $row): string
   {
     $value = $row[$this->fieldName];
 

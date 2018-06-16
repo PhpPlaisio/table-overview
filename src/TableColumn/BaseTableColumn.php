@@ -1,5 +1,5 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Abc;
@@ -61,7 +61,7 @@ abstract class BaseTableColumn
    *
    * @param string $dataType The data type of this table column.
    */
-  public function __construct($dataType)
+  public function __construct(string $dataType)
   {
     $this->col = new ColElement();
     $this->col->setAttrData('type', $dataType);
@@ -73,7 +73,7 @@ abstract class BaseTableColumn
    *
    * @return int
    */
-  public function getColSpan()
+  public function getColSpan(): int
   {
     return 1;
   }
@@ -84,7 +84,7 @@ abstract class BaseTableColumn
    *
    * @return string
    */
-  public function getDataType()
+  public function getDataType(): string
   {
     return $this->col->getAttribute('data-type');
   }
@@ -95,7 +95,7 @@ abstract class BaseTableColumn
    *
    * @return string
    */
-  public function getHtmlCol()
+  public function getHtmlCol(): string
   {
     return $this->col->getHtmlCol();
   }
@@ -106,7 +106,7 @@ abstract class BaseTableColumn
    *
    * @return string
    */
-  public function getHtmlColumnFilter()
+  public function getHtmlColumnFilter(): string
   {
     if ($this->headerText===null)
     {
@@ -127,7 +127,7 @@ abstract class BaseTableColumn
    *
    * @return string
    */
-  public function getHtmlColumnHeader()
+  public function getHtmlColumnHeader(): string
   {
     $attributes = [];
     $classes    = [];
@@ -166,7 +166,7 @@ abstract class BaseTableColumn
    *
    * @return bool
    */
-  public function hasEmptyHeader()
+  public function hasEmptyHeader(): bool
   {
     return !isset($this->headerText);
   }
@@ -176,7 +176,7 @@ abstract class BaseTableColumn
    * If this columns is sortable sets this column as not sortable (overriding the default behaviour a child class).
    * Has no effect when this column is not sortable.
    */
-  public function notSortable()
+  public function notSortable(): void
   {
     $this->sortable = false;
   }
@@ -188,7 +188,7 @@ abstract class BaseTableColumn
    * @param OverviewTable $table
    * @param int           $columnIndex
    */
-  public function onAddColumn($table, $columnIndex)
+  public function onAddColumn(OverviewTable $table, int $columnIndex): void
   {
     // Nothing to do.
   }
@@ -200,7 +200,7 @@ abstract class BaseTableColumn
    * @param int  $sortOrder      The sorting order.
    * @param bool $descendingFlag If true the data is sorted descending, otherwise ascending.
    */
-  public function setSortOrder($sortOrder, $descendingFlag = false)
+  public function setSortOrder(int $sortOrder, bool $descendingFlag = false): void
   {
     $this->sortDirection = ($descendingFlag) ? 'desc' : 'asc';
     $this->sortOrder     = $sortOrder;

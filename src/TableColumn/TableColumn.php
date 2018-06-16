@@ -1,8 +1,8 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
-//----------------------------------------------------------------------------------------------------------------------
+
 /**
  * Abstract parent class for generating HTML code for table cells in an overview table.
  */
@@ -16,7 +16,7 @@ abstract class TableColumn extends BaseTableColumn
    *
    * @return string
    */
-  abstract public function getHtmlCell($row);
+  abstract public function getHtmlCell(array $row): string;
 
   //--------------------------------------------------------------------------------------------------------------------
 }

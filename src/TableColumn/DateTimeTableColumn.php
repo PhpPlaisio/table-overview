@@ -1,5 +1,5 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Helper\Html;
@@ -41,7 +41,7 @@ class DateTimeTableColumn extends TableColumn
    * @param string|null     $format     The format specifier for formatting the content of this table column. If null
    *                                    the default format is used.
    */
-  public function __construct($headerText, $fieldName, $format = null)
+  public function __construct($headerText, string $fieldName, ?string $format = null)
   {
     parent::__construct('datetime');
 
@@ -54,7 +54,7 @@ class DateTimeTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell($row)
+  public function getHtmlCell(array $row): string
   {
     $value = $row[$this->fieldName];
 

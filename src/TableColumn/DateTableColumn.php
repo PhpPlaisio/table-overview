@@ -1,10 +1,10 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Helper\Html;
 
-//----------------------------------------------------------------------------------------------------------------------
+
 /**
  * Table column for table cells with dates.
  */
@@ -49,20 +49,20 @@ class DateTableColumn extends TableColumn
    * @param string|null     $format     The format specifier for formatting the content of this table column. If null
    *                                    the default format is used.
    */
-  public function __construct($headerText, $fieldName, $format = null)
+  public function __construct($headerText, string $fieldName, ?string $format = null)
   {
     parent::__construct('date');
 
     $this->headerText = $headerText;
     $this->fieldName  = $fieldName;
-    $this->format     = ($format) ? $format : self::$defaultFormat;
+    $this->format     = ($format!==null) ? $format : self::$defaultFormat;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell($row)
+  public function getHtmlCell(array $row): string
   {
     $value = $row[$this->fieldName];
 
