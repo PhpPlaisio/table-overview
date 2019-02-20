@@ -30,6 +30,8 @@ class OverviewTable extends HtmlElement
    * The title of this table.
    *
    * @var string
+   *
+   * @deprecated
    */
   protected $title;
 
@@ -148,6 +150,8 @@ class OverviewTable extends HtmlElement
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Returns the title of this table.
+   *
+   * @deprecated
    */
   public function getTitle(): string
   {
@@ -159,6 +163,8 @@ class OverviewTable extends HtmlElement
    * Sets the title of this table.
    *
    * @param string $title The title.
+   *
+   * @deprecated
    */
   public function setTitle(string $title): void
   {
