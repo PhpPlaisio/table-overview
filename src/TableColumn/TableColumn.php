@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
 
 namespace SetBased\Abc\Table\TableColumn;
-
 
 /**
  * Abstract parent class for generating HTML code for table cells in an overview table.
