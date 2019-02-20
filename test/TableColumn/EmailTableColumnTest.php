@@ -1,11 +1,10 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\EmailTableColumn;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Test cases for class EmailTableColumn.
  */
@@ -15,7 +14,7 @@ class EmailTableColumnTest extends TestCase
   /**
    * Test the col element.
    */
-  public function testColElement()
+  public function testColElement(): void
   {
     $column = new EmailTableColumn('header', 'date');
     $col    = $column->getHtmlCol();
@@ -27,7 +26,7 @@ class EmailTableColumnTest extends TestCase
   /**
    * Test with an empty email address.
    */
-  public function testEmptyAddress()
+  public function testEmptyAddress(): void
   {
     $column = new EmailTableColumn('header', 'mail');
     $row    = ['mail' => ''];
@@ -40,7 +39,7 @@ class EmailTableColumnTest extends TestCase
   /**
    * Test data type.
    */
-  public function testGetDataType()
+  public function testGetDataType(): void
   {
     $column   = new EmailTableColumn('header', 'mail');
     $dataType = $column->getDataType();
@@ -52,7 +51,7 @@ class EmailTableColumnTest extends TestCase
   /**
    * Test with a valid email address.
    */
-  public function testValidAddress1()
+  public function testValidAddress1(): void
   {
     $column = new EmailTableColumn('header', 'mail');
     $row    = ['mail' => 'info@setbased.nl'];

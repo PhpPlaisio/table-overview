@@ -1,11 +1,10 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\DateTableColumn;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Test cases for class DateTableColumn.
  */
@@ -15,7 +14,7 @@ class DateTableColumnTest extends TestCase
   /**
    * Test the col element.
    */
-  public function testColElement()
+  public function testColElement(): void
   {
     $column = new DateTableColumn('header', 'date');
     $col    = $column->getHtmlCol();
@@ -27,7 +26,7 @@ class DateTableColumnTest extends TestCase
   /**
    * Test with an empty date.
    */
-  public function testEmptyDate1()
+  public function testEmptyDate1(): void
   {
     $column = new DateTableColumn('header', 'date');
     $row    = ['date' => ''];
@@ -40,7 +39,7 @@ class DateTableColumnTest extends TestCase
   /**
    * Test data type.
    */
-  public function testGetDataType()
+  public function testGetDataType(): void
   {
     $column   = new DateTableColumn('header', 'date');
     $dataType = $column->getDataType();
@@ -52,7 +51,7 @@ class DateTableColumnTest extends TestCase
   /**
    * Test with an invalid date.
    */
-  public function testInvalidDate1()
+  public function testInvalidDate1(): void
   {
     $column = new DateTableColumn('header', 'date');
     $row    = ['date' => 'not a date'];
@@ -65,7 +64,7 @@ class DateTableColumnTest extends TestCase
   /**
    * Test with an open date.
    */
-  public function testOpenEndDate1()
+  public function testOpenEndDate1(): void
   {
     $column = new DateTableColumn('header', 'date');
     $row    = ['date' => '9999-12-31'];
@@ -78,7 +77,7 @@ class DateTableColumnTest extends TestCase
   /**
    * Test with an custom open date.
    */
-  public function testOpenEndDate2()
+  public function testOpenEndDate2(): void
   {
     DateTableColumn::$openDate = '8888-88-88';
 
@@ -93,7 +92,7 @@ class DateTableColumnTest extends TestCase
   /**
    * Test with a valid date.
    */
-  public function testValidDate1()
+  public function testValidDate1(): void
   {
     $column = new DateTableColumn('header', 'date', 'l jS \of F Y');
     $row    = ['date' => '2004-07-13'];  // PHP 5.0.0 release date.

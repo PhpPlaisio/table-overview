@@ -1,11 +1,10 @@
 <?php
-//----------------------------------------------------------------------------------------------------------------------
+
 namespace SetBased\Abc\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
 use SetBased\Abc\Table\TableColumn\MultiEmailTableColumn;
 
-//----------------------------------------------------------------------------------------------------------------------
 /**
  * Test cases for class MultiEmailTableColumn.
  */
@@ -15,7 +14,7 @@ class MultiEmailTableColumnTest extends TestCase
   /**
    * Test the col element.
    */
-  public function testColElement()
+  public function testColElement(): void
   {
     $column = new MultiEmailTableColumn('header', 'mail');
     $col    = $column->getHtmlCol();
@@ -27,7 +26,7 @@ class MultiEmailTableColumnTest extends TestCase
   /**
    * Test with an empty email address.
    */
-  public function testEmptyAddress()
+  public function testEmptyAddress(): void
   {
     $column = new MultiEmailTableColumn('header', 'mail');
     $row    = ['mail' => ''];
@@ -40,7 +39,7 @@ class MultiEmailTableColumnTest extends TestCase
   /**
    * Test data type.
    */
-  public function testGetDataType()
+  public function testGetDataType(): void
   {
     $column   = new MultiEmailTableColumn('header', 'mail');
     $dataType = $column->getDataType();
@@ -52,7 +51,7 @@ class MultiEmailTableColumnTest extends TestCase
   /**
    * Test with a valid email addresses.
    */
-  public function testValidAddress1()
+  public function testValidAddress1(): void
   {
     $column = new MultiEmailTableColumn('header', 'mail');
     $row    = ['mail' => 'info@setbased.nl,webmaster@setbased.nl'];
