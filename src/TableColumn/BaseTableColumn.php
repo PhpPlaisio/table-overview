@@ -169,7 +169,7 @@ abstract class BaseTableColumn
    */
   public function hasEmptyHeader(): bool
   {
-    return !isset($this->headerText);
+    return ($this->headerText===null);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
