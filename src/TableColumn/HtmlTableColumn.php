@@ -25,10 +25,9 @@ class HtmlTableColumn extends TableColumn
    */
   public function __construct($headerText, string $fieldName)
   {
-    parent::__construct('text');
+    parent::__construct('text', $headerText);
 
-    $this->headerText = $headerText;
-    $this->fieldName  = $fieldName;
+    $this->fieldName = $fieldName;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

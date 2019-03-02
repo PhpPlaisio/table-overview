@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace SetBased\Abc\Table\TableColumn;
 
-use SetBased\Abc\Abc;
 use SetBased\Abc\Helper\Html;
 
 /**
@@ -45,12 +44,13 @@ abstract class DualTableColumn extends TableColumn
   /**
    * Object constructor.
    *
-   * @param string $dataType1 The data type of the first column.
-   * @param string $dataType2 The data type of the second column.
+   * @param string          $dataType1  The data type of the first column.
+   * @param string          $dataType2  The data type of the second column.
+   * @param string|int|null $headerText The header text of this table column.
    */
-  public function __construct($dataType1, $dataType2)
+  public function __construct($dataType1, $dataType2, $headerText)
   {
-    parent::__construct($dataType1);
+    parent::__construct($dataType1, $headerText);
 
     $this->col2 = new ColElement();
     $this->col2->setAttrData('type', $dataType2);
@@ -131,12 +131,10 @@ abstract class DualTableColumn extends TableColumn
       }
     }
 
-    $header_text = (is_int($this->headerText)) ? Abc::$babel->getWord($this->headerText) : $this->headerText;
-
     $attributes['class']   = implode(' ', $classes);
     $attributes['colspan'] = 2;
 
-    return Html::generateElement('th', $attributes, '<span>&nbsp;</span>'.Html::txt2Html($header_text), true);
+    return Html::generateElement('th', $attributes, '<span>&nbsp;</span>'.Html::txt2Html($this->headerText), true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

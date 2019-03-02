@@ -27,10 +27,9 @@ class EmailTableColumn extends TableColumn
    */
   public function __construct($headerText, string $fieldName)
   {
-    parent::__construct('email');
+    parent::__construct('email', $headerText);
 
-    $this->headerText = $headerText;
-    $this->fieldName  = $fieldName;
+    $this->fieldName = $fieldName;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

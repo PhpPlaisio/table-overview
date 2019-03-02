@@ -21,16 +21,9 @@ abstract class BaseTableColumn
   protected $col;
 
   /**
-   * The header of this column. We distinguish 3 types:
-   * <ul>
-   * <li>string: the value is the header text of this table column,
-   * <li>null: this table column has header without a text and with class 'empty',
-   * <li>int: the value is a word ID to be resolved to a text using Babel.
-   * </ul>
+   * The header text of this column.
    *
-   * Note: 14 is a word ID and '14' is a header text.
-   *
-   * @var string|int|null
+   * @var string
    */
   protected $headerText;
 
@@ -60,12 +53,21 @@ abstract class BaseTableColumn
   /**
    * Object  constructor.
    *
-   * @param string $dataType The data type of this table column.
+   * @param string          $dataType   The data type of this table column.
+   * @param string|int|null $headerText The header of this column. We distinguish 3 types:
+   *                                    <ul>
+   *                                    <li>string: the value is the header text of this table column,
+   *                                    <li>null: this table column has header without a text and with class 'empty',
+   *                                    <li>int: the value is a word ID to be resolved to a text using Babel.
+   *                                    </ul>
+   *                                    Note: 14 is a word ID and '14' is a header text.
    */
-  public function __construct(string $dataType)
+  public function __construct(string $dataType, $headerText)
   {
     $this->col = new ColElement();
     $this->col->setAttrData('type', $dataType);
+
+    $this->headerText = (is_int($headerText)) ? Abc::$babel->getWord($headerText) : $headerText;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -88,6 +90,17 @@ abstract class BaseTableColumn
   public function getDataType(): string
   {
     return $this->col->getAttribute('data-type');
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the text of this header.
+   *
+   * @return string|null
+   */
+  public function getHeaderText(): ?string
+  {
+    return $this->headerText;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -135,12 +148,10 @@ abstract class BaseTableColumn
 
     if ($this->headerText===null)
     {
-      $header_text = '';
-      $classes[]   = 'empty';
+      $classes[] = 'empty';
     }
     else
     {
-      $header_text = (is_int($this->headerText)) ? Abc::$babel->getWord($this->headerText) : $this->headerText;
       if ($this->sortable)
       {
         // Add class indicating this column can be used for sorting.
@@ -151,14 +162,14 @@ abstract class BaseTableColumn
         {
           $attributes['data-sort-order'] = $this->sortOrder;
 
-          $classes[] = ($this->sortDirection=='desc') ? ' sorted-desc' : ' sorted-asc';
+          $classes[] = ($this->sortDirection=='desc') ? 'sorted-desc' : 'sorted-asc';
         }
       }
     }
 
     $attributes['class'] = implode(' ', $classes);
 
-    return Html::generateElement('th', $attributes, $header_text);
+    return Html::generateElement('th', $attributes, $this->headerText);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

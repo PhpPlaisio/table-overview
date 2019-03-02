@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace SetBased\Abc\Table;
 
+use SetBased\Abc\Abc;
+use SetBased\Abc\Helper\Css;
 use SetBased\Abc\Helper\Html;
 use SetBased\Abc\HtmlElement;
 use SetBased\Abc\Table\TableColumn\TableColumn;
@@ -13,6 +15,20 @@ use SetBased\Abc\Table\TableColumn\TableColumn;
 class OverviewTable extends HtmlElement
 {
   //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * The class used in the generated HTML code.
+   *
+   * @var string|null
+   */
+  public static $class = 'overview-table';
+
+  /**
+   * If set CSS for responsive table will generated.
+   *
+   * @var string|null
+   */
+  public static $responsiveMediaQuery;
+
   /**
    * The objects for generating the columns of this table.
    *
@@ -31,8 +47,6 @@ class OverviewTable extends HtmlElement
    * The title of this table.
    *
    * @var string
-   *
-   * @deprecated
    */
   protected $title;
 
@@ -104,6 +118,8 @@ class OverviewTable extends HtmlElement
    */
   public function getHtmlTable(array $rows): string
   {
+    $this->prepare();
+
     $ret = $this->getHtmlPrefix();
 
     $ret .= Html::generateTag('table', $this->attributes);
@@ -121,18 +137,20 @@ class OverviewTable extends HtmlElement
     $ret .= '</colgroup>';
 
     // Generate HTML code for the table header.
-    $ret .= '<thead>';
+    $ret .= Html::generateTag('thead', ['class' => static::$class]);
     $ret .= $this->getHtmlHeader();
     $ret .= '</thead>';
 
     // Generate HTML code for the table body.
-    $ret .= '<tbody>';
+    $ret .= Html::generateTag('tbody', ['class' => static::$class]);
     $ret .= $this->getHtmlBody($rows);
     $ret .= '</tbody>';
 
     $ret .= '</table>';
 
     $ret .= $this->getHtmlPostfix();
+
+    $this->generateResponsiveCss();
 
     return $ret;
   }
@@ -174,9 +192,9 @@ class OverviewTable extends HtmlElement
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns the inner HTML code of the body for this table holding @a $rows as data.
+   * Returns the inner HTML code of the body for this table holding the rows as data.
    *
-   * @param array[] $rows
+   * @param array[] $rows The data of the rows.
    *
    * @return string
    */
@@ -186,8 +204,11 @@ class OverviewTable extends HtmlElement
     $i   = 0;
     foreach ($rows as $row)
     {
-      if ($i % 2==0) $ret .= '<tr class="even">';
-      else           $ret .= '<tr class="odd">';
+      $class = static::$class;
+      if ($class!==null) $class .= ' ';
+      $class .= ($i % 2==0) ? 'even' : 'odd';
+
+      $ret .= Html::generateTag('tr', ['class' => $class]);
       foreach ($this->columns as $column)
       {
         $ret .= $column->getHtmlCell($row);
@@ -265,7 +286,7 @@ class OverviewTable extends HtmlElement
       $ret .= '</tr>';
     }
 
-    $ret .= '<tr class="header">';
+    $ret .= '<tr class="overview-table header">'; // xxx use static::$class
     foreach ($this->columns as $column)
     {
       $ret .= $column->getHtmlColumnHeader();
@@ -274,7 +295,7 @@ class OverviewTable extends HtmlElement
 
     if ($this->filter)
     {
-      $ret .= '<tr class="filter">';
+      $ret .= '<tr class="overview-table filter">'; // xxx use static::$class
       foreach ($this->columns as $column)
       {
         $ret .= $column->getHtmlColumnFilter();
@@ -305,6 +326,43 @@ class OverviewTable extends HtmlElement
   protected function getHtmlPrefix(): string
   {
     return '';
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Generates CSS for responsive tables.
+   */
+  private function generateResponsiveCss()
+  {
+    if (static::$responsiveMediaQuery===null) return;
+
+    Abc::$assets->cssAppendLine(static::$responsiveMediaQuery);
+    Abc::$assets->cssAppendLine('{');
+    $id     = $this->getAttribute('id');
+    $format = '#%s tr.%s > td:nth-of-type(%d):before {content: %s;}';
+    foreach ($this->columns as $index => $column)
+    {
+      $text = $column->getHeaderText();
+      for ($i=0; $i<$column->getColSpan(); $i++)
+      {
+        Abc::$assets->cssAppendLine(sprintf($format, $id, static::$class, $index + $i, Css::txt2CssString($text)));
+      }
+    }
+    Abc::$assets->cssAppendLine('}');
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Prepares this table for generation HTML code.
+   */
+  private function prepare(): void
+  {
+    $this->addClass(static::$class);
+
+    if (static::$responsiveMediaQuery!==null && $this->getAttribute('id')===null)
+    {
+      $this->setAttrId(Html::getAutoId());
+    }
   }
 
   //--------------------------------------------------------------------------------------------------------------------

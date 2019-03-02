@@ -5,7 +5,6 @@ namespace SetBased\Abc\Table\TableColumn;
 
 use SetBased\Abc\Helper\Html;
 
-
 /**
  * Table column for table cells with dates.
  */
@@ -52,11 +51,10 @@ class DateTableColumn extends TableColumn
    */
   public function __construct($headerText, string $fieldName, ?string $format = null)
   {
-    parent::__construct('date');
+    parent::__construct('date', $headerText);
 
-    $this->headerText = $headerText;
-    $this->fieldName  = $fieldName;
-    $this->format     = ($format!==null) ? $format : self::$defaultFormat;
+    $this->fieldName = $fieldName;
+    $this->format    = ($format!==null) ? $format : self::$defaultFormat;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

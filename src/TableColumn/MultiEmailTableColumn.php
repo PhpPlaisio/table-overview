@@ -44,9 +44,8 @@ class MultiEmailTableColumn extends TableColumn
    */
   public function __construct($headerText, string $fieldName, string $dataSeparator = ',', string $htmlSeparator = '<br/>')
   {
-    parent::__construct('email');
+    parent::__construct('email', $headerText);
 
-    $this->headerText    = $headerText;
     $this->fieldName     = $fieldName;
     $this->dataSeparator = $dataSeparator;
     $this->htmlSeparator = $htmlSeparator;
