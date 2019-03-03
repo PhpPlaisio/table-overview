@@ -286,7 +286,7 @@ class OverviewTable extends HtmlElement
       $ret .= '</tr>';
     }
 
-    $ret .= '<tr class="overview-table header">'; // xxx use static::$class
+    $ret .= Html::generateTag('tr', ['class' => [self::$class, 'header']]);
     foreach ($this->columns as $column)
     {
       $ret .= $column->getHtmlColumnHeader();
@@ -295,7 +295,7 @@ class OverviewTable extends HtmlElement
 
     if ($this->filter)
     {
-      $ret .= '<tr class="overview-table filter">'; // xxx use static::$class
+      $ret .= Html::generateTag('tr', ['class' => [self::$class, 'filter']]);
       foreach ($this->columns as $column)
       {
         $ret .= $column->getHtmlColumnFilter();
