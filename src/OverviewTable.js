@@ -9,16 +9,18 @@ define(
 
   function ($) {
     'use strict';
+
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Object constructor.
      *
      * @param {jQuery} $table The table.
+     * @param {MediaQueryList} mq The media query list object (must match for small screens).
      *
      * @constructor
      */
-    function OverviewTable($table) {
-      var that = this;
+    function OverviewTable($table, mq) {
+      let that = this;
 
       if (OverviewTable.debug) {
         OverviewTable.log('Start create OverviewTable:');
@@ -37,17 +39,12 @@ define(
 
       // The HTML table associated with the JavaScript object.
       this.$table = $table;
-
-      // Display the row with table filters.
-      $table.children('thead').children('tr.filter').each(function () {
-        $(this).css('display', 'table-row');
-      });
       OverviewTable.benchmark('Prepare table and table info');
 
       // Column headers can span 1 or 2 columns. Create lookup table from columnIndex to header_index.
       this.$headers.each(function (headerIndex, th) {
-        var j;
-        var span;
+        let j;
+        let span;
 
         span = $(th).attr('colspan');
         if (span) {
@@ -65,7 +62,7 @@ define(
       // Get the column types and install the column handlers.
       this.columnHandlers = [];
       $table.children('colgroup').children('col').each(function (columnIndex, col) {
-        var columnType;
+        let columnType;
 
         that.columnHandlers[columnIndex] = null;
 
@@ -82,13 +79,21 @@ define(
         OverviewTable.benchmark('Initialize column handler');
 
         // Initialize the filter.
-        that.columnHandlers[columnIndex].initFilter(that, columnIndex);
+        that.columnHandlers[columnIndex].initFilter(that, columnIndex, mq);
         OverviewTable.benchmark('Initialize filter');
 
         // Initialize the sorter.
         that.columnHandlers[columnIndex].initSort(that, columnIndex);
         OverviewTable.benchmark('Initialize sorter');
       });
+
+      // Install and fire media change event handler.
+      if (mq !== undefined) {
+        mq.addListener(function () {that.mediaChange(mq);});
+      }
+      $(window).resize(function () {that.mediaChange(mq);});
+      this.mediaChange(mq);
+      OverviewTable.benchmark('Initialize media change event handlers');
 
       // Execute additional initializations (if any)
       this.initHook();
@@ -100,6 +105,27 @@ define(
           'ms');
       }
     }
+
+    //------------------------------------------------------------------------------------------------------------------
+    /**
+     * @param {MediaQueryList} mq The media query list object (must match for small screens).
+     */
+    OverviewTable.prototype.mediaChange = function (mq) {
+      let that = this;
+
+      if (mq && mq.matches) {
+        // Small screen.
+        this.$table.children('thead').children('tr.filter').each(function () { $(this).css('display', 'none'); });
+      } else {
+        // Large screen.
+        // Display the row with table filters.
+        this.$table.children('thead').children('tr.filter').each(function () { $(this).css('display', 'table-row'); });
+      }
+
+      this.$table.children('colgroup').children('col').each(function (columnIndex) {
+        that.columnHandlers[columnIndex].mediaChange(mq);
+      });
+    };
 
     //------------------------------------------------------------------------------------------------------------------
     /**
@@ -236,9 +262,9 @@ define(
      * @returns {string}
      */
     OverviewTable.toLowerCaseNoDiacritics = function (string) {
-      var c;
-      var i;
-      var textNew = '';
+      let c;
+      let i;
+      let textNew = '';
 
       if (string === null || typeof string === 'undefined') {
         return string;
@@ -321,7 +347,7 @@ define(
      * @returns {int}
      */
     OverviewTable.getSortOrder = function ($header, colSpan, offset) {
-      var order;
+      let order;
 
       order = $header.attr(OverviewTable.getAttributeName('data-sort-order', colSpan, offset));
       if (order === undefined) {
@@ -364,7 +390,7 @@ define(
      * @returns {string}
      */
     OverviewTable.getFlipSortDirection = function ($header, colSpan, offset) {
-      var sortDirection;
+      let sortDirection;
 
       sortDirection = OverviewTable.getSortDirection($header, colSpan, offset);
       if (sortDirection === 'desc' || sortDirection === '') {
@@ -384,8 +410,8 @@ define(
      * @param {int}               columnIndex The index of the column.
      */
     OverviewTable.prototype.sort = function (event, $header, column, columnIndex) {
-      var sortColumnInfo;
-      var sortInfo;
+      let sortColumnInfo;
+      let sortInfo;
 
       if (OverviewTable.debug) {
         OverviewTable.log('Start sort:');
@@ -446,14 +472,14 @@ define(
      * Returns an array indexed by the sort order with objects holding sorting information of the column.
      */
     OverviewTable.prototype.getSortInfo = function () {
-      var columnsInfo = [];
-      var dual;
-      var sortOrder;
-      var span;
-      var that = this;
+      let columnsInfo = [];
+      let dual;
+      let sortOrder;
+      let span;
+      let that = this;
 
       this.$table.children('colgroup').children('col').each(function (columnIndex) {
-        var $th = that.$headers.eq(that.headerIndexLookup[columnIndex]);
+        let $th = that.$headers.eq(that.headerIndexLookup[columnIndex]);
 
         span = $th.attr('colspan');
         if (!span || span === '1') {
@@ -516,13 +542,13 @@ define(
      * @returns {{}}
      */
     OverviewTable.prototype.getColumnSortInfo = function (event, $header, columnIndex) {
-      var columnInfo = {};
-      var diff;
-      var span;
-      var widthCol1 = 0;
-      var widthCol2 = 0;
-      var widthHeader;
-      var x;
+      let columnInfo = {};
+      let diff;
+      let span;
+      let widthCol1 = 0;
+      let widthCol2 = 0;
+      let widthHeader;
+      let x;
 
       columnInfo.columnIndex = columnIndex;
 
@@ -607,9 +633,9 @@ define(
      * @param {[]} tableSortInfo The sorting metadata of the table.
      */
     OverviewTable.prototype.addSortInfo = function (tableSortInfo) {
-      var $header;
-      var i;
-      var order;
+      let $header;
+      let i;
+      let order;
 
       for (i = 0; i < tableSortInfo.length; i += 1) {
         order = i + 1;
@@ -617,7 +643,7 @@ define(
         $header.attr(OverviewTable.getAttributeName('data-sort-order', tableSortInfo[i].colspan, tableSortInfo[i].offset),
           order);
         $header.addClass(OverviewTable.getAttributeName('sorted',
-            tableSortInfo[i].colspan, tableSortInfo[i].offset) + '-' + tableSortInfo[i].sortDirection);
+          tableSortInfo[i].colspan, tableSortInfo[i].offset) + '-' + tableSortInfo[i].sortDirection);
       }
     };
 
@@ -626,11 +652,11 @@ define(
      * Applies zebra theme on the table.
      */
     OverviewTable.prototype.applyZebraTheme = function () {
-      var even = true;
+      let even = true;
 
       // Note: Using this.style.display is faster than using children('tr:visible').
       this.$table.children('tbody').children('tr').each(function () {
-        var $this = $(this);
+        let $this = $(this);
 
         if (this.style.display !== 'none') {
           if (even === true) {
@@ -651,11 +677,11 @@ define(
      * @param {ColumnTypeHandler} column      The column type handler for the column.
      */
     OverviewTable.prototype.sortSingleColumn = function (sortingInfo, column) {
-      var cell;
-      var i;
-      var rows;
-      var sortDirection;
-      var tbody;
+      let cell;
+      let i;
+      let rows;
+      let sortDirection;
+      let tbody;
 
       // Get the sort direction.
       if (sortingInfo.sortDirection === 'asc') {
@@ -696,16 +722,16 @@ define(
      * @param {[]} tableSortingInfo The sorting metadata of this table.
      */
     OverviewTable.prototype.sortMultiColumn = function (tableSortingInfo) {
-      var cell;
-      var columnHandler;
-      var dir;
-      var i;
-      var j;
-      var multiCmp = null;
-      var rows;
-      var sortFunc = '';
-      var tbody;
-      var this1 = this;  // Is required by multiCmp.
+      let cell;
+      let columnHandler;
+      let dir;
+      let i;
+      let j;
+      let multiCmp = null;
+      let rows;
+      let sortFunc = '';
+      let tbody;
+      let this1 = this;  // Is required by multiCmp.
 
       // Get all the rows of the table.
       rows = this.$table.children('tbody').children('tr').get();
@@ -723,7 +749,7 @@ define(
       OverviewTable.benchmark('Extracting sort keys');
 
       sortFunc += 'multiCmp = function (row1, row2) {\n';
-      sortFunc += '  var cmp;\n';
+      sortFunc += '  let cmp;\n';
       for (i = 0; i < tableSortingInfo.length; i += 1) {
         dir = 1;
         if (tableSortingInfo[i].sortDirection === 'desc') {
@@ -761,10 +787,10 @@ define(
      *
      */
     OverviewTable.prototype.filter = function () {
-      var count;
-      var filters = [];
-      var i;
-      var that = this;
+      let count;
+      let filters = [];
+      let i;
+      let that = this;
 
       if (OverviewTable.debug) {
         OverviewTable.log('Apply filters:');
@@ -791,21 +817,21 @@ define(
         }
 
         // All filters are ineffective. Show all rows.
-        this.$table.children('tbody').children('tr').show();
+        this.$table.children('tbody').children('tr').css('display','');
         OverviewTable.benchmark('Show all rows');
 
       } else {
         // One or more filters are effective.
 
         // Hide all rows.
-        this.$table.children('tbody').children('tr').hide();
+        this.$table.children('tbody').children('tr').css('display','none');
         OverviewTable.benchmark('Hide all rows');
 
         // Apply all effective filters.
         this.$table.children('tbody').children('tr').each(function () {
-          var j;
-          var show = 1;
-          var $this = $(this);
+          let j;
+          let show = 1;
+          let $this = $(this);
 
           for (j = 0; j < filters.length; j += 1) {
             if (filters[j] && !filters[j].simpleFilter(this.cells[j])) {
@@ -818,7 +844,7 @@ define(
 
           if (show === 1) {
             // The row matches all filters. Show the row.
-            $this.show();
+            $this.css('display', '');
           }
         });
         OverviewTable.benchmark('Apply all effective filters');
@@ -871,35 +897,36 @@ define(
      *
      * @param selector  {string} The jQuery selector.
      * @param className {string} The class name.
+     * @param {MediaQueryList} mq The media query list object (must match for small screens).
      */
-    OverviewTable.registerTable = function (selector, className) {
+    OverviewTable.registerTable = function (selector, className, mq) {
       // Set name of class if this undefined.
       if (typeof className === 'undefined') {
         className = 'SetBased/Abc/Table/OverviewTable';
       }
 
       $(selector).each(function () {
-        var $this1 = $(this);
+        let $this1 = $(this);
 
         if ($this1.is('table')) {
           // Selector is a table.
-          if (!$this1.hasClass('registered')) {
+          if (!$this1.hasClass('is-registered')) {
             require([className],
               function (Constructor) {
-                OverviewTable.tables[OverviewTable.tables.length] = new Constructor($this1);
+                OverviewTable.tables[OverviewTable.tables.length] = new Constructor($this1, mq);
               });
-            $this1.addClass('registered');
+            $this1.addClass('is-registered');
           }
         } else {
           // Selector is not a table. Find the table below the selector.
           $this1.find('table').first().each(function () {
-            var $this2 = $(this);
-            if (!$this2.hasClass('registered')) {
+            let $this2 = $(this);
+            if (!$this2.hasClass('is-registered')) {
               require([className],
                 function (Constructor) {
-                  OverviewTable.tables[OverviewTable.tables.length] = new Constructor($this2);
+                  OverviewTable.tables[OverviewTable.tables.length] = new Constructor($this2, mq);
                 });
-              $this2.addClass('registered');
+              $this2.addClass('is-registered');
             }
           });
         }

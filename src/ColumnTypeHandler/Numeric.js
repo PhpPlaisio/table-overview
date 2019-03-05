@@ -31,8 +31,8 @@ define(
      * @returns {number}
      */
     Numeric.prototype.getSortKey = function (tableCell) {
-      var regexp;
-      var parts;
+      let regexp;
+      let parts;
 
       regexp = /[\d.,\-+]*/;
       parts = regexp.exec($(tableCell).text());

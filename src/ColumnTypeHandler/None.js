@@ -26,6 +26,13 @@ define(
       return null;
     };
 
+    //------------------------------------------------------------------------------------------------------------------
+    /**
+     * @param {MediaQueryList} mq The media query list object (must match for small screens).
+     */
+    None.prototype.mediaChange = function (mq) {
+    };
+
     // -----------------------------------------------------------------------------------------------------------------
     None.prototype.initFilter = function () {
       return null;

@@ -10,6 +10,7 @@ define(
 
   function ($, OverviewTable, ColumnTypeHandler) {
     'use strict';
+
     //------------------------------------------------------------------------------------------------------------------
     function Text() {
       // Use parent constructor.
@@ -49,7 +50,7 @@ define(
      * @returns {boolean}
      */
     Text.prototype.simpleFilter = function (tableCell) {
-      var value;
+      let value;
 
       value = this.extractForFilter(tableCell);
 
@@ -57,8 +58,27 @@ define(
     };
 
     //------------------------------------------------------------------------------------------------------------------
-    Text.prototype.initFilter = function (overviewTable, columnIndex) {
-      var that = this;
+    /**
+     * @param {MediaQueryList} mq The media query list object (must match for small screens).
+     */
+    Text.prototype.mediaChange = function (mq) {
+      this.$input.width('');
+
+      if (mq === undefined || mq.matches === false) {
+        // Large screen.
+        this.$input.width(this.$input.width() +
+          (this.$input.closest('td').innerWidth() - this.$input.outerWidth(true)));
+      }
+    };
+
+    //------------------------------------------------------------------------------------------------------------------
+    /**
+     * @param {OverviewTable} overviewTable The overview table.
+     * @param {int}  columnIndex The index of the column in the table.
+     * @param {MediaQueryList} mq The media query list object (must match for small screens).
+     */
+    Text.prototype.initFilter = function (overviewTable, columnIndex, mq) {
+      let that = this;
 
       this.$input = overviewTable.$filters.eq(columnIndex).find('input');
 
@@ -76,9 +96,10 @@ define(
       // Install event handler for changed filter value.
       this.$input.keyup({table: overviewTable, element: this.$input}, OverviewTable.filterTrigger);
 
-      // Resize the input box.
-      this.$input.width(this.$input.width() +
-        (this.$input.closest('td').innerWidth() - this.$input.outerWidth(true)));
+      // Install and fire media query event handler.
+      //mq.addListener(function (mq) {that.mediaChange(mq);});
+      // $(window).resize(function (mq) {that.mediaChange(mq);});
+      this.mediaChange(mq);
     };
 
     //------------------------------------------------------------------------------------------------------------------

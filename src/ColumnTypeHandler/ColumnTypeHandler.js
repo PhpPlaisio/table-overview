@@ -42,13 +42,13 @@ define(
      *                                       column type handler.
      */
     ColumnTypeHandler.prototype.initSort = function (overviewTable, columnIndex) {
-      var that = this;
-      var $header;
-      var x;
-      var widthHeader;
-      var widthCol1 = 0;
-      var widthCol2 = 0;
-      var diff;
+      let that = this;
+      let $header;
+      let x;
+      let widthHeader;
+      let widthCol1 = 0;
+      let widthCol2 = 0;
+      let diff;
 
       // Install event handler for click on sort icon.
       $header = overviewTable.$headers.eq(overviewTable.headerIndexLookup[columnIndex]);
