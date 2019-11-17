@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace SetBased\Abc\Table\TableColumn;
+namespace Plaisio\Table\TableColumn;
 
 /**
  * Table column for table cells with arbitrary HTML code..

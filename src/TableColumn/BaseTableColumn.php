@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace SetBased\Abc\Table\TableColumn;
+namespace Plaisio\Table\TableColumn;
 
-use SetBased\Abc\Abc;
-use SetBased\Abc\Helper\Html;
-use SetBased\Abc\Table\OverviewTable;
+use Plaisio\Helper\Html;
+use Plaisio\Kernel\Nub;
+use Plaisio\Table\OverviewTable;
 
 /**
  * Abstract parent class for generating HTML code for table cells in an overview table.
@@ -67,7 +67,7 @@ abstract class BaseTableColumn
     $this->col = new ColElement();
     $this->col->setAttrData('type', $dataType);
 
-    $this->headerText = (is_int($headerText)) ? Abc::$babel->getWord($headerText) : $headerText;
+    $this->headerText = (is_int($headerText)) ? Nub::$babel->getWord($headerText) : $headerText;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

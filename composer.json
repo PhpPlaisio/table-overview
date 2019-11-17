@@ -1,19 +1,17 @@
 {
-  "name": "setbased/abc-table-overview",
-  "description": "ABC-Framework: Overview Table",
+  "name": "plaisio/table-overview",
+  "description": "PhpPlaisio: Overview Table",
   "keywords": [
-    "ABC-Framework",
-    "Table",
-    "Overview"
+    "PhpPlaisio",
+    "Overview Table"
   ],
-  "type": "library",
   "license": "MIT",
   "require": {
     "php": ">=7.1.0",
-    "setbased/abc": "^0.10.47",
-    "setbased/exception": "^2.0.0",
-    "setbased/abc-helper-css": "^1.1.0",
-    "setbased/abc-html": "^2.1.0"
+    "plaisio/helper-css": "^1.0.0",
+    "plaisio/helper-html": "^1.0.0",
+    "plaisio/kernel": "^1.0.0.",
+    "setbased/exception": "^2.0.0"
   },
   "require-dev": {
     "phing/phing": "^2.0.0",
@@ -21,12 +19,12 @@
   },
   "autoload": {
     "psr-4": {
-      "SetBased\\Abc\\Table\\": "src/"
+      "Plaisio\\Table\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "SetBased\\Abc\\Table\\Test\\": "test/"
+      "Plaisio\\Table\\Test\\": "test/"
     }
   },
   "config": {

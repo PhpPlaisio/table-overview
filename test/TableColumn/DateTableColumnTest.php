@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace SetBased\Abc\Table\Test\TableColumn;
+namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
-use SetBased\Abc\Table\TableColumn\DateTableColumn;
+use Plaisio\Table\TableColumn\DateTableColumn;
 
 /**
  * Test cases for class DateTableColumn.

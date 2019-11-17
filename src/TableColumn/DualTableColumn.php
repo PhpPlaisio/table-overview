@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace SetBased\Abc\Table\TableColumn;
+namespace Plaisio\Table\TableColumn;
 
-use SetBased\Abc\Helper\Html;
+use Plaisio\Helper\Html;
 
 /**
  * Abstract class for classes for generating HTML code for two columns in an overview table with a single header.

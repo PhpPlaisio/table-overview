@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace SetBased\Abc\Table;
+namespace Plaisio\Table;
 
-use SetBased\Abc\Abc;
-use SetBased\Abc\Helper\Css;
-use SetBased\Abc\Helper\Html;
-use SetBased\Abc\HtmlElement;
-use SetBased\Abc\Table\TableColumn\TableColumn;
+use Plaisio\Helper\Css;
+use Plaisio\Helper\Html;
+use Plaisio\Helper\HtmlElement;
+use Plaisio\Kernel\Nub;
+use Plaisio\Table\TableColumn\TableColumn;
 
 /**
  * Class for generating tables with an overview of a list of entities.
@@ -336,8 +336,8 @@ class OverviewTable extends HtmlElement
   {
     if (static::$responsiveMediaQuery===null) return;
 
-    Abc::$assets->cssAppendLine(static::$responsiveMediaQuery);
-    Abc::$assets->cssAppendLine('{');
+    Nub::$assets->cssAppendLine(static::$responsiveMediaQuery);
+    Nub::$assets->cssAppendLine('{');
     $id     = $this->getAttribute('id');
     $format = '#%s tr.%s > td:nth-of-type(%d):before {content: %s;}';
     foreach ($this->columns as $index => $column)
@@ -345,10 +345,10 @@ class OverviewTable extends HtmlElement
       $text = $column->getHeaderText();
       for ($i=0; $i<$column->getColSpan(); $i++)
       {
-        Abc::$assets->cssAppendLine(sprintf($format, $id, static::$class, $index + $i, Css::txt2CssString($text)));
+        Nub::$assets->cssAppendLine(sprintf($format, $id, static::$class, $index + $i, Css::txt2CssString($text)));
       }
     }
-    Abc::$assets->cssAppendLine('}');
+    Nub::$assets->cssAppendLine('}');
   }
 
   //--------------------------------------------------------------------------------------------------------------------

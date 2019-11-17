@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace SetBased\Abc\Table\TableColumn;
+namespace Plaisio\Table\TableColumn;
 
-use SetBased\Abc\Helper\Html;
-use SetBased\Abc\HtmlElement;
+use Plaisio\Helper\Html;
+use Plaisio\Helper\HtmlElement;
 
 /**
  * Class for col elements.
