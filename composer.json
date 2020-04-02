@@ -8,9 +8,9 @@
   "license": "MIT",
   "require": {
     "php": ">=7.3",
-    "plaisio/helper-css": "^1.0",
-    "plaisio/helper-html": "^1.0",
-    "plaisio/kernel": "^1.0",
+    "plaisio/helper-css": "^1.1",
+    "plaisio/helper-html": "^1.1",
+    "plaisio/kernel": "^1.1",
     "setbased/exception": "^2.1"
   },
   "require-dev": {
