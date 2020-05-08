@@ -336,19 +336,19 @@ class OverviewTable extends HtmlElement
   {
     if (static::$responsiveMediaQuery===null) return;
 
-    Nub::$assets->cssAppendLine(static::$responsiveMediaQuery);
-    Nub::$assets->cssAppendLine('{');
+    Nub::$nub->assets->cssAppendLine(static::$responsiveMediaQuery);
+    Nub::$nub->assets->cssAppendLine('{');
     $id     = $this->getAttribute('id');
     $format = '#%s tr.%s > td:nth-of-type(%d):before {content: %s;}';
     foreach ($this->columns as $index => $column)
     {
       $text = $column->getHeaderText();
-      for ($i=0; $i<$column->getColSpan(); $i++)
+      for ($i = 0; $i<$column->getColSpan(); $i++)
       {
-        Nub::$assets->cssAppendLine(sprintf($format, $id, static::$class, $index + $i, Css::txt2CssString($text)));
+        Nub::$nub->assets->cssAppendLine(sprintf($format, $id, static::$class, $index + $i, Css::txt2CssString($text)));
       }
     }
-    Nub::$assets->cssAppendLine('}');
+    Nub::$nub->assets->cssAppendLine('}');
   }
 
   //--------------------------------------------------------------------------------------------------------------------

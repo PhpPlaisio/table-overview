@@ -67,7 +67,7 @@ abstract class BaseTableColumn
     $this->col = new ColElement();
     $this->col->setAttrData('type', $dataType);
 
-    $this->headerText = (is_int($headerText)) ? Nub::$babel->getWord($headerText) : $headerText;
+    $this->headerText = (is_int($headerText)) ? Nub::$nub->babel->getWord($headerText) : $headerText;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
