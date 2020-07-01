@@ -115,11 +115,11 @@ define(
 
       if (mq && mq.matches) {
         // Small screen.
-        this.$table.children('thead').children('tr.filter').each(function () { $(this).css('display', 'none'); });
+        this.$table.children('thead').children('tr.filter').css('display', 'none');
       } else {
         // Large screen.
         // Display the row with table filters.
-        this.$table.children('thead').children('tr.filter').each(function () { $(this).css('display', 'table-row'); });
+        this.$table.children('thead').children('tr.filter').find('input').css('visibility', 'visible');
       }
 
       this.$table.children('colgroup').children('col').each(function (columnIndex) {
@@ -817,14 +817,14 @@ define(
         }
 
         // All filters are ineffective. Show all rows.
-        this.$table.children('tbody').children('tr').css('display','');
+        this.$table.children('tbody').children('tr').css('display', '');
         OverviewTable.benchmark('Show all rows');
 
       } else {
         // One or more filters are effective.
 
         // Hide all rows.
-        this.$table.children('tbody').children('tr').css('display','none');
+        this.$table.children('tbody').children('tr').css('display', 'none');
         OverviewTable.benchmark('Hide all rows');
 
         // Apply all effective filters.
