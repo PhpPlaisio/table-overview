@@ -119,7 +119,8 @@ define(
       } else {
         // Large screen.
         // Display the row with table filters.
-        this.$table.children('thead').children('tr.filter').find('input').css('visibility', 'visible');
+        this.$table.children('thead').children('tr.filter').find('input')
+          .css('opacity', '1').css('visibility', 'visible').css('display', 'none').fadeIn(200);
       }
 
       this.$table.children('colgroup').children('col').each(function (columnIndex) {
