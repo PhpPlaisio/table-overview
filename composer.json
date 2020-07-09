@@ -1,0 +1,13 @@
+{
+  "name": "plaisio/js-table-overview-table",
+  "description": "PhpPlaisio: Overview Table",
+  "keywords": [
+    "PhpPlaisio",
+    "Overview Table"
+  ],
+  "license": "MIT",
+  "config": {
+    "bin-dir": "bin/",
+    "sort-packages": true
+  }
+}
