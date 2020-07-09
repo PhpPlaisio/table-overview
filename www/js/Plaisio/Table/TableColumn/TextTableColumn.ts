@@ -1,10 +1,10 @@
 import {OverviewTable} from "../OverviewTable";
-import {ColumnType} from "./ColumnType";
+import {TableColumn} from "./TableColumn";
 
 /**
- * Column type for generic text.
+ * Table column for generic text.
  */
-export class TextColumnType implements ColumnType
+export class TextTableColumn implements TableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -205,8 +205,5 @@ export class TextColumnType implements ColumnType
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/**
- * Register column type handlers.
- */
-OverviewTable.registerColumnTypeHandler('text', TextColumnType);
-OverviewTable.registerColumnTypeHandler('email', TextColumnType);
+OverviewTable.registerTableColumn('text', TextTableColumn);
+OverviewTable.registerTableColumn('email', TextTableColumn);

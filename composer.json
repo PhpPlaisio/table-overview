@@ -18,7 +18,7 @@
   "require-dev": {
     "phing/phing": "^2.0",
     "phpunit/phpunit": "^9.0",
-    "plaisio/console": "^2.0"
+    "plaisio/console": "dev-master"
   },
   "autoload": {
     "psr-4": {

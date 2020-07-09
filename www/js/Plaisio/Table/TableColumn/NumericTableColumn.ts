@@ -1,10 +1,10 @@
 import {OverviewTable} from "../OverviewTable";
-import {TextColumnType} from "./TextColumnType";
+import {TextTableColumn} from "./TextTableColumn";
 
 /**
- * Column type for integers and floats.
+ * Table column for integers and floats.
  */
-export class NumericColumnType extends TextColumnType
+export class NumericTableColumn extends TextTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -50,7 +50,4 @@ export class NumericColumnType extends TextColumnType
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/**
- * Register column type handler.
- */
-OverviewTable.registerColumnTypeHandler('numeric', NumericColumnType);
+OverviewTable.registerTableColumn('numeric', NumericTableColumn);

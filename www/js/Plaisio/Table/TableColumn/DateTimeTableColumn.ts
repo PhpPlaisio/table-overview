@@ -1,10 +1,10 @@
 import {OverviewTable} from "../OverviewTable";
-import {TextColumnType} from "./TextColumnType";
+import {TextTableColumn} from "./TextTableColumn";
 
 /**
- * Column type for date and datetime.
+ * Table column for date and datetime.
  */
-export class DateTimeColumnType extends TextColumnType
+export class DateTimeTableColumn extends TextTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -19,8 +19,5 @@ export class DateTimeColumnType extends TextColumnType
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/**
- * Register column type handlers.
- */
-OverviewTable.registerColumnTypeHandler('date', DateTimeColumnType);
-OverviewTable.registerColumnTypeHandler('datetime', DateTimeColumnType);
+OverviewTable.registerTableColumn('date', DateTimeTableColumn);
+OverviewTable.registerTableColumn('datetime', DateTimeTableColumn);

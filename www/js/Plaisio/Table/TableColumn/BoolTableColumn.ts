@@ -1,10 +1,10 @@
 import {OverviewTable} from "../OverviewTable";
-import {TextColumnType} from "./TextColumnType";
+import {TextTableColumn} from "./TextTableColumn";
 
 /**
- * Column type for boolean.
+ * Table column for boolean.
  */
-export class BoolColumnType extends TextColumnType
+export class BoolTableColumn extends TextTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -28,7 +28,4 @@ export class BoolColumnType extends TextColumnType
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/**
- * Register column type handler.
- */
-OverviewTable.registerColumnTypeHandler('bool', BoolColumnType);
+OverviewTable.registerTableColumn('bool', BoolTableColumn);

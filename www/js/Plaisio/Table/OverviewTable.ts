@@ -1,4 +1,4 @@
-import {ColumnType} from "./ColumnType/ColumnType";
+import {TableColumn} from "./TableColumn/TableColumn";
 import {ColumnSortInfo} from "./Helper/ColumnSortInfo";
 
 /**
@@ -20,8 +20,8 @@ export class OverviewTable
   /**
    * All available column type handler classes.
    */
-  private static columnTypeHandlers: Map<string, ColumnType['constructor']> =
-    new Map<string, ColumnType['constructor']>();
+  private static TableColumnHandlers: Map<string, TableColumn['constructor']> =
+    new Map<string, TableColumn['constructor']>();
 
   /**
    * The jQuery object of this table.
@@ -61,7 +61,7 @@ export class OverviewTable
   /**
    * The columns headers of this table.
    */
-  private columnHandlers: ColumnType[] = [];
+  private columnHandlers: TableColumn[] = [];
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -108,14 +108,14 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Registers a column type and handler.
+   * Registers a table column type.
    *
-   * @param columnType The name of the column type.
+   * @param TableColumn The name of the column type.
    * @param handler The handler for the column type.
    */
-  public static registerColumnTypeHandler(columnType: string, handler: ColumnType['constructor']): void
+  public static registerTableColumn(TableColumn: string, handler: TableColumn['constructor']): void
   {
-    OverviewTable.columnTypeHandlers.set(columnType, handler);
+    OverviewTable.TableColumnHandlers.set(TableColumn, handler);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -214,7 +214,7 @@ export class OverviewTable
     }
 
     // Create a list of effective filters.
-    let filters: ColumnType[] = [];
+    let filters: TableColumn[] = [];
     let count: number = 0;
     for (let i: number = 0; i < this.columnHandlers.length; i += 1)
     {
@@ -603,7 +603,7 @@ export class OverviewTable
    */
   public sort(event,
               $header: JQuery,
-              column: ColumnType,
+              column: TableColumn,
               columnIndex: number): void
   {
     if (OverviewTable.debug)
@@ -754,15 +754,15 @@ export class OverviewTable
     {
       that.columnHandlers[columnIndex] = null;
 
-      let columnType = $(col).attr('data-type');
-      if (!columnType || !OverviewTable.columnTypeHandlers.has(columnType))
+      let TableColumn = $(col).attr('data-type');
+      if (!TableColumn || !OverviewTable.TableColumnHandlers.has(TableColumn))
       {
-        columnType = 'none';
+        TableColumn = 'none';
       }
 
-      let tmp: any = OverviewTable.columnTypeHandlers.get(columnType);
+      let tmp: any = OverviewTable.TableColumnHandlers.get(TableColumn);
       that.columnHandlers[columnIndex] = new tmp();
-      that.logProfile('Install column handler with type "' + columnType + '"');
+      that.logProfile('Install column handler with type "' + TableColumn + '"');
 
       that.columnHandlers[columnIndex].initFilter(that, columnIndex, that.mq);
       that.logProfile('Initialize filter');

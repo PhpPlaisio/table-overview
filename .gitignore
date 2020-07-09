@@ -1,8 +1,11 @@
+*.js
 /.idea/
 /.phpunit.result.cache
 /bin/
 /composer.lock
 /doc/
+/node_modules/
+/package-lock.json
 /test/coverage.xml
 /test/report/
 /vendor/
