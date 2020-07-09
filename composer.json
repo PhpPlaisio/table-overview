@@ -1,9 +1,10 @@
 {
-  "name": "plaisio/js-table-overview-table",
+  "name": "plaisio/table-overview-js",
   "description": "PhpPlaisio: Overview Table",
   "keywords": [
     "PhpPlaisio",
-    "Overview Table"
+    "Overview Table",
+    "TypeScript"
   ],
   "license": "MIT",
   "config": {
