@@ -2,7 +2,7 @@ import {ColumnType} from "./ColumnType/ColumnType";
 import {ColumnSortInfo} from "./Helper/ColumnSortInfo";
 
 /**
- * Class for handling filtering and soring on an overview table.
+ * Class enabling filtering and soring of overview tables.
  */
 export class OverviewTable
 {
@@ -20,7 +20,8 @@ export class OverviewTable
   /**
    * All available column type handler classes.
    */
-  private static columnTypeHandlers = {};
+  private static columnTypeHandlers: Map<string, ColumnType['constructor']> =
+    new Map<string, ColumnType['constructor']>();
 
   /**
    * The jQuery object of this table.
@@ -112,9 +113,9 @@ export class OverviewTable
    * @param columnType The name of the column type.
    * @param handler The handler for the column type.
    */
-  public static registerColumnTypeHandler(columnType: string, handler: any): void
+  public static registerColumnTypeHandler(columnType: string, handler: ColumnType['constructor']): void
   {
-    OverviewTable.columnTypeHandlers[columnType] = handler;
+    OverviewTable.columnTypeHandlers.set(columnType, handler);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -313,7 +314,7 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns sorting direction of a column.
+   * Returns the sorting direction of a column.
    *
    * @param $header The table header of the column.
    * @param colSpan The colspan of the column header.
@@ -496,7 +497,7 @@ export class OverviewTable
     rows.sort(multiCmp);
     this.logProfile('Sorted by ' + tableSortingInfo.length + ' columns');
 
-    // Reappend the rows to the table body.
+    // Re-append the rows to the table body.
     let tbody = this.$table.children('tbody')[0];
     for (let i = 0; i < rows.length; i += 1)
     {
@@ -754,12 +755,13 @@ export class OverviewTable
       that.columnHandlers[columnIndex] = null;
 
       let columnType = $(col).attr('data-type');
-      if (!columnType || !OverviewTable.columnTypeHandlers[columnType])
+      if (!columnType || !OverviewTable.columnTypeHandlers.has(columnType))
       {
         columnType = 'none';
       }
 
-      that.columnHandlers[columnIndex] = new OverviewTable.columnTypeHandlers[columnType]();
+      let tmp: any = OverviewTable.columnTypeHandlers.get(columnType);
+      that.columnHandlers[columnIndex] = new tmp();
       that.logProfile('Install column handler with type "' + columnType + '"');
 
       that.columnHandlers[columnIndex].initFilter(that, columnIndex, that.mq);
