@@ -8,6 +8,11 @@ export class OverviewTable
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Name of the event triggered after filtering on a table has ended.
+   */
+  public static readonly FILTERING_ENDED = 'overview-table-filtering-ended';
+
+  /**
    * All registered tables.
    */
   protected static tables: OverviewTable[] = [];
@@ -277,6 +282,8 @@ export class OverviewTable
 
     this.applyZebraTheme();
     this.logProfile('Apply zebra theme');
+
+    this.$table.trigger(OverviewTable.FILTERING_ENDED);
 
     if (OverviewTable.debug)
     {
@@ -669,7 +676,7 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Triggers the filtering a this table.
+   * Triggers the filtering of this table.
    *
    * @param event The event that fired.
    */
