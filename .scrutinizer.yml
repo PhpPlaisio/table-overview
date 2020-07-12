@@ -1,4 +1,8 @@
 build:
+  dependencies:
+    before:
+      - pecl install inotify
+
   tests:
     before:
       - export PLAISIO_CONFIG_DIR=test
