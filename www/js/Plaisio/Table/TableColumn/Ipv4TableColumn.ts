@@ -1,5 +1,5 @@
-import {OverviewTable} from "../OverviewTable";
-import {TextTableColumn} from "./TextTableColumn";
+import {OverviewTable} from '../OverviewTable';
+import {TextTableColumn} from './TextTableColumn';
 
 /**
  * Table column for IPv4 addresses.

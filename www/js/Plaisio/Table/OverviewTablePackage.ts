@@ -1,15 +1,13 @@
-import {OverviewTable} from "./OverviewTable";
-
-export * from "./TableColumn/BoolTableColumn";
-export * from "./TableColumn/DateTimeTableColumn";
-export * from "./TableColumn/Ipv4TableColumn";
-export * from "./TableColumn/NoneTableColumn";
-export * from "./TableColumn/NumericTableColumn";
-export * from "./TableColumn/TableColumn";
-export * from "./TableColumn/TextTableColumn";
-export * from "./TableColumn/UuidTableColumn";
+import './TableColumn/BoolTableColumn';
+import './TableColumn/DateTimeTableColumn';
+import './TableColumn/Ipv4TableColumn';
+import './TableColumn/NoneTableColumn';
+import './TableColumn/NumericTableColumn';
+import './TableColumn/TextTableColumn';
+import './TableColumn/UuidTableColumn';
+import {OverviewTable} from './OverviewTable';
 
 export class OverviewTablePackage extends OverviewTable
 {
-    // Nothing to implement.
+  // Nothing to implement.
 }

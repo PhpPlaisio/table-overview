@@ -1,5 +1,5 @@
-import {OverviewTable} from "../OverviewTable";
-import {TextTableColumn} from "./TextTableColumn";
+import {OverviewTable} from '../OverviewTable';
+import {TextTableColumn} from './TextTableColumn';
 
 /**
  * Table column for boolean.
@@ -12,16 +12,16 @@ export class BoolTableColumn extends TextTableColumn
    */
   public extractForFilter(tableCell: HTMLTableCellElement): string
   {
-    return $(tableCell).attr('data-value');
+    return $(tableCell).attr('data-value') || '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritDoc
    */
-  public getSortKey(tableCell): string
+  public getSortKey(tableCell: HTMLTableCellElement): string
   {
-    return $(tableCell).attr('data-value');
+    return $(tableCell).attr('data-value') || '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------

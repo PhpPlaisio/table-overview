@@ -1,5 +1,5 @@
-import {TableColumn} from "./TableColumn/TableColumn";
-import {ColumnSortInfo} from "./Helper/ColumnSortInfo";
+import {TableColumn} from './TableColumn/TableColumn';
+import {ColumnSortInfo} from './Helper/ColumnSortInfo';
 
 /**
  * Class enabling filtering and soring of overview tables.
@@ -18,20 +18,15 @@ export class OverviewTable
   protected static tables: OverviewTable[] = [];
 
   /**
-   * If and only if true debug and profiling message are logged on the console.
-   */
-  private static debug: boolean = false;
-
-  /**
    * All available column type handler classes.
    */
   private static TableColumnHandlers: Map<string, TableColumn['constructor']> =
     new Map<string, TableColumn['constructor']>();
 
   /**
-   * The jQuery object of this table.
+   * If and only if true debug and profiling message are logged on the console.
    */
-  public $table: JQuery;
+  private static debug: boolean = false;
 
   /**
    * The HTML table cells with filters of this HTML table.
@@ -44,19 +39,19 @@ export class OverviewTable
   public $headers: JQuery;
 
   /**
+   * The jQuery object of this table.
+   */
+  public $table: JQuery;
+
+  /**
    * Lookup from column index to header index.
    */
-  public headerIndexLookup = [];
+  public headerIndexLookup = Array<number>();
 
   /**
-   * The start time (for bugging and profiling).
+   * The columns headers of this table.
    */
-  private timeStart: Date = null
-
-  /**
-   * The intermediate time (for bugging and profiling).
-   */
-  private timeIntermediate: Date;
+  private columnHandlers: TableColumn[] = [];
 
   /**
    *  The media query list object (must match for small screens).
@@ -64,9 +59,14 @@ export class OverviewTable
   private readonly mq: MediaQueryList;
 
   /**
-   * The columns headers of this table.
+   * The intermediate time (for bugging and profiling).
    */
-  private columnHandlers: TableColumn[] = [];
+  private timeIntermediate: Date;
+
+  /**
+   * The start time (for bugging and profiling).
+   */
+  private timeStart: Date;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -77,15 +77,16 @@ export class OverviewTable
    */
   public constructor($table: JQuery, mq: MediaQueryList)
   {
+    this.timeStart        = new Date();
+    this.timeIntermediate = new Date();
+
     if (OverviewTable.debug)
     {
       this.log('Start create OverviewTable:');
-      this.timeStart = new Date();
-      this.timeIntermediate = new Date();
     }
 
-    this.$table = $table;
-    this.mq = mq;
+    this.$table   = $table;
+    this.mq       = mq;
     this.$filters = $table.children('thead').children('tr.filter').find('td');
     this.$headers = $table.children('thead').children('tr.header').find('th');
     this.logProfile('Prepare table and table info');
@@ -113,14 +114,38 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Registers a table column type.
+   * Merges info about sorting of a column to sorting info of a table.
    *
-   * @param TableColumn The name of the column type.
-   * @param handler The handler for the column type.
+   * @param tableSortInfo  De sorting metadata of the table.
+   * @param columnSortInfo De sorting metadata of the column (on which sorting is requested).
+   *
+   * @returns
    */
-  public static registerTableColumn(TableColumn: string, handler: TableColumn['constructor']): void
+  static mergeInfo(tableSortInfo: ColumnSortInfo[], columnSortInfo: ColumnSortInfo): ColumnSortInfo[]
   {
-    OverviewTable.TableColumnHandlers.set(TableColumn, handler);
+    if (tableSortInfo.length === 0)
+    {
+      // If selected only one column and sort info is empty, add column info
+      columnSortInfo.sortOrder = 1;
+      tableSortInfo[0]         = columnSortInfo;
+    }
+    else
+    {
+      if (columnSortInfo.sortOrder !== -1 && tableSortInfo[columnSortInfo.sortOrder - 1])
+      {
+        // If clicked column is already sorted and sort info contain info about this column,
+        // change sort direction for it column.
+        tableSortInfo[columnSortInfo.sortOrder - 1]['sortDirection'] = columnSortInfo.sortDirection;
+      }
+      else
+      {
+        // If clicked column isn't sorted add this column info to sort info.
+        columnSortInfo.sortOrder = tableSortInfo.length + 1;
+        tableSortInfo.push(columnSortInfo);
+      }
+    }
+
+    return tableSortInfo;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -154,38 +179,14 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Merges info about sorting of a column to sorting info of a table.
+   * Registers a table column type.
    *
-   * @param tableSortInfo  De sorting metadata of the table.
-   * @param columnSortInfo De sorting metadata of the column (on which sorting is requested).
-   *
-   * @returns
+   * @param TableColumn The name of the column type.
+   * @param handler The handler for the column type.
    */
-  static mergeInfo(tableSortInfo: ColumnSortInfo[], columnSortInfo: ColumnSortInfo): ColumnSortInfo[]
+  public static registerTableColumn(TableColumn: string, handler: TableColumn['constructor']): void
   {
-    if (tableSortInfo.length === 0)
-    {
-      // If selected only one column and sort info is empty, add column info
-      columnSortInfo.sortOrder = 1;
-      tableSortInfo[0] = columnSortInfo;
-    }
-    else
-    {
-      if (columnSortInfo.sortOrder !== -1 && tableSortInfo[columnSortInfo.sortOrder - 1])
-      {
-        // If clicked column is already sorted and sort info contain info about this column,
-        // change sort direction for it column.
-        tableSortInfo[columnSortInfo.sortOrder - 1]['sortDirection'] = columnSortInfo.sortDirection;
-      }
-      else
-      {
-        // If clicked column isn't sorted add this column info to sort info.
-        columnSortInfo.sortOrder = tableSortInfo.length + 1;
-        tableSortInfo.push(columnSortInfo);
-      }
-    }
-
-    return tableSortInfo;
+    OverviewTable.TableColumnHandlers.set(TableColumn, handler);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -194,15 +195,76 @@ export class OverviewTable
    *
    * @param string The string.
    */
-  public static toLowerCaseNoDiacritics(string: string): string
+  public static toLowerCaseNoDiacritics(string: string | null): string
   {
     if (string === null)
     {
-      return null;
+      return '';
     }
 
     // See https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
     return string.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Adds classes and data attributes concerning sorting to the column headers.
+   *
+   * @param tableSortInfo The sorting metadata of the table.
+   */
+  public addSortInfo(tableSortInfo: ColumnSortInfo[]): void
+  {
+    for (let i = 0; i < tableSortInfo.length; i += 1)
+    {
+      let order   = i + 1;
+      let $header = this.$headers.eq(this.headerIndexLookup[tableSortInfo[i].columnIndex]);
+      $header.attr(this.getAttributeName('data-sort-order',
+        tableSortInfo[i].colspan,
+        tableSortInfo[i].offset),
+        order);
+      $header.addClass(this.getAttributeName('sorted',
+        tableSortInfo[i].colspan,
+        tableSortInfo[i].offset) + '-' + tableSortInfo[i].sortDirection);
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Applies zebra theme on the table.
+   */
+  public applyZebraTheme(): void
+  {
+    let even: boolean = true;
+
+    // Note: Using this.style.display is faster than using children('tr:visible').
+    this.$table.children('tbody').children('tr').each(function ()
+    {
+      let $this = $(this);
+
+      if (this.style.display !== 'none')
+      {
+        if (even)
+        {
+          $this.removeClass('odd').addClass('even');
+        }
+        else
+        {
+          $this.removeClass('even').addClass('odd');
+        }
+        even = !even;
+      }
+    });
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the width of a column.
+   *
+   * @param columnIndex The index of the column in the table.
+   */
+  public columnWidth(columnIndex: number): number
+  {
+    return this.$table.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth() || 0;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -214,13 +276,13 @@ export class OverviewTable
     if (OverviewTable.debug)
     {
       this.log('Apply filters:');
-      this.timeStart = new Date();
+      this.timeStart        = new Date();
       this.timeIntermediate = new Date();
     }
 
     // Create a list of effective filters.
-    let filters: TableColumn[] = [];
-    let count: number = 0;
+    let filters: (TableColumn | null)[] = [];
+    let count: number                   = 0;
     for (let i: number = 0; i < this.columnHandlers.length; i += 1)
     {
       if (this.columnHandlers[i] && this.columnHandlers[i].startFilter())
@@ -257,12 +319,13 @@ export class OverviewTable
       // Apply all effective filters.
       this.$table.children('tbody').children('tr').each(function ()
       {
-        let show = 1;
+        let show  = 1;
         let $this = $(this);
 
         for (let j = 0; j < filters.length; j += 1)
         {
-          if (filters[j] && !filters[j].simpleFilter((<HTMLTableRowElement>this).cells[j]))
+          // @ts-ignore
+          if (filters[j] && !(filters[j].simpleFilter(this.cells[j])))
           {
             // The table cell does not match the filter. Don't show the row.
             show = 0;
@@ -293,30 +356,122 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Applies zebra theme on the table.
+   * Triggers the filtering of this table.
+   *
+   * @param event The event that fired.
    */
-  public applyZebraTheme(): void
+  public filterTrigger(event: JQuery.TriggeredEvent): void
   {
-    let even: boolean = true;
+    event.data.table.filter();
+  }
 
-    // Note: Using this.style.display is faster than using children('tr:visible').
-    this.$table.children('tbody').children('tr').each(function ()
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns object with info about sorting of a column.
+   *
+   * @param event The event that triggers the sorting.
+   * @param $header The table header of the column.
+   * @param columnIndex The index of the column.
+   */
+  public getColumnSortInfo(event: JQuery.TriggeredEvent, $header: JQuery, columnIndex: number): ColumnSortInfo
+  {
+    let columnInfo         = new ColumnSortInfo();
+    columnInfo.columnIndex = columnIndex;
+
+    let span = $header.attr('colspan');
+    if (!span || span === '1')
     {
-      let $this = $(this);
-
-      if (this.style.display !== 'none')
+      columnInfo.colspan       = 1;
+      columnInfo.offset        = 0;
+      columnInfo.sortOrder     = parseInt($header.attr('data-sort-order') || '-1', 10);
+      columnInfo.sortDirection = this.getFlipSortDirection($header, 1, 0);
+    }
+    else if (span === '2')
+    {
+      if ($header.hasClass('sort-1') && $header.hasClass('sort-2'))
       {
-        if (even)
+        // Header spans two columns and both columns can be used for sorting.
+        let widthCol1 = 0;
+        let widthCol2 = 0;
+        let offset    = $header.offset();
+        let x: number = 0;
+        if (event.pageX && offset)
         {
-          $this.removeClass('odd').addClass('even');
+          x = event.pageX - offset.left;
         }
-        else
+
+        if (this.headerIndexLookup[columnIndex] === this.headerIndexLookup[columnIndex - 1])
         {
-          $this.removeClass('even').addClass('odd');
+          // User clicked right column of a dual column header.
+          widthCol1 = this.columnWidth(columnIndex - 1);
+          widthCol2 = this.columnWidth(columnIndex);
         }
-        even = !even;
+
+        if (this.headerIndexLookup[columnIndex] === this.headerIndexLookup[columnIndex + 1])
+        {
+          // User clicked left column of a dual column header.
+          widthCol1 = this.columnWidth(columnIndex);
+          widthCol2 = this.columnWidth(columnIndex + 1);
+        }
+
+        let widthHeader: number = $header.outerWidth() || 0;
+        let diff: number        = widthHeader - widthCol1 - widthCol2;
+
+        // We account diff due to cell separation.
+        if (x < (widthCol1 - diff / 2))
+        {
+          columnInfo.colspan       = 2;
+          columnInfo.offset        = 0;
+          columnInfo.sortOrder     = parseInt($header.attr('data-sort-order-1') || '-1', 10);
+          columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 0);
+        }
+        else if (x > (widthCol1 + diff / 2))
+        {
+          columnInfo.colspan       = 2;
+          columnInfo.offset        = 1;
+          columnInfo.sortOrder     = parseInt($header.attr('data-sort-order-2') || '-1', 10);
+          columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 1);
+        }
       }
-    });
+      else if ($header.hasClass('sort-1'))
+      {
+        // Header spans two columns but only the first/left column can used for sorting.
+        columnInfo.colspan       = 2;
+        columnInfo.offset        = 0;
+        columnInfo.sortOrder     = parseInt($header.attr('data-sort-order-1') || '-1', 10);
+        columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 0);
+      }
+      else if ($header.hasClass('sort-2'))
+      {
+        // Header spans two columns but only the second/right column can used for sorting.
+        columnInfo.colspan       = 2;
+        columnInfo.offset        = 1;
+        columnInfo.sortOrder     = parseInt($header.attr('data-sort-order-2') || '-1', 10);
+        columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 1);
+      }
+    }
+    // Colspan greater than 2 is not supported.
+
+    return columnInfo;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the reversed sorting direction of a column.
+   *
+   * @param $header The table header of the column.
+   * @param colSpan The colspan of the column header.
+   * @param offset  The offset of the column (relative the the column header).
+   */
+  public getFlipSortDirection($header: JQuery, colSpan: number, offset: number): string
+  {
+    let sortDirection = this.getSortDirection($header, colSpan, offset);
+    if (sortDirection === 'desc' || sortDirection === '')
+    {
+      return 'asc';
+    }
+
+    return 'desc';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -344,25 +499,6 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns the reversed sorting direction of a column.
-   *
-   * @param $header The table header of the column.
-   * @param colSpan The colspan of the column header.
-   * @param offset  The offset of the column (relative the the column header).
-   */
-  public getFlipSortDirection($header: JQuery, colSpan: number, offset: number): string
-  {
-    let sortDirection = this.getSortDirection($header, colSpan, offset);
-    if (sortDirection === 'desc' || sortDirection === '')
-    {
-      return 'asc';
-    }
-
-    return 'desc';
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
    * Returns sort order for a column.
    *
    * @param $header The table header of the column.
@@ -384,223 +520,6 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Adds classes and data attributes concerning sorting to the column headers.
-   *
-   * @param tableSortInfo The sorting metadata of the table.
-   */
-  public addSortInfo(tableSortInfo): void
-  {
-    for (let i = 0; i < tableSortInfo.length; i += 1)
-    {
-      let order = i + 1;
-      let $header = this.$headers.eq(this.headerIndexLookup[tableSortInfo[i].columnIndex]);
-      $header.attr(this.getAttributeName('data-sort-order',
-        tableSortInfo[i].colspan,
-        tableSortInfo[i].offset),
-        order);
-      $header.addClass(this.getAttributeName('sorted',
-        tableSortInfo[i].colspan,
-        tableSortInfo[i].offset) + '-' + tableSortInfo[i].sortDirection);
-    }
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Sorts the table by one column.
-   *
-   * @param sortingInfo The metadata for sorting of this table.
-   * @param column      The column type handler for the column.
-   */
-  public sortSingleColumn(sortingInfo: ColumnSortInfo, column): void
-  {
-    let cell;
-    let i;
-    let rows;
-    let tbody;
-
-    // Get the sort direction.
-    let sortDirection = (sortingInfo.sortDirection === 'asc') ? 1 : -1;
-
-    // Get all the rows of the table.
-    rows = this.$table.children('tbody').children('tr').get();
-
-    // Pull out the sort keys of the table cells.
-    for (i = 0; i < rows.length; i += 1)
-    {
-      cell = rows[i].cells[sortingInfo.columnIndex];
-      rows[i].sortKey = column.getSortKey(cell);
-    }
-    this.logProfile('Extracting sort keys');
-
-    // Actually sort the rows.
-    rows.sort(function (row1, row2)
-    {
-      return sortDirection * column.compareSortKeys(row1.sortKey, row2.sortKey);
-    });
-    this.logProfile('Sorted by one column');
-
-    // Reappend the rows to the table body.
-    tbody = this.$table.children('tbody')[0];
-    for (i = 0; i < rows.length; i += 1)
-    {
-      rows[i].sortKey = null;
-      tbody.appendChild(rows[i]);
-    }
-    this.logProfile('Reappend the sorted rows');
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Sorts the table by two or more columns.
-   *
-   * @param tableSortingInfo The sorting metadata of this table.
-   */
-  public sortMultiColumn(tableSortingInfo): void
-  {
-    let multiCmp = null;
-    let this1 = this;  // Is required by multiCmp.
-
-    // Get all the rows of the table.
-    let rows = this.$table.children('tbody').children('tr').get();
-
-    for (let i = 0; i < rows.length; i += 1)
-    {
-      rows[i]['sortKey'] = [];
-      for (let j = 0; j < tableSortingInfo.length; j += 1)
-      {
-        let columnHandler = this.columnHandlers[tableSortingInfo[j].columnIndex];
-
-        // Pull out the sort keys of the table cells.
-        let cell = (<HTMLTableRowElement>rows[i]).cells[tableSortingInfo[j].columnIndex];
-        rows[i]['sortKey'][j] = columnHandler.getSortKey(cell);
-      }
-    }
-    this.logProfile('Extracting sort keys');
-
-    let sortFunc = 'multiCmp = function (row1, row2) {\n';
-    sortFunc += '  let cmp;\n';
-    for (let i = 0; i < tableSortingInfo.length; i += 1)
-    {
-      let dir = 1;
-      if (tableSortingInfo[i].sortDirection === 'desc')
-      {
-        dir = -1;
-      }
-      sortFunc += '  cmp = this1.columnHandlers[' +
-        tableSortingInfo[i].columnIndex +
-        '].compareSortKeys(row1.sortKey[' +
-        i + '], row2.sortKey[' +
-        i + ']);\n';
-      sortFunc += '  if (cmp !== 0) {\n';
-      sortFunc += '    return cmp * ' + dir + ';\n';
-      sortFunc += '  }\n';
-    }
-    sortFunc += '  return 0;\n';
-    sortFunc += '};\n';
-    eval(sortFunc);
-    this.logProfile('Prepare multi sort function');
-
-    // Actually sort the rows.
-    rows.sort(multiCmp);
-    this.logProfile('Sorted by ' + tableSortingInfo.length + ' columns');
-
-    // Re-append the rows to the table body.
-    let tbody = this.$table.children('tbody')[0];
-    for (let i = 0; i < rows.length; i += 1)
-    {
-      rows[i]['sortKey'] = null;
-      tbody.appendChild(rows[i]);
-    }
-    this.logProfile('Reappend the sorted rows');
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns object with info about sorting of a column.
-   *
-   * @param event The event that triggers the sorting.
-   * @param $header The table header of the column.
-   * @param columnIndex The index of the column.
-   */
-  public getColumnSortInfo(event, $header: JQuery, columnIndex: number): ColumnSortInfo
-  {
-    let columnInfo = new ColumnSortInfo();
-    columnInfo.columnIndex = columnIndex;
-
-    let span: string = $header.attr('colspan');
-    if (!span || span === '1')
-    {
-      columnInfo.colspan = 1;
-      columnInfo.offset = 0;
-      columnInfo.sortOrder = parseInt($header.attr('data-sort-order'), 10);
-      columnInfo.sortDirection = this.getFlipSortDirection($header, 1, 0);
-    }
-    else if (span === '2')
-    {
-      if ($header.hasClass('sort-1') && $header.hasClass('sort-2'))
-      {
-        // Header spans two columns and both columns can be used for sorting.
-        let x = event.pageX - $header.offset().left;
-        let widthCol1 = 0;
-        let widthCol2 = 0;
-
-        if (this.headerIndexLookup[columnIndex] === this.headerIndexLookup[columnIndex - 1])
-        {
-          // User clicked right column of a dual column header.
-          widthCol1 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex - 1) + ')').outerWidth();
-          widthCol2 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
-        }
-
-        if (this.headerIndexLookup[columnIndex] === this.headerIndexLookup[columnIndex + 1])
-        {
-          // User clicked left column of a dual column header.
-          widthCol1 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + columnIndex + ')').outerWidth();
-          widthCol2 = this.$table.children('tbody').find('tr:visible:first > td:eq(' + (columnIndex + 1) + ')').outerWidth();
-        }
-
-        let widthHeader: number = $header.outerWidth();
-        let diff: number = widthHeader - widthCol1 - widthCol2;
-
-        // We account diff due to cell separation.
-        if (x < (widthCol1 - diff / 2))
-        {
-          columnInfo.colspan = 2;
-          columnInfo.offset = 0;
-          columnInfo.sortOrder = parseInt($header.attr('data-sort-order-1'), 10);
-          columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 0);
-        }
-        else if (x > (widthCol1 + diff / 2))
-        {
-          columnInfo.colspan = 2;
-          columnInfo.offset = 1;
-          columnInfo.sortOrder = parseInt($header.attr('data-sort-order-2'), 10);
-          columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 1);
-        }
-      }
-      else if ($header.hasClass('sort-1'))
-      {
-        // Header spans two columns but only the first/left column can used for sorting.
-        columnInfo.colspan = 2;
-        columnInfo.offset = 0;
-        columnInfo.sortOrder = parseInt($header.attr('data-sort-order-1'), 10);
-        columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 0);
-      }
-      else if ($header.hasClass('sort-2'))
-      {
-        // Header spans two columns but only the second/right column can used for sorting.
-        columnInfo.colspan = 2;
-        columnInfo.offset = 1;
-        columnInfo.sortOrder = parseInt($header.attr('data-sort-order-2'), 10);
-        columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 1);
-      }
-    }
-    // Colspan greater than 2 is not supported.
-
-    return columnInfo;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
    * Sorts the table whn the user has clicked on a table header.
    *
    * @param event       The mouse click event.
@@ -608,7 +527,7 @@ export class OverviewTable
    * @param column      The column type handler for the column.
    * @param columnIndex The index of the column.
    */
-  public sort(event,
+  public sort(event: JQuery.TriggeredEvent,
               $header: JQuery,
               column: TableColumn,
               columnIndex: number): void
@@ -616,7 +535,7 @@ export class OverviewTable
     if (OverviewTable.debug)
     {
       this.log('Start sort:');
-      this.timeStart = new Date();
+      this.timeStart        = new Date();
       this.timeIntermediate = new Date();
     }
 
@@ -676,13 +595,276 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Triggers the filtering of this table.
+   * Sorts the table by two or more columns.
    *
-   * @param event The event that fired.
+   * @param tableSortingInfo The sorting metadata of this table.
    */
-  public filterTrigger(event): void
+  public sortMultiColumn(tableSortingInfo: ColumnSortInfo[]): void
   {
-    event.data.table.filter();
+    let multiCmp;
+    let this1 = this;  // Is required by multiCmp.
+
+    // Get all the rows of the table.
+    let rows = this.$table.children('tbody').children('tr').get();
+
+    for (let i = 0; i < rows.length; i += 1)
+    {
+      (rows[i] as any)['sortKey'] = [];
+      for (let j = 0; j < tableSortingInfo.length; j += 1)
+      {
+        let columnHandler = this.columnHandlers[tableSortingInfo[j].columnIndex];
+
+        // Pull out the sort keys of the table cells.
+        let cell                    = (<HTMLTableRowElement>rows[i]).cells[tableSortingInfo[j].columnIndex];
+        (rows[i] as any).sortKey[j] = columnHandler.getSortKey(cell);
+      }
+    }
+    this.logProfile('Extracting sort keys');
+
+    let sortFunc = 'multiCmp = function (row1, row2) {\n';
+    sortFunc += '  let cmp;\n';
+    for (let i = 0; i < tableSortingInfo.length; i += 1)
+    {
+      let dir = 1;
+      if (tableSortingInfo[i].sortDirection === 'desc')
+      {
+        dir = -1;
+      }
+      sortFunc += '  cmp = this1.columnHandlers[' +
+        tableSortingInfo[i].columnIndex +
+        '].compareSortKeys(row1.sortKey[' +
+        i + '], row2.sortKey[' +
+        i + ']);\n';
+      sortFunc += '  if (cmp !== 0) {\n';
+      sortFunc += '    return cmp * ' + dir + ';\n';
+      sortFunc += '  }\n';
+    }
+    sortFunc += '  return 0;\n';
+    sortFunc += '};\n';
+    eval(sortFunc);
+    this.logProfile('Prepare multi sort function');
+
+    // Actually sort the rows.
+    rows.sort(multiCmp);
+    this.logProfile('Sorted by ' + tableSortingInfo.length + ' columns');
+
+    // Re-append the rows to the table body.
+    let tbody = this.$table.children('tbody')[0];
+    for (let i = 0; i < rows.length; i += 1)
+    {
+      (rows[i] as any)['sortKey'] = null;
+      tbody.appendChild(rows[i]);
+    }
+    this.logProfile('Reappend the sorted rows');
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sorts the table by one column.
+   *
+   * @param sortingInfo The metadata for sorting of this table.
+   * @param column      The column type handler for the column.
+   */
+  public sortSingleColumn(sortingInfo: ColumnSortInfo, column: TableColumn): void
+  {
+    // Get the sort direction.
+    let sortDirection = (sortingInfo.sortDirection === 'asc') ? 1 : -1;
+
+    // Get all the rows of the table.
+    let rows = this.$table.children('tbody').children('tr').get();
+
+    // Pull out the sort keys of the table cells.
+    for (let i = 0; i < rows.length; i += 1)
+    {
+      let cell                 = (rows[i] as any).cells[sortingInfo.columnIndex];
+      (rows[i] as any).sortKey = column.getSortKey(cell);
+    }
+    this.logProfile('Extracting sort keys');
+
+    // Actually sort the rows.
+    rows.sort(function (row1, row2)
+    {
+      return sortDirection * column.compareSortKeys((row1 as any).sortKey, (row2 as any).sortKey);
+    });
+    this.logProfile('Sorted by one column');
+
+    // Reappend the rows to the table body.
+    let tbody = this.$table.children('tbody')[0];
+    for (let i = 0; i < rows.length; i += 1)
+    {
+      (rows[i] as any).sortKey = null;
+      tbody.appendChild(rows[i]);
+    }
+    this.logProfile('Reappend the sorted rows');
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Removes all classes and data attributes concerning sorting from the column headers.
+   */
+  private cleanSortAttributes(): void
+  {
+    // Remove all orders for all columns.
+    this.$table.children('thead').find('th')
+        .attr('data-sort-order', null)
+        .attr('data-sort-order-1', null)
+        .attr('data-sort-order-2', null)
+        .removeClass('sorted-asc')
+        .removeClass('sorted-desc')
+        .removeClass('sorted-1-asc')
+        .removeClass('sorted-1-desc')
+        .removeClass('sorted-2-asc')
+        .removeClass('sorted-2-desc');
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the attribute name based on the (base)name of the attribute and sorting metadata of the column.
+   *
+   * @param attributeName The (base)name of the attribute.
+   * @param colSpan       The colspan of the column header.
+   * @param offset        The offset of the column (relative to the column header).
+   */
+  private getAttributeName(attributeName: string, colSpan: number, offset: number): string
+  {
+    if (colSpan === 1)
+    {
+      return attributeName;
+    }
+
+    return attributeName + '-' + (offset + 1);
+  }
+
+  //------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns an array indexed by the sort order with objects holding sorting information of the column.
+   */
+  private getSortInfo(): ColumnSortInfo[]
+  {
+    let columnsInfo: ColumnSortInfo[] = [];
+    let dual: string | null;
+    let sortOrder;
+    let that                          = this;
+
+    this.$table.children('colgroup').children('col').each(function (columnIndex: number)
+    {
+      let $th = that.$headers.eq(that.headerIndexLookup[columnIndex]);
+
+      let span = $th.attr('colspan');
+      if (!span || span === '1')
+      {
+        sortOrder = that.getSortOrder($th, 1, 0);
+        if (sortOrder !== -1)
+        {
+          columnsInfo[sortOrder - 1] = new ColumnSortInfo(1, columnIndex, 0, that.getSortDirection($th, 1, 0), sortOrder);
+        }
+      }
+      else if (span === '2')
+      {
+        if (!dual || dual === 'right')
+        {
+          dual = 'left';
+        }
+        else
+        {
+          dual = 'right';
+        }
+
+        if (dual === 'left' && $th.hasClass('sort-1'))
+        {
+          sortOrder = that.getSortOrder($th, 2, 0);
+          if (sortOrder !== -1)
+          {
+            columnsInfo[sortOrder - 1] = new ColumnSortInfo(2, columnIndex, 0, that.getSortDirection($th, 2, 0), sortOrder);
+          }
+        }
+
+        if (dual === 'right' && $th.hasClass('sort-2'))
+        {
+          sortOrder = that.getSortOrder($th, 2, 1);
+          if (sortOrder !== -1)
+          {
+            columnsInfo[sortOrder - 1] = new ColumnSortInfo(2, columnIndex, 1, that.getSortDirection($th, 2, 1), sortOrder);
+          }
+        }
+      }
+    });
+
+    return columnsInfo;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Initializes the column type handlers and types.
+   */
+  private initColumnHeaders(): void
+  {
+    let that = this;
+
+    this.$table.children('colgroup').children('col').each(function (columnIndex: number, col: HTMLElement)
+    {
+      let TableColumn = $(col).attr('data-type');
+      if (!TableColumn || !OverviewTable.TableColumnHandlers.has(TableColumn))
+      {
+        TableColumn = 'none';
+      }
+
+      let tmp: any                     = OverviewTable.TableColumnHandlers.get(TableColumn);
+      that.columnHandlers[columnIndex] = new tmp();
+      that.logProfile('Install column handler with type "' + TableColumn + '"');
+
+      that.columnHandlers[columnIndex].initFilter(that, columnIndex, that.mq);
+      that.logProfile('Initialize filter');
+
+      that.columnHandlers[columnIndex].initSort(that, columnIndex);
+      that.logProfile('Initialize sorter');
+    });
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Initializes the map from column index to header index. Column headers can span 1 or 2 columns.
+   */
+  private initColumnMap(): void
+  {
+    let that = this;
+    this.$headers.each(function (headerIndex: number, th: HTMLElement)
+    {
+      const colspan: number = parseInt($(th).attr('colspan') || '1', 10);
+
+      for (let j = 0; j < colspan; j += 1)
+      {
+        that.headerIndexLookup.push(headerIndex);
+      }
+    });
+
+    this.logProfile('Init lookup table from columnIndex to header_index');
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Install and fire media change event handler.
+   */
+  private initMediaChange(): void
+  {
+    let that = this;
+
+    if (this.mq)
+    {
+      this.mq.addListener(function ()
+      {
+        that.mediaChange(that.mq);
+      });
+    }
+
+    $(window).on('resize', function ()
+    {
+      that.mediaChange(that.mq);
+    });
+
+    this.mediaChange(this.mq);
+
+    this.logProfile('Initialize media change event handlers');
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -720,112 +902,6 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Initializes the map from column index to header index. Column headers can span 1 or 2 columns.
-   */
-  private initColumnMap(): void
-  {
-    let that = this;
-
-    this.$headers.each(function (headerIndex, th)
-    {
-      let span: number;
-
-      let colspan = $(th).attr('colspan');
-      if (colspan)
-      {
-        span = parseFloat(colspan);
-      }
-      else
-      {
-        span = 1;
-      }
-
-      for (let j = 0; j < span; j += 1)
-      {
-        that.headerIndexLookup.push(headerIndex);
-      }
-    });
-
-    this.logProfile('Init lookup table from columnIndex to header_index');
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Initializes the column type handlers and types.
-   */
-  private initColumnHeaders(): void
-  {
-    let that = this;
-
-    this.$table.children('colgroup').children('col').each(function (columnIndex, col)
-    {
-      that.columnHandlers[columnIndex] = null;
-
-      let TableColumn = $(col).attr('data-type');
-      if (!TableColumn || !OverviewTable.TableColumnHandlers.has(TableColumn))
-      {
-        TableColumn = 'none';
-      }
-
-      let tmp: any = OverviewTable.TableColumnHandlers.get(TableColumn);
-      that.columnHandlers[columnIndex] = new tmp();
-      that.logProfile('Install column handler with type "' + TableColumn + '"');
-
-      that.columnHandlers[columnIndex].initFilter(that, columnIndex, that.mq);
-      that.logProfile('Initialize filter');
-
-      that.columnHandlers[columnIndex].initSort(that, columnIndex);
-      that.logProfile('Initialize sorter');
-    });
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Install and fire media change event handler.
-   */
-  private initMediaChange(): void
-  {
-    let that = this;
-
-    if (this.mq)
-    {
-      this.mq.addListener(function ()
-      {
-        that.mediaChange(that.mq);
-      });
-    }
-
-    $(window).on('resize', function ()
-    {
-      that.mediaChange(that.mq);
-    });
-
-    this.mediaChange(this.mq);
-
-    this.logProfile('Initialize media change event handlers');
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Removes all classes and data attributes concerning sorting from the column headers.
-   */
-  private cleanSortAttributes(): void
-  {
-    // Remove all orders for all columns.
-    this.$table.children('thead').find('th')
-      .attr('data-sort-order', null)
-      .attr('data-sort-order-1', null)
-      .attr('data-sort-order-2', null)
-      .removeClass('sorted-asc')
-      .removeClass('sorted-desc')
-      .removeClass('sorted-1-asc')
-      .removeClass('sorted-1-desc')
-      .removeClass('sorted-2-asc')
-      .removeClass('sorted-2-desc');
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
    * @param mq The media query list object (must match for small screens).
    */
   private mediaChange(mq: MediaQueryList): void
@@ -841,107 +917,13 @@ export class OverviewTable
     {
       // Large screen. Display the row with table filters.
       this.$table.children('thead').children('tr.filter').find('input')
-        .css('opacity', '1').css('visibility', 'visible').css('display', 'none').fadeIn(200);
+          .css('opacity', '1').css('visibility', 'visible').css('display', 'none').fadeIn(200);
     }
 
-    this.$table.children('colgroup').children('col').each(function (columnIndex)
+    this.$table.children('colgroup').children('col').each(function (columnIndex: number)
     {
       that.columnHandlers[columnIndex].mediaChange(mq);
     });
-  }
-
-  //------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns an array indexed by the sort order with objects holding sorting information of the column.
-   */
-  private getSortInfo(): ColumnSortInfo[]
-  {
-    let columnsInfo = [];
-    let dual;
-    let sortOrder;
-    let that = this;
-
-    this.$table.children('colgroup').children('col').each(function (columnIndex)
-    {
-      let $th = that.$headers.eq(that.headerIndexLookup[columnIndex]);
-
-      let span = $th.attr('colspan');
-      if (!span || span === '1')
-      {
-        sortOrder = that.getSortOrder($th, 1, 0);
-        if (sortOrder !== -1)
-        {
-          columnsInfo[sortOrder - 1] = {
-            columnIndex: columnIndex,
-            colspan: 1,
-            offset: 0,
-            sortOrder: sortOrder,
-            sortDirection: that.getSortDirection($th, 1, 0)
-          };
-        }
-      }
-      else if (span === '2')
-      {
-        if (!dual || dual === 'right')
-        {
-          dual = 'left';
-        }
-        else
-        {
-          dual = 'right';
-        }
-
-        if (dual === 'left' && $th.hasClass('sort-1'))
-        {
-          sortOrder = that.getSortOrder($th, 2, 0);
-          if (sortOrder !== -1)
-          {
-            columnsInfo[sortOrder - 1] = {
-              columnIndex: columnIndex,
-              colspan: 2,
-              offset: 0,
-              sortOrder: sortOrder,
-              sortDirection: that.getSortDirection($th, 2, 0)
-            };
-          }
-        }
-
-        if (dual === 'right' && $th.hasClass('sort-2'))
-        {
-          sortOrder = that.getSortOrder($th, 2, 1);
-          if (sortOrder !== -1)
-          {
-            columnsInfo[sortOrder - 1] = {
-              columnIndex: columnIndex,
-              colspan: 2,
-              offset: 1,
-              sortOrder: sortOrder,
-              sortDirection: that.getSortDirection($th, 2, 1)
-            };
-          }
-        }
-      }
-    });
-
-    return columnsInfo;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns the attribute name based on the (base)name of the attribute and sorting metadata of the column.
-   *
-   * @param attributeName The (base)name of the attribute.
-   * @param colSpan       The colspan of the column header.
-   * @param offset        The offset of the column (relative to the column header).
-   */
-  private getAttributeName(attributeName: string, colSpan: number, offset: number): string
-  {
-    if (colSpan === 1)
-    {
-      return attributeName;
-    }
-
-    return attributeName + '-' + (offset + 1);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

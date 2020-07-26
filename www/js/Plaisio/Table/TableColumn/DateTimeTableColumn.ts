@@ -1,5 +1,5 @@
-import {OverviewTable} from "../OverviewTable";
-import {TextTableColumn} from "./TextTableColumn";
+import {OverviewTable} from '../OverviewTable';
+import {TextTableColumn} from './TextTableColumn';
 
 /**
  * Table column for date and datetime.
@@ -10,9 +10,9 @@ export class DateTimeTableColumn extends TextTableColumn
   /**
    * @inheritDoc
    */
-  public getSortKey(tableCell): string
+  public getSortKey(tableCell: HTMLTableCellElement): string
   {
-    return $(tableCell).attr('data-value');
+    return $(tableCell).attr('data-value') || '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------

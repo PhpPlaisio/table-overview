@@ -1,4 +1,3 @@
-*.js
 /.idea/
 /.phpunit.result.cache
 /bin/
@@ -9,3 +8,5 @@
 /test/coverage.xml
 /test/report/
 /vendor/
+/www/js/**/*.js
+/www/js/**/*.js.map

@@ -1,5 +1,5 @@
-import {OverviewTable} from "../OverviewTable";
-import {TableColumn} from "./TableColumn";
+import {OverviewTable} from '../OverviewTable';
+import {TableColumn} from './TableColumn';
 
 /**
  * Table column for generic text.
@@ -10,113 +10,48 @@ export class TextTableColumn implements TableColumn
   /**
    * The form control (type text) filter.
    */
-  protected $input: JQuery;
+  protected $input: JQuery = $();
 
   /**
    * The value for filtering.
    */
-  protected filter: string;
+  protected filter: string = '';
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritDoc
    */
-  public startFilter(): boolean
+  public compareSortKeys(value1: string, value2: string): number
   {
-    this.filter = OverviewTable.toLowerCaseNoDiacritics(<string>this.$input.val());
+    if (value1 < value2)
+    {
+      return -1;
+    }
 
-    // Note: this.filterValue might be undefined in case there is no input:text box for filtering in the column
-    // header.
+    if (value1 > value2)
+    {
+      return 1;
+    }
 
-    return (this.filter && this.filter !== '');
+    return 0;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritDoc
    */
-  public simpleFilter(tableCell: HTMLTableCellElement): boolean
+  public extractForFilter(tableCell: HTMLTableCellElement): string
   {
-    let value = this.extractForFilter(tableCell);
-
-    return (value.indexOf(this.filter) !== -1);
+    return OverviewTable.toLowerCaseNoDiacritics($(tableCell).text());
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritDoc
    */
-  public initSort(table: OverviewTable, index: number): void
+  public getSortKey(tableCell: HTMLTableCellElement): string
   {
-    let that = this;
-    let widthCol1: number = 0;
-    let widthCol2: number = 0;
-
-    // Install event handler for click on sort icon.
-    let $header = table.$headers.eq(table.headerIndexLookup[index]);
-
-    if ($header.hasClass('sort'))
-    {
-      $header.on('click', function (event)
-      {
-        table.sort(event, $header, that, index);
-      });
-    }
-    else if ($header.hasClass('sort-1') || $header.hasClass('sort-2'))
-    {
-      $header.on('click', function (event)
-      {
-        if ($header.hasClass('sort-1') && $header.hasClass('sort-2'))
-        {
-          let x = event.pageX - $header.offset().left;
-
-          if (table.headerIndexLookup[index] === table.headerIndexLookup[index - 1])
-          {
-            widthCol1 = table.$table.children('tbody').children('tr:visible:first')
-              .find('td:eq(' + (index - 1) + ')').outerWidth();
-            widthCol2 = table.$table.children('tbody').children('tr:visible:first')
-              .find('td:eq(' + index + ')').outerWidth();
-          }
-
-          if (table.headerIndexLookup[index] === table.headerIndexLookup[index + 1])
-          {
-            widthCol1 = table.$table.children('tbody').children('tr:visible:first')
-              .find('td:eq(' + index + ')').outerWidth();
-            widthCol2 = table.$table.children('tbody').children('tr:visible:first')
-              .find('td:eq(' + (index + 1) + ')').outerWidth();
-          }
-
-          let widthHeader: number = $header.outerWidth();
-          let diff: number = widthHeader - widthCol1 - widthCol2;
-
-          if (x > (widthCol1 - diff / 2))
-          {
-            if (table.headerIndexLookup[index] ===
-              table.headerIndexLookup[index - 1])
-            {
-              // Sort by right column.
-              table.sort(event, $header, that, index);
-            }
-          }
-          else if (x < (widthCol1 + diff / 2))
-          {
-            if (table.headerIndexLookup[index] === table.headerIndexLookup[index + 1])
-            {
-              // Sort by left column.
-              table.sort(event, $header, that, index);
-            }
-          }
-        }
-        else if ($header.hasClass('sort-1'))
-        {
-          table.sort(event, $header, that, index);
-        }
-        else if ($header.hasClass('sort-2'))
-        {
-          table.sort(event, $header, that, index);
-        }
-      });
-    }
+    return OverviewTable.toLowerCaseNoDiacritics($(tableCell).text());
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -152,15 +87,94 @@ export class TextTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
+  public initSort(table: OverviewTable, index: number): void
+  {
+    let that = this;
+
+    // Install event handler for click on sort icon.
+    let $header = table.$headers.eq(table.headerIndexLookup[index]);
+
+    if ($header.hasClass('sort'))
+    {
+      $header.on('click', function (event)
+      {
+        table.sort(event, $header, that, index);
+      });
+    }
+    else if ($header.hasClass('sort-1') || $header.hasClass('sort-2'))
+    {
+      $header.on('click', function (event: JQuery.TriggeredEvent)
+      {
+        if ($header.hasClass('sort-1') && $header.hasClass('sort-2'))
+        {
+          let widthCol1 = 0;
+          let widthCol2 = 0;
+          let offset    = $header.offset();
+          let x: number = 0;
+          if (event.pageX && offset)
+          {
+            x = event.pageX - offset.left;
+          }
+
+          if (table.headerIndexLookup[index] === table.headerIndexLookup[index - 1])
+          {
+            widthCol1 = table.columnWidth(index - 1);
+            widthCol2 = table.columnWidth(index);
+          }
+
+          if (table.headerIndexLookup[index] === table.headerIndexLookup[index + 1])
+          {
+            widthCol1 = table.columnWidth(index);
+            widthCol2 = table.columnWidth(index + 1);
+          }
+
+          let widthHeader: number = $header.outerWidth() || 0;
+          let diff: number        = widthHeader - widthCol1 - widthCol2;
+
+          if (x > (widthCol1 - diff / 2))
+          {
+            if (table.headerIndexLookup[index] ===
+              table.headerIndexLookup[index - 1])
+            {
+              // Sort by right column.
+              table.sort(event, $header, that, index);
+            }
+          }
+          else if (x < (widthCol1 + diff / 2))
+          {
+            if (table.headerIndexLookup[index] === table.headerIndexLookup[index + 1])
+            {
+              // Sort by left column.
+              table.sort(event, $header, that, index);
+            }
+          }
+        }
+        else if ($header.hasClass('sort-1'))
+        {
+          table.sort(event, $header, that, index);
+        }
+        else if ($header.hasClass('sort-2'))
+        {
+          table.sort(event, $header, that, index);
+        }
+      });
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritDoc
+   */
   public mediaChange(mq: MediaQueryList): void
   {
     this.$input.width('');
 
-    if (mq || mq.matches === false)
+    if (mq || (mq as any).matches === false)
     {
       // Large screen.
-      this.$input.width(this.$input.width() +
-        (this.$input.closest('td').innerWidth() - this.$input.outerWidth(true)));
+      this.$input.width((this.$input.width() || 0) +
+        ((this.$input.closest('td').innerWidth() || 0) -
+        (this.$input.outerWidth(true) || 0)));
     }
   }
 
@@ -168,37 +182,22 @@ export class TextTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  public extractForFilter(tableCell: HTMLTableCellElement): string
+  public simpleFilter(tableCell: HTMLTableCellElement): boolean
   {
-    return OverviewTable.toLowerCaseNoDiacritics($(tableCell).text());
+    let value = this.extractForFilter(tableCell);
+
+    return (value.indexOf(this.filter) !== -1);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritDoc
    */
-  public getSortKey(tableCell): string
+  public startFilter(): boolean
   {
-    return OverviewTable.toLowerCaseNoDiacritics($(tableCell).text());
-  }
+    this.filter = OverviewTable.toLowerCaseNoDiacritics(<string>this.$input.val());
 
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * @inheritDoc
-   */
-  public compareSortKeys(value1: string, value2: string): number
-  {
-    if (value1 < value2)
-    {
-      return -1;
-    }
-
-    if (value1 > value2)
-    {
-      return 1;
-    }
-
-    return 0;
+    return (this.filter !== '');
   }
 
   //--------------------------------------------------------------------------------------------------------------------

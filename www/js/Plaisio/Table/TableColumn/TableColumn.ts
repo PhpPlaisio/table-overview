@@ -1,4 +1,4 @@
-import {OverviewTable} from "../OverviewTable";
+import {OverviewTable} from '../OverviewTable';
 
 /**
  * Interface for column types.
@@ -7,18 +7,9 @@ export interface TableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns true if the row filter must take this column filter in to account. Returns false otherwise.
+   * Compares two values for sorting.
    */
-  startFilter(): boolean;
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Initializes the sorting for the column.
-   *
-   * @param table The overview table object of the table of the column of this column type handler.
-   * @param index The column index of the column of the table of the column of this  column type handler.
-   */
-  initSort(table: OverviewTable, index: number): void;
+  compareSortKeys(value1: string, value2: string): number
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -26,15 +17,7 @@ export interface TableColumn
    *
    * @param tableCell The table cell.
    */
-  getSortKey(tableCell): string
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns true if the table (based on this column filter) must be shown. Returns false otherwise.
-   *
-   * @param tableCell The table cell.
-   */
-  simpleFilter(tableCell: HTMLTableCellElement): boolean
+  getSortKey(tableCell: HTMLTableCellElement): string
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -48,9 +31,32 @@ export interface TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Initializes the sorting for the column.
+   *
+   * @param table The overview table object of the table of the column of this column type handler.
+   * @param index The column index of the column of the table of the column of this  column type handler.
+   */
+  initSort(table: OverviewTable, index: number): void;
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * @param mq The media query list object (must match for small screens).
    */
   mediaChange(mq: MediaQueryList): void;
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns true if the table (based on this column filter) must be shown. Returns false otherwise.
+   *
+   * @param tableCell The table cell.
+   */
+  simpleFilter(tableCell: HTMLTableCellElement): boolean
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns true if the row filter must take this column filter in to account. Returns false otherwise.
+   */
+  startFilter(): boolean;
 
   //--------------------------------------------------------------------------------------------------------------------
 }
