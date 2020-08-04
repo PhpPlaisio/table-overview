@@ -1,3 +1,4 @@
+import {Cast} from '../../Helper/Cast';
 import {OverviewTable} from '../OverviewTable';
 import {TableColumn} from './TableColumn';
 
@@ -196,7 +197,7 @@ export class TextTableColumn implements TableColumn
    */
   public startFilter(): boolean
   {
-    this.filter = OverviewTable.toLowerCaseNoDiacritics(<string>this.$input.val());
+    this.filter = OverviewTable.toLowerCaseNoDiacritics(Cast.toManString(this.$input.val(), ''));
 
     return (this.filter !== '');
   }
