@@ -60,7 +60,7 @@ export class TextTableColumn implements TableColumn
    */
   public initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
   {
-    let that = this;
+    const that = this;
 
     this.$input = table.$filters.eq(columnIndex).find('input');
 
@@ -68,7 +68,7 @@ export class TextTableColumn implements TableColumn
     this.$input.val('');
 
     // Install event handler for ESC-key pressed in filter.
-    this.$input.on('keyup', function (event)
+    this.$input.on('keyup', function (event: JQuery.KeyUpEvent)
     {
       // If the ESC-key was pressed or nothing is entered clear the value of the search box.
       if (event.key === 'Escape')
@@ -89,14 +89,14 @@ export class TextTableColumn implements TableColumn
    */
   public initSort(table: OverviewTable, index: number): void
   {
-    let that = this;
+    const that = this;
 
     // Install event handler for click on sort icon.
     let $header = table.$headers.eq(table.headerIndexLookup[index]);
 
     if ($header.hasClass('sort'))
     {
-      $header.on('click', function (event)
+      $header.on('click', function (event: JQuery.ClickEvent)
       {
         table.sort(event, $header, that, index);
       });
@@ -109,8 +109,9 @@ export class TextTableColumn implements TableColumn
         {
           let widthCol1 = 0;
           let widthCol2 = 0;
-          let offset    = $header.offset();
           let x: number = 0;
+          const offset  = $header.offset();
+
           if (event.pageX && offset)
           {
             x = event.pageX - offset.left;
@@ -128,8 +129,8 @@ export class TextTableColumn implements TableColumn
             widthCol2 = table.columnWidth(index + 1);
           }
 
-          let widthHeader: number = $header.outerWidth() || 0;
-          let diff: number        = widthHeader - widthCol1 - widthCol2;
+          const widthHeader: number = $header.outerWidth() || 0;
+          const diff: number        = widthHeader - widthCol1 - widthCol2;
 
           if (x > (widthCol1 - diff / 2))
           {
@@ -174,7 +175,7 @@ export class TextTableColumn implements TableColumn
       // Large screen.
       this.$input.width((this.$input.width() || 0) +
         ((this.$input.closest('td').innerWidth() || 0) -
-        (this.$input.outerWidth(true) || 0)));
+          (this.$input.outerWidth(true) || 0)));
     }
   }
 
@@ -184,7 +185,7 @@ export class TextTableColumn implements TableColumn
    */
   public simpleFilter(tableCell: HTMLTableCellElement): boolean
   {
-    let value = this.extractForFilter(tableCell);
+    const value = this.extractForFilter(tableCell);
 
     return (value.indexOf(this.filter) !== -1);
   }

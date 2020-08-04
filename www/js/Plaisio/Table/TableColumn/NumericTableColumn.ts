@@ -12,8 +12,8 @@ export class NumericTableColumn extends TextTableColumn
    */
   public compareSortKeys(value1: string, value2: string): number
   {
-    let val1: number = (value1 === '') ? NaN : parseFloat(value1);
-    let val2: number = (value2 === '') ? NaN : parseFloat(value2);
+    const val1: number = (value1 === '') ? NaN : parseFloat(value1);
+    const val2: number = (value2 === '') ? NaN : parseFloat(value2);
 
     if (val1 === val2)
     {

@@ -157,7 +157,7 @@ export class OverviewTable
    */
   public static registerTable(selector: string, mq: MediaQueryList)
   {
-    let that = this;
+    const that = this;
 
     $(selector).each(function ()
     {
@@ -216,8 +216,8 @@ export class OverviewTable
   {
     for (let i = 0; i < tableSortInfo.length; i += 1)
     {
-      let order   = i + 1;
-      let $header = this.$headers.eq(this.headerIndexLookup[tableSortInfo[i].columnIndex]);
+      const order   = i + 1;
+      const $header = this.$headers.eq(this.headerIndexLookup[tableSortInfo[i].columnIndex]);
       $header.attr(this.getAttributeName('data-sort-order',
         tableSortInfo[i].colspan,
         tableSortInfo[i].offset),
@@ -378,7 +378,7 @@ export class OverviewTable
     let columnInfo         = new ColumnSortInfo();
     columnInfo.columnIndex = columnIndex;
 
-    let span = $header.attr('colspan');
+    const span = $header.attr('colspan');
     if (!span || span === '1')
     {
       columnInfo.colspan       = 1;
@@ -393,8 +393,8 @@ export class OverviewTable
         // Header spans two columns and both columns can be used for sorting.
         let widthCol1 = 0;
         let widthCol2 = 0;
-        let offset    = $header.offset();
         let x: number = 0;
+        const offset  = $header.offset();
         if (event.pageX && offset)
         {
           x = event.pageX - offset.left;
@@ -414,8 +414,8 @@ export class OverviewTable
           widthCol2 = this.columnWidth(columnIndex + 1);
         }
 
-        let widthHeader: number = $header.outerWidth() || 0;
-        let diff: number        = widthHeader - widthCol1 - widthCol2;
+        const widthHeader: number = $header.outerWidth() || 0;
+        const diff: number        = widthHeader - widthCol1 - widthCol2;
 
         // We account diff due to cell separation.
         if (x < (widthCol1 - diff / 2))
@@ -465,7 +465,7 @@ export class OverviewTable
    */
   public getFlipSortDirection($header: JQuery, colSpan: number, offset: number): string
   {
-    let sortDirection = this.getSortDirection($header, colSpan, offset);
+    const sortDirection = this.getSortDirection($header, colSpan, offset);
     if (sortDirection === 'desc' || sortDirection === '')
     {
       return 'asc';
@@ -507,9 +507,7 @@ export class OverviewTable
    */
   public getSortOrder($header: JQuery, colSpan: number, offset: number): number
   {
-    let order;
-
-    order = $header.attr(this.getAttributeName('data-sort-order', colSpan, offset));
+    const order = $header.attr(this.getAttributeName('data-sort-order', colSpan, offset));
     if (order === undefined)
     {
       return -1;
@@ -544,7 +542,7 @@ export class OverviewTable
     this.logProfile('Get all sort info');
 
     // Get info about column what was selected for sort.
-    let sortColumnInfo = this.getColumnSortInfo(event, $header, columnIndex);
+    const sortColumnInfo = this.getColumnSortInfo(event, $header, columnIndex);
     this.logProfile('Get info about current column');
 
     if (sortColumnInfo.sortDirection === null)
@@ -668,7 +666,7 @@ export class OverviewTable
   public sortSingleColumn(sortingInfo: ColumnSortInfo, column: TableColumn): void
   {
     // Get the sort direction.
-    let sortDirection = (sortingInfo.sortDirection === 'asc') ? 1 : -1;
+    const sortDirection = (sortingInfo.sortDirection === 'asc') ? 1 : -1;
 
     // Get all the rows of the table.
     let rows = this.$table.children('tbody').children('tr').get();
@@ -689,7 +687,7 @@ export class OverviewTable
     this.logProfile('Sorted by one column');
 
     // Reappend the rows to the table body.
-    let tbody = this.$table.children('tbody')[0];
+    const tbody = this.$table.children('tbody')[0];
     for (let i = 0; i < rows.length; i += 1)
     {
       (rows[i] as any).sortKey = null;
@@ -744,7 +742,7 @@ export class OverviewTable
     let columnsInfo: ColumnSortInfo[] = [];
     let dual: string | null;
     let sortOrder;
-    let that                          = this;
+    const that                        = this;
 
     this.$table.children('colgroup').children('col').each(function (columnIndex: number)
     {
@@ -799,7 +797,7 @@ export class OverviewTable
    */
   private initColumnHeaders(): void
   {
-    let that = this;
+    const that = this;
 
     this.$table.children('colgroup').children('col').each(function (columnIndex: number, col: HTMLElement)
     {
@@ -809,7 +807,7 @@ export class OverviewTable
         TableColumn = 'none';
       }
 
-      let tmp: any                     = OverviewTable.TableColumnHandlers.get(TableColumn);
+      const tmp: any                   = OverviewTable.TableColumnHandlers.get(TableColumn);
       that.columnHandlers[columnIndex] = new tmp();
       that.logProfile('Install column handler with type "' + TableColumn + '"');
 
@@ -827,7 +825,7 @@ export class OverviewTable
    */
   private initColumnMap(): void
   {
-    let that = this;
+    const that = this;
     this.$headers.each(function (headerIndex: number, th: HTMLElement)
     {
       const colspan: number = parseInt($(th).attr('colspan') || '1', 10);
@@ -847,7 +845,7 @@ export class OverviewTable
    */
   private initMediaChange(): void
   {
-    let that = this;
+    const that = this;
 
     if (this.mq)
     {
@@ -906,7 +904,7 @@ export class OverviewTable
    */
   private mediaChange(mq: MediaQueryList): void
   {
-    let that = this;
+    const that = this;
 
     if (mq && mq.matches)
     {
