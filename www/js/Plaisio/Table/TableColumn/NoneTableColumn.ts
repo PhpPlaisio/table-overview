@@ -28,6 +28,15 @@ export class NoneTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
+  public initColumn(table: OverviewTable, columnIndex: number): void
+  {
+    // Nothing to do.
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritDoc
+   */
   initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
   {
     // Nothing to do.

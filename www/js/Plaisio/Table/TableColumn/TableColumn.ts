@@ -19,6 +19,12 @@ export interface TableColumn
    */
   getSortKey(tableCell: HTMLTableCellElement): string
 
+  //------------------------------------------------------------------------------------------------------------------
+  /**
+   * Initializes this column.
+   */
+  initColumn(table: OverviewTable, columnIndex: number): void;
+
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Initializes the filter of this column.
@@ -27,7 +33,7 @@ export interface TableColumn
    * @param columnIndex The index of this column in the table.
    * @param mq          The media query.
    */
-  initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
+  initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

@@ -811,6 +811,9 @@ export class OverviewTable
       that.columnHandlers[columnIndex] = new tmp();
       that.logProfile('Install column handler with type "' + TableColumn + '"');
 
+      that.columnHandlers[columnIndex].initColumn(that, columnIndex);
+      that.logProfile('Initialize column');
+
       that.columnHandlers[columnIndex].initFilter(that, columnIndex, that.mq);
       that.logProfile('Initialize filter');
 

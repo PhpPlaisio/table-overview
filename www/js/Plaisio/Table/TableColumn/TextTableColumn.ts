@@ -59,6 +59,15 @@ export class TextTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
+  public initColumn(table: OverviewTable, columnIndex: number): void
+  {
+    // Nothing to do.
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritDoc
+   */
   public initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
   {
     const that = this;
