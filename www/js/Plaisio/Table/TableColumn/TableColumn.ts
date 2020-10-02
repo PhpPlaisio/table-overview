@@ -21,20 +21,20 @@ export interface TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Initializes the filter for the column.
+   * Initializes the filter of this column.
    *
-   * @param table The overview table object of the table of the column of this column type handler.
-   * @param columnIndex In index of the column in the table.
-   * @param mq The media query.
+   * @param table       The overview table object of the table of this column.
+   * @param columnIndex The index of this column in the table.
+   * @param mq          The media query.
    */
   initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Initializes the sorting for the column.
+   * Initializes the sorting for this column.
    *
-   * @param table The overview table object of the table of the column of this column type handler.
-   * @param index The column index of the column of the table of the column of this  column type handler.
+   * @param table The overview table object of the table of this column .
+   * @param index The index of this column in the table.
    */
   initSort(table: OverviewTable, index: number): void;
 
