@@ -36,15 +36,20 @@ class MultiEmailTableColumn extends TableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $headerText     The header text of this table column.
+   * @param string|int|null $header         The header text of this table column.
    * @param string          $fieldName      The key to be used for getting the value from the data row.
    * @param string          $dataSeparator  The character for separating multiple email addresses in the input data.
    * @param string          $htmlSeparator  The HTML snippet for separating multiple email addresses in the generated
    *                                        HTML code.
+   * @param bool            $headerIsHtml   If and only if true the header is HTML code.
    */
-  public function __construct($headerText, string $fieldName, string $dataSeparator = ',', string $htmlSeparator = '<br/>')
+  public function __construct($header,
+                              string $fieldName,
+                              string $dataSeparator = ',',
+                              string $htmlSeparator = '<br/>',
+                              bool $headerIsHtml = false)
   {
-    parent::__construct('email', $headerText);
+    parent::__construct('email', $header, $headerIsHtml);
 
     $this->fieldName     = $fieldName;
     $this->dataSeparator = $dataSeparator;

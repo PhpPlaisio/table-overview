@@ -22,12 +22,13 @@ class EmailTableColumn extends TableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $headerText The header text of this table column.
-   * @param string          $fieldName  The key to be used for getting the value from the data row.
+   * @param string|int|null $header       The header text of this table column.
+   * @param string          $fieldName    The key to be used for getting the value from the data row.
+   * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($headerText, string $fieldName)
+  public function __construct($header, string $fieldName, bool $headerIsHtml = false)
   {
-    parent::__construct('email', $headerText);
+    parent::__construct('email', $header, $headerIsHtml);
 
     $this->fieldName = $fieldName;
   }

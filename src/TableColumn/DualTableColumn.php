@@ -19,11 +19,18 @@ abstract class DualTableColumn extends TableColumn
   protected $col2;
 
   /**
+   * If and only if true the second column can be used for sorting the data in the table of this column.
+   *
+   * @var bool
+   */
+  protected $isSortable2 = true;
+
+  /**
    * The sort direction of the data in the second column.
    *
-   * @var string|null
+   * @var string
    */
-  protected $sortDirection2;
+  protected $sortDirection2 = 'asc';
 
   /**
    * If set the data in the table of the second column is sorted or must be sorted by this column (and possible by other
@@ -33,24 +40,18 @@ abstract class DualTableColumn extends TableColumn
    */
   protected $sortOrder2;
 
-  /**
-   * If set second column can be used for sorting the data in the table of this column.
-   *
-   * @var bool
-   */
-  protected $sortable2 = true;
-
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Object constructor.
    *
-   * @param string          $dataType1  The data type of the first column.
-   * @param string          $dataType2  The data type of the second column.
-   * @param string|int|null $headerText The header text of this table column.
+   * @param string          $dataType1    The data type of the first column.
+   * @param string          $dataType2    The data type of the second column.
+   * @param string|int|null $header       The header of this table column.
+   * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($dataType1, $dataType2, $headerText)
+  public function __construct(string $dataType1, string $dataType2, $header, bool $headerIsHtml = false)
   {
-    parent::__construct($dataType1, $headerText);
+    parent::__construct($dataType1, $header, $headerIsHtml);
 
     $this->col2 = new ColElement();
     $this->col2->setAttrData('type', $dataType2);
@@ -86,10 +87,7 @@ abstract class DualTableColumn extends TableColumn
    */
   public function getHtmlColumnFilter(): string
   {
-    $ret = '<td><input type="text"/></td>';
-    $ret .= '<td><input type="text"/></td>';
-
-    return $ret;
+    return '<td><input type="text"/></td><td><input type="text"/></td>';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -104,7 +102,7 @@ abstract class DualTableColumn extends TableColumn
     $classes    = [];
 
     // Add class indicating this column can be used for sorting.
-    if ($this->sortable)
+    if ($this->isSortable)
     {
       $classes[] = 'sort-1';
 
@@ -113,12 +111,12 @@ abstract class DualTableColumn extends TableColumn
       {
         $attributes['data-sort-order-1'] = $this->sortOrder;
 
-        $classes[] = ($this->sortDirection=='desc') ? 'sorted-1-desc' : 'sorted-1-asc';
+        $classes[] = ($this->sortDirection==='desc') ? 'sorted-1-desc' : 'sorted-1-asc';
       }
     }
 
     // Add class indicating this column can be used for sorting.
-    if ($this->sortable2)
+    if ($this->isSortable2)
     {
       $classes[] = 'sort-2';
 
@@ -127,42 +125,16 @@ abstract class DualTableColumn extends TableColumn
       {
         $attributes['data-sort-order-2'] = $this->sortOrder2;
 
-        $classes[] = ($this->sortDirection2=='desc') ? 'sorted-2-desc' : 'sorted-2-asc';
+        $classes[] = ($this->sortDirection2==='desc') ? 'sorted-2-desc' : 'sorted-2-asc';
       }
     }
 
     $attributes['class']   = implode(' ', $classes);
     $attributes['colspan'] = 2;
 
-    return Html::generateElement('th', $attributes, '<span>&nbsp;</span>'.Html::txt2Html($this->headerText), true);
-  }
+    $innerText = '<span>&nbsp;</span>'.($this->headerIsHtml ? $this->header : Html::txt2Html($this->header));
 
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Sets the first and the second column as not sortable (overriding the default behaviour a child class).
-   */
-  public function notSortable(): void
-  {
-    $this->sortable  = false;
-    $this->sortable2 = false;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Sets the first column as not sortable (overriding the default behaviour a child class).
-   */
-  public function notSortable1(): void
-  {
-    $this->sortable = false;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Sets the second column as not sortable (overriding the default behaviour a child class).
-   */
-  public function notSortable2(): void
-  {
-    $this->sortable2 = false;
+    return Html::generateElement('th', $attributes, $innerText, true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -172,7 +144,7 @@ abstract class DualTableColumn extends TableColumn
    * @param int  $sortOrder      The sorting order.
    * @param bool $descendingFlag If set the data is sorted descending, otherwise ascending.
    */
-  public function sortOrder1(int $sortOrder, bool $descendingFlag = false): void
+  public function setSortOrder1(int $sortOrder, bool $descendingFlag = false): void
   {
     $this->sortDirection = ($descendingFlag) ? 'desc' : 'asc';
     $this->sortOrder     = $sortOrder;
@@ -185,10 +157,44 @@ abstract class DualTableColumn extends TableColumn
    * @param int  $sortOrder      The sorting order.
    * @param bool $descendingFlag If set the data is sorted descending, otherwise ascending.
    */
-  public function sortOrder2(int $sortOrder, bool $descendingFlag = false): void
+  public function setSortOrder2(int $sortOrder, bool $descendingFlag = false): void
   {
     $this->sortDirection2 = ($descendingFlag) ? 'desc' : 'asc';
     $this->sortOrder2     = $sortOrder;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sets whether both the first and the second column is sortable.
+   *
+   * @param bool $isSortable If and only of true both columns can be used for sorting the data in the table.
+   */
+  public function setSortable(bool $isSortable): void
+  {
+    $this->isSortable  = $isSortable;
+    $this->isSortable2 = $isSortable;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sets whether the first column is sortable.
+   *
+   * @param bool $isSortable If and only of true the first column can be used for sorting the data in the table.
+   */
+  public function setSortable1(bool $isSortable): void
+  {
+    $this->isSortable = $isSortable;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sets whether the second column is sortable.
+   *
+   * @param bool $isSortable If and only of true the second column can be used for sorting the data in the table.
+   */
+  public function setSortable2(bool $isSortable): void
+  {
+    $this->isSortable2 = $isSortable;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

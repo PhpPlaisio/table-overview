@@ -27,13 +27,14 @@ class CombinedTableColumn extends DualTableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $headerText The header of this column.
-   * @param TableColumn     $column1    The first table column.
-   * @param TableColumn     $column2    The second table column.
+   * @param string|int|null $header       The header of this column.
+   * @param TableColumn     $column1      The first table column.
+   * @param TableColumn     $column2      The second table column.
+   * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($headerText, TableColumn $column1, TableColumn $column2)
+  public function __construct($header, TableColumn $column1, TableColumn $column2, bool $headerIsHtml = false)
   {
-    parent::__construct($column1->getDataType(), $column2->getDataType(), $headerText);
+    parent::__construct($column1->getDataType(), $column2->getDataType(), $header, $headerIsHtml);
 
     $this->column1 = $column1;
     $this->column2 = $column2;
@@ -70,7 +71,7 @@ class CombinedTableColumn extends DualTableColumn
    * @param int  $sortOrder      The sorting order.
    * @param bool $descendingFlag If set the data is sorted descending, otherwise ascending.
    */
-  public function sortOrder1(int $sortOrder, bool $descendingFlag = false): void
+  public function setSortOrder1(int $sortOrder, bool $descendingFlag = false): void
   {
     $this->column1->setSortOrder($sortOrder, $descendingFlag);
   }
@@ -82,7 +83,7 @@ class CombinedTableColumn extends DualTableColumn
    * @param int  $sortOrder      The sorting order.
    * @param bool $descendingFlag If set the data is sorted descending, otherwise ascending.
    */
-  public function sortOrder2(int $sortOrder, bool $descendingFlag = false): void
+  public function setSortOrder2(int $sortOrder, bool $descendingFlag = false): void
   {
     $this->column2->setSortOrder($sortOrder, $descendingFlag);
   }

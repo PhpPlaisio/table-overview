@@ -14,25 +14,39 @@ abstract class BaseTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * The attributes of the col element of this table column.
+   * The col element of this column.
    *
    * @var ColElement
    */
   protected $col;
 
   /**
-   * The header text of this column.
+   * The header of this column.
    *
-   * @var string
+   * @var string|null
    */
-  protected $headerText;
+  protected $header;
+
+  /**
+   * If and only if true the header is HTML code.
+   *
+   * @var bool
+   */
+  protected $headerIsHtml;
+
+  /**
+   * If and only if true this column can be used for sorting the data in the table of this column.
+   *
+   * @var bool
+   */
+  protected $isSortable = true;
 
   /**
    * The sort direction of the data in this column.
    *
    * @var string
    */
-  protected $sortDirection;
+  protected $sortDirection = 'asc';
 
   /**
    * If set the data in the table of this column is sorted or must be sorted by this column (and possible by other
@@ -42,32 +56,27 @@ abstract class BaseTableColumn
    */
   protected $sortOrder;
 
-  /**
-   * If set this column can be used for sorting the data in the table of this column.
-   *
-   * @var bool
-   */
-  protected $sortable = true;
-
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Object  constructor.
    *
-   * @param string          $dataType   The data type of this table column.
-   * @param string|int|null $headerText The header of this column. We distinguish 3 types:
-   *                                    <ul>
-   *                                    <li>string: the value is the header text of this table column,
-   *                                    <li>null: this table column has header without a text and with class 'empty',
-   *                                    <li>int: the value is a word ID to be resolved to a text using Babel.
-   *                                    </ul>
-   *                                    Note: 14 is a word ID and '14' is a header text.
+   * @param string          $dataType     The data type of this table column.
+   * @param string|int|null $header       The header of this column. We distinguish 3 types:
+   *                                      <ul>
+   *                                      <li>string: the value is the header text of this table column,
+   *                                      <li>null: this table column has header without a text and with class 'empty',
+   *                                      <li>int: the value is a word ID to be resolved to a text using Babel.
+   *                                      </ul>
+   *                                      Note: 14 is a word ID and '14' is a header text.
+   * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct(string $dataType, $headerText)
+  public function __construct(string $dataType, $header, bool $headerIsHtml = false)
   {
     $this->col = new ColElement();
     $this->col->setAttrData('type', $dataType);
 
-    $this->headerText = (is_int($headerText)) ? Nub::$nub->babel->getWord($headerText) : $headerText;
+    $this->header       = (is_int($header)) ? Nub::$nub->babel->getWord($header) : $header;
+    $this->headerIsHtml = $headerIsHtml;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -98,9 +107,9 @@ abstract class BaseTableColumn
    *
    * @return string|null
    */
-  public function getHeaderText(): ?string
+  public function getHeader(): ?string
   {
-    return $this->headerText;
+    return $this->header;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -122,7 +131,7 @@ abstract class BaseTableColumn
    */
   public function getHtmlColumnFilter(): string
   {
-    if ($this->headerText===null)
+    if ($this->header===null)
     {
       // If the column header is empty there is no column filter by default. This behaviour can be overridden in a
       // child class.
@@ -146,13 +155,13 @@ abstract class BaseTableColumn
     $attributes = [];
     $classes    = [];
 
-    if ($this->headerText===null)
+    if ($this->header===null)
     {
       $classes[] = 'empty';
     }
     else
     {
-      if ($this->sortable)
+      if ($this->isSortable)
       {
         // Add class indicating this column can be used for sorting.
         $classes[] = 'sort';
@@ -162,14 +171,14 @@ abstract class BaseTableColumn
         {
           $attributes['data-sort-order'] = $this->sortOrder;
 
-          $classes[] = ($this->sortDirection=='desc') ? 'sorted-desc' : 'sorted-asc';
+          $classes[] = ($this->sortDirection==='desc') ? 'sorted-desc' : 'sorted-asc';
         }
       }
     }
 
     $attributes['class'] = implode(' ', $classes);
 
-    return Html::generateElement('th', $attributes, $this->headerText);
+    return Html::generateElement('th', $attributes, $this->header, $this->headerIsHtml);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -178,19 +187,31 @@ abstract class BaseTableColumn
    *
    * @return bool
    */
-  public function hasEmptyHeader(): bool
+  public function headerIsEmpty(): bool
   {
-    return ($this->headerText===null);
+    return ($this->header===null);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * If this columns is sortable sets this column as not sortable (overriding the default behaviour a child class).
-   * Has no effect when this column is not sortable.
+   * Returns true if and only the header is HTML code
+   *
+   * @return bool
    */
-  public function notSortable(): void
+  public function headerIsHtml(): bool
   {
-    $this->sortable = false;
+    return $this->headerIsHtml;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns true if o=and only if this column can be used for sorting the data in the table of this column.
+   *
+   * @return bool
+   */
+  public function isSortable(): bool
+  {
+    return $this->isSortable;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -216,6 +237,19 @@ abstract class BaseTableColumn
   {
     $this->sortDirection = ($descendingFlag) ? 'desc' : 'asc';
     $this->sortOrder     = $sortOrder;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Set whether this column can be used for sorting the data in the table of this column. By defaults this column be
+   * used for sorting the table.
+   *
+   * @param bool $isSortable If and only of true this column can be used for sorting the data in the table of this
+   *                         column.
+   */
+  public function setSortable(bool $isSortable): void
+  {
+    $this->isSortable = $isSortable;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

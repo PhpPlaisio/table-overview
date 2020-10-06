@@ -29,14 +29,15 @@ class NumericTableColumn extends TableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $headerText The header text of this table column.
-   * @param string          $fieldName  The key to be used for getting the value from the data row.
-   * @param string          $format     The format specifier for formatting the content of this table column. See
-   *                                    sprintf.
+   * @param string|int|null $header       The header text of this table column.
+   * @param string          $fieldName    The key to be used for getting the value from the data row.
+   * @param string          $format       The format specifier for formatting the content of this table column. See
+   *                                      sprintf.
+   * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($headerText, string $fieldName, string $format = '%d')
+  public function __construct($header, string $fieldName, string $format = '%d', bool $headerIsHtml = false)
   {
-    parent::__construct('numeric', $headerText);
+    parent::__construct('numeric', $header, $headerIsHtml);
 
     $this->fieldName = $fieldName;
     $this->format    = $format;

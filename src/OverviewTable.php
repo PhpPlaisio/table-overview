@@ -129,7 +129,7 @@ class OverviewTable extends HtmlElement
     foreach ($this->columns as $column)
     {
       // If required disable sorting of this column.
-      if (!$this->sortable) $column->notSortable();
+      if (!$this->sortable) $column->setSortable(false);
 
       // Generate column element.
       $ret .= $column->getHtmlCol();
@@ -238,7 +238,7 @@ class OverviewTable extends HtmlElement
       $ret .= '<tr class="title">';
       foreach ($this->columns as $column)
       {
-        $empty = $column->hasEmptyHeader();
+        $empty = $column->headerIsEmpty();
 
         if ($mode==1)
         {
@@ -342,7 +342,7 @@ class OverviewTable extends HtmlElement
     $format = '#%s tr.%s > td:nth-of-type(%d):before {content: %s;}';
     foreach ($this->columns as $index => $column)
     {
-      $text = $column->getHeaderText();
+      $text = $column->getHeader();
       for ($i = 0; $i<$column->getColSpan(); $i++)
       {
         Nub::$nub->assets->cssAppendLine(sprintf($format, $id, static::$class, $index + $i, Css::txt2CssString($text)));

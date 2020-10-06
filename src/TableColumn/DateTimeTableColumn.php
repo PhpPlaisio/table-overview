@@ -38,14 +38,15 @@ class DateTimeTableColumn extends TableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $headerText The header text of this table column.
-   * @param string          $fieldName  The key to be used for getting the value from the data row.
-   * @param string|null     $format     The format specifier for formatting the content of this table column. If null
-   *                                    the default format is used.
+   * @param string|int|null $header       The header text of this table column.
+   * @param string          $fieldName    The key to be used for getting the value from the data row.
+   * @param string|null     $format       The format specifier for formatting the content of this table column. If null
+   *                                      the default format is used.
+   * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($headerText, string $fieldName, ?string $format = null)
+  public function __construct($header, string $fieldName, ?string $format = null, bool $headerIsHtml = false)
   {
-    parent::__construct('datetime', $headerText);
+    parent::__construct('datetime', $header, $headerIsHtml);
 
     $this->fieldName = $fieldName;
     $this->format    = ($format!==null) ? $format : self::$defaultFormat;
