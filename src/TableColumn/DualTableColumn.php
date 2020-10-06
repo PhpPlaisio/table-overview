@@ -16,21 +16,21 @@ abstract class DualTableColumn extends TableColumn
    *
    * @var ColElement
    */
-  protected $col2;
+  protected ColElement $col2;
 
   /**
    * If and only if true the second column can be used for sorting the data in the table of this column.
    *
    * @var bool
    */
-  protected $isSortable2 = true;
+  protected bool $isSortable2 = true;
 
   /**
    * The sort direction of the data in the second column.
    *
    * @var string
    */
-  protected $sortDirection2 = 'asc';
+  protected string $sortDirection2 = 'asc';
 
   /**
    * If set the data in the table of the second column is sorted or must be sorted by this column (and possible by other
@@ -38,7 +38,7 @@ abstract class DualTableColumn extends TableColumn
    *
    * @var int|null
    */
-  protected $sortOrder2;
+  protected ?int $sortOrder2;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

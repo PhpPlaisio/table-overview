@@ -18,35 +18,35 @@ abstract class BaseTableColumn
    *
    * @var ColElement
    */
-  protected $col;
+  protected ColElement $col;
 
   /**
    * The header of this column.
    *
    * @var string|null
    */
-  protected $header;
+  protected ? string $header;
 
   /**
    * If and only if true the header is HTML code.
    *
    * @var bool
    */
-  protected $headerIsHtml;
+  protected bool $headerIsHtml;
 
   /**
    * If and only if true this column can be used for sorting the data in the table of this column.
    *
    * @var bool
    */
-  protected $isSortable = true;
+  protected bool $isSortable = true;
 
   /**
    * The sort direction of the data in this column.
    *
    * @var string
    */
-  protected $sortDirection = 'asc';
+  protected string $sortDirection = 'asc';
 
   /**
    * If set the data in the table of this column is sorted or must be sorted by this column (and possible by other
@@ -54,7 +54,7 @@ abstract class BaseTableColumn
    *
    * @var int|null
    */
-  protected $sortOrder;
+  protected ?int $sortOrder;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

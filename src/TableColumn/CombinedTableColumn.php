@@ -14,14 +14,14 @@ class CombinedTableColumn extends DualTableColumn
    *
    * @var TableColumn
    */
-  private $column1;
+  private TableColumn $column1;
 
   /**
    * The second table column.
    *
    * @var TableColumn
    */
-  private $column2;
+  private TableColumn $column2;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

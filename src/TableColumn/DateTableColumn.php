@@ -16,7 +16,7 @@ class DateTableColumn extends TableColumn
    *
    * @var string
    */
-  public static $defaultFormat = 'd-m-Y';
+  public static string $defaultFormat = 'd-m-Y';
 
   /**
    * Many (database) system use a certain value for empty dates or open end dates. Such a value must be shown as an
@@ -24,21 +24,21 @@ class DateTableColumn extends TableColumn
    *
    * @var string
    */
-  public static $openDate = '9999-12-31';
+  public static string $openDate = '9999-12-31';
 
   /**
    * The field name of the data row used for generating this table column.
    *
    * @var string
    */
-  protected $fieldName;
+  protected string $fieldName;
 
   /**
    * The format specifier for formatting the content of this table column.
    *
    * @var string
    */
-  protected $format;
+  protected string $format;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

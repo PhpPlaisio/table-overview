@@ -16,7 +16,7 @@ class Ipv4TableColumn extends TableColumn
    *
    * @var string
    */
-  protected $fieldName;
+  protected string $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

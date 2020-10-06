@@ -16,7 +16,7 @@ class EmailTableColumn extends TableColumn
    *
    * @var string
    */
-  protected $fieldName;
+  protected string $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

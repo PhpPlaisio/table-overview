@@ -16,21 +16,21 @@ class MultiEmailTableColumn extends TableColumn
    *
    * @var string
    */
-  protected $dataSeparator;
+  protected string $dataSeparator;
 
   /**
    * The field name of the data row used for generating this table column.
    *
    * @var string
    */
-  protected $fieldName;
+  protected string $fieldName;
 
   /**
    * The character for separating multiple email addresses  in the generated HTML code.
    *
    * @var string
    */
-  protected $htmlSeparator;
+  protected string $htmlSeparator;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

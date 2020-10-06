@@ -20,49 +20,49 @@ class OverviewTable extends HtmlElement
    *
    * @var string|null
    */
-  public static $class = 'overview-table';
+  public static ?string $class = 'overview-table';
 
   /**
    * If set CSS for responsive table will generated.
    *
    * @var string|null
    */
-  public static $responsiveMediaQuery;
+  public static ?string $responsiveMediaQuery;
 
   /**
    * The objects for generating the columns of this table.
    *
    * @var TableColumn[]
    */
-  protected $columns = [];
+  protected array $columns = [];
 
   /**
    * If set to true the header will contain a row for filtering.
    *
    * @var bool
    */
-  protected $filter = false;
+  protected bool $filter = false;
 
   /**
    * The title of this table.
    *
-   * @var string
+   * @var string|null
    */
-  protected $title;
+  protected ?string $title = null;
 
   /**
    * The index in $columns of the next column added to this table.
    *
    * @var int
    */
-  private $columnIndex = 1;
+  private int $columnIndex = 1;
 
   /**
    * If set to true the table is sortable.
    *
    * @var bool
    */
-  private $sortable = true;
+  private bool $sortable = true;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

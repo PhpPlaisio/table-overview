@@ -18,21 +18,21 @@ class DateTimeTableColumn extends TableColumn
    *
    * @var string
    */
-  public static $defaultFormat = 'd-m-Y H:i:s';
+  public static string $defaultFormat = 'd-m-Y H:i:s';
 
   /**
    * The field name of the data row used for generating this table column.
    *
    * @var string
    */
-  protected $fieldName;
+  protected string $fieldName;
 
   /**
    * The format specifier for formatting the content of this table column.
    *
    * @var string
    */
-  protected $format;
+  protected string $format;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

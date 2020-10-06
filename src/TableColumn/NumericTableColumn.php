@@ -16,14 +16,14 @@ class NumericTableColumn extends TableColumn
    *
    * @var string
    */
-  protected $fieldName;
+  protected string $fieldName;
 
   /**
    * The format specifier for formatting the content of this table column.
    *
    * @var string
    */
-  protected $format;
+  protected string $format;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
