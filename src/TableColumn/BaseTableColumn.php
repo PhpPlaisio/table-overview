@@ -25,7 +25,7 @@ abstract class BaseTableColumn
    *
    * @var string|null
    */
-  protected ? string $header;
+  protected ?string $header;
 
   /**
    * If and only if true the header is HTML code.
@@ -54,7 +54,7 @@ abstract class BaseTableColumn
    *
    * @var int|null
    */
-  protected ?int $sortOrder;
+  protected ?int $sortOrder = null;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
