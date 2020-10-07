@@ -38,7 +38,7 @@ abstract class DualTableColumn extends TableColumn
    *
    * @var int|null
    */
-  protected ?int $sortOrder2;
+  protected ?int $sortOrder2 = null;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
