@@ -530,64 +530,67 @@ export class OverviewTable
               column: TableColumn,
               columnIndex: number): void
   {
-    if (OverviewTable.debug)
+    if (!$(event.target).hasClass('no-sort'))
     {
-      this.log('Start sort:');
-      this.timeStart        = new Date();
-      this.timeIntermediate = new Date();
-    }
-
-    // Get info about all currently sorted columns.
-    let sortInfo = this.getSortInfo();
-    this.logProfile('Get all sort info');
-
-    // Get info about column what was selected for sort.
-    const sortColumnInfo = this.getColumnSortInfo(event, $header, columnIndex);
-    this.logProfile('Get info about current column');
-
-    if (sortColumnInfo.sortDirection === null)
-    {
-      // The user has clicked between two columns of a column header with colspan 2.
-      // Don't sort and return immediately.
-      this.logProfile('No sorting');
-      return;
-    }
-
-    // Remove all classes concerning sorting from the column headers.
-    this.cleanSortAttributes();
-    this.logProfile('Reset column headers');
-
-    if (!event.ctrlKey)
-    {
-      sortInfo = OverviewTable.mergeInfo([], sortColumnInfo);
-      this.logProfile('Merge info');
-      this.sortSingleColumn(sortInfo[0], column);
-    }
-    else
-    {
-      sortInfo = OverviewTable.mergeInfo(sortInfo, sortColumnInfo);
-      this.logProfile('Merge info');
-      if (sortInfo.length === 1)
+      if (OverviewTable.debug)
       {
+        this.log('Start sort:');
+        this.timeStart        = new Date();
+        this.timeIntermediate = new Date();
+      }
+
+      // Get info about all currently sorted columns.
+      let sortInfo = this.getSortInfo();
+      this.logProfile('Get all sort info');
+
+      // Get info about column what was selected for sort.
+      const sortColumnInfo = this.getColumnSortInfo(event, $header, columnIndex);
+      this.logProfile('Get info about current column');
+
+      if (sortColumnInfo.sortDirection === null)
+      {
+        // The user has clicked between two columns of a column header with colspan 2.
+        // Don't sort and return immediately.
+        this.logProfile('No sorting');
+        return;
+      }
+
+      // Remove all classes concerning sorting from the column headers.
+      this.cleanSortAttributes();
+      this.logProfile('Reset column headers');
+
+      if (!event.ctrlKey)
+      {
+        sortInfo = OverviewTable.mergeInfo([], sortColumnInfo);
+        this.logProfile('Merge info');
         this.sortSingleColumn(sortInfo[0], column);
       }
       else
       {
-        this.sortMultiColumn(sortInfo);
+        sortInfo = OverviewTable.mergeInfo(sortInfo, sortColumnInfo);
+        this.logProfile('Merge info');
+        if (sortInfo.length === 1)
+        {
+          this.sortSingleColumn(sortInfo[0], column);
+        }
+        else
+        {
+          this.sortMultiColumn(sortInfo);
+        }
       }
-    }
 
-    // Add classes concerning sorting to the column headers.
-    this.addSortInfo(sortInfo);
-    this.logProfile('Added info to table head');
+      // Add classes concerning sorting to the column headers.
+      this.addSortInfo(sortInfo);
+      this.logProfile('Added info to table head');
 
-    // Apply zebra theme for the table.
-    this.applyZebraTheme();
-    this.logProfile('Apply zebra theme');
+      // Apply zebra theme for the table.
+      this.applyZebraTheme();
+      this.logProfile('Apply zebra theme');
 
-    if (OverviewTable.debug)
-    {
-      this.log('Finish sort ' + (new Date().getTime() - this.timeIntermediate.getTime()) + 'ms');
+      if (OverviewTable.debug)
+      {
+        this.log('Finish sort ' + (new Date().getTime() - this.timeIntermediate.getTime()) + 'ms');
+      }
     }
   }
 
