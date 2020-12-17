@@ -40,7 +40,7 @@ export class NumericTableColumn extends TextTableColumn
    */
   public getSortKey(tableCell: HTMLTableCellElement): any
   {
-    const value: any = $(tableCell).attr('data-value');
+    const value: any = $(tableCell).attr('data-value') || $(tableCell).text();
 
     return Cast.isManFloat(value) ? parseFloat(value) : null;
   };

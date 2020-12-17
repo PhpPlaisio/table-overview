@@ -25,7 +25,7 @@ export class TextTableColumn implements TableColumn
   public compareSortKeys(value1: any, value2: any): number
   {
     const val1: string = (typeof value1 === 'string') ? value1 : '';
-    const val2: string = (typeof value1 === 'string') ? value1 : '';
+    const val2: string = (typeof value2 === 'string') ? value2 : '';
 
     if (val1 < val2)
     {
