@@ -19,9 +19,9 @@ export class BoolTableColumn extends TextTableColumn
   /**
    * @inheritDoc
    */
-  public getSortKey(tableCell: HTMLTableCellElement): string
+  public getSortKey(tableCell: HTMLTableCellElement): any
   {
-    return $(tableCell).attr('data-value') || '';
+    return $(tableCell).attr('data-value');
   }
 
   //--------------------------------------------------------------------------------------------------------------------

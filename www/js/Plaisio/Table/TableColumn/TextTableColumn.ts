@@ -22,14 +22,17 @@ export class TextTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  public compareSortKeys(value1: string, value2: string): number
+  public compareSortKeys(value1: any, value2: any): number
   {
-    if (value1 < value2)
+    const val1: string = (typeof value1 === 'string') ? value1 : '';
+    const val2: string = (typeof value1 === 'string') ? value1 : '';
+
+    if (val1 < val2)
     {
       return -1;
     }
 
-    if (value1 > value2)
+    if (val1 > val2)
     {
       return 1;
     }
@@ -50,7 +53,7 @@ export class TextTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  public getSortKey(tableCell: HTMLTableCellElement): string
+  public getSortKey(tableCell: HTMLTableCellElement): any
   {
     return OverviewTable.toLowerCaseNoDiacritics($(tableCell).text());
   }

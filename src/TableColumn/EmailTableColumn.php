@@ -41,19 +41,17 @@ class EmailTableColumn extends TableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value!==false && $value!==null && $value!=='')
-    {
-      $html = '<td class="email">';
-      $html .= Html::generateElement('a', ['href' => 'mailto:'.$value], $value);
-      $html .= '</td>';
-
-      return $html;
-    }
-    else
+    if ($value===null || $value==='')
     {
       // The value is empty.
       return '<td></td>';
     }
+
+    $html = '<td class="email">';
+    $html .= Html::generateElement('a', ['href' => 'mailto:'.$value], $value);
+    $html .= '</td>';
+
+    return $html;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

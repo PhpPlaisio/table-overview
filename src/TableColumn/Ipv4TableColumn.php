@@ -39,7 +39,25 @@ class Ipv4TableColumn extends TableColumn
    */
   public function getHtmlCell(array $row): string
   {
-    return '<td class="ipv4">'.Html::txt2Html($row[$this->fieldName]).'</td>';
+    $value = $row[$this->fieldName];
+
+    if ($value===null || $value==='')
+    {
+      return '<td></td>';
+    }
+
+    if (is_int($value))
+    {
+      $int    = $value;
+      $string = long2ip($value);
+    }
+    else
+    {
+      $int    = ip2long($value);
+      $string = $value;
+    }
+
+    return Html::generateElement('td', ['class' => 'ipv4', 'data-value' => $int], $string);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

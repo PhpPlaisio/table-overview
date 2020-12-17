@@ -60,27 +60,22 @@ class DateTimeTableColumn extends TableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value!==false && $value!==null && $value!=='')
+    if ($value===null || $value==='')
     {
-      $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $row[$this->fieldName]);
+      // The value is empty.
+      return '<td></td>';
+    }
 
-      if ($datetime)
-      {
-        return Html::generateElement('td',
-                                     ['class' => 'datetime', 'data-value' => $datetime->format('Y-m-d H:i:s')],
-                                     $datetime->format($this->format));
-      }
-      else
-      {
-        // The value is not a valid datetime.
-        return '<td>'.Html::txt2Html($row[$this->fieldName]).'</td>';
-      }
-    }
-    else
+    $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $row[$this->fieldName]);
+    if (!$datetime)
     {
-      // The value is an empty datetime.
-      return '<td class="datetime"></td>';
+      // The value is not a valid datetime.
+      return '<td>'.Html::txt2Html($row[$this->fieldName]).'</td>';
     }
+
+    return Html::generateElement('td',
+                                 ['class' => 'datetime', 'data-value' => $datetime->format('Y-m-d H:i:s')],
+                                 $datetime->format($this->format));
   }
 
   //--------------------------------------------------------------------------------------------------------------------

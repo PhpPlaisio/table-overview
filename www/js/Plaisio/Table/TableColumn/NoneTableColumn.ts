@@ -10,7 +10,7 @@ export class NoneTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  compareSortKeys(value1: string, value2: string): number
+  compareSortKeys(value1: any, value2: any): number
   {
     return 0;
   }
@@ -19,7 +19,7 @@ export class NoneTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  getSortKey(tableCell: HTMLTableCellElement): string
+  getSortKey(tableCell: HTMLTableCellElement): any
   {
     return '';
   }

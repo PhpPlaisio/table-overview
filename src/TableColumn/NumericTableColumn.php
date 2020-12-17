@@ -51,7 +51,7 @@ class NumericTableColumn extends TableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value===false || $value===null || $value==='')
+    if ($value===null || $value==='')
     {
       // The value is empty.
       return '<td></td>';
@@ -64,7 +64,7 @@ class NumericTableColumn extends TableColumn
     }
 
     // Value is a number. Use the format specifier for showing the value.
-    return '<td class="number">'.Html::txt2Html(sprintf($this->format, $value)).'</td>';
+    return Html::generateElement('td', ['class' => 'number', 'data-value' => $value], sprintf($this->format, $value));
   }
 
   //--------------------------------------------------------------------------------------------------------------------

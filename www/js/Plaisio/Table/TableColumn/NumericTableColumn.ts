@@ -1,3 +1,4 @@
+import {Cast} from '../../Helper/Cast';
 import {OverviewTable} from '../OverviewTable';
 import {TextTableColumn} from './TextTableColumn';
 
@@ -10,10 +11,10 @@ export class NumericTableColumn extends TextTableColumn
   /**
    * @inheritDoc
    */
-  public compareSortKeys(value1: string, value2: string): number
+  public compareSortKeys(value1: any, value2: any): number
   {
-    const val1: number = (value1 === '') ? NaN : parseFloat(value1);
-    const val2: number = (value2 === '') ? NaN : parseFloat(value2);
+    const val1: number = (typeof value1 === 'number') ? value1 : NaN;
+    const val2: number = (typeof value2 === 'number') ? value2 : NaN;
 
     if (val1 === val2)
     {
@@ -37,18 +38,11 @@ export class NumericTableColumn extends TextTableColumn
   /**
    * @inheritDoc
    */
-  public getSortKey(tableCell: HTMLTableCellElement): string
+  public getSortKey(tableCell: HTMLTableCellElement): any
   {
-    const regexp = /[\d.,\-+]*/;
-    const parts  = regexp.exec($(tableCell).text());
+    const value: any = $(tableCell).attr('data-value');
 
-    if (parts === null)
-    {
-      return $(tableCell).text();
-    }
-
-    // todo Better internationalisation.
-    return parts[0].replace('.', '').replace(',', '.');
+    return Cast.isManFloat(value) ? parseFloat(value) : null;
   };
 
   //--------------------------------------------------------------------------------------------------------------------

@@ -66,27 +66,22 @@ class DateTableColumn extends TableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value!==false && $value!==null && $value!=='' && $row[$this->fieldName]!=self::$openDate)
+    if ($value===null || $value==='' || $row[$this->fieldName]===self::$openDate)
     {
-      $date = \DateTime::createFromFormat('Y-m-d', $row[$this->fieldName]);
+      // The value is empty.
+      return '<td></td>';
+    }
 
-      if ($date)
-      {
-        return Html::generateElement('td',
-                                     ['class' => 'date', 'data-value' => $date->format('Y-m-d')],
-                                     $date->format($this->format));
-      }
-      else
-      {
-        // The $data[$this->fieldName] is not a valid date.
-        return '<td>'.Html::txt2Html($row[$this->fieldName]).'</td>';
-      }
-    }
-    else
+    $date = \DateTime::createFromFormat('Y-m-d', $row[$this->fieldName]);
+    if (!$date)
     {
-      // The value is an empty date.
-      return '<td class="date"></td>';
+      // The $data[$this->fieldName] is not a valid date.
+      return '<td>'.Html::txt2Html($row[$this->fieldName]).'</td>';
     }
+
+    return Html::generateElement('td',
+                                 ['class' => 'date', 'data-value' => $date->format('Y-m-d')],
+                                 $date->format($this->format));
   }
 
   //--------------------------------------------------------------------------------------------------------------------

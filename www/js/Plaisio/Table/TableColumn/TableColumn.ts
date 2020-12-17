@@ -9,7 +9,7 @@ export interface TableColumn
   /**
    * Compares two values for sorting.
    */
-  compareSortKeys(value1: string, value2: string): number
+  compareSortKeys(value1: any, value2: any): number
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -17,7 +17,7 @@ export interface TableColumn
    *
    * @param tableCell The table cell.
    */
-  getSortKey(tableCell: HTMLTableCellElement): string
+  getSortKey(tableCell: HTMLTableCellElement): any
 
   //------------------------------------------------------------------------------------------------------------------
   /**

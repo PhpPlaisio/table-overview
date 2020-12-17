@@ -47,7 +47,7 @@ class DateTimeTableColumnTest extends TestCase
     $row    = ['date' => ''];
     $ret    = $column->getHtmlCell($row);
 
-    self::assertEquals('<td class="datetime"></td>', $ret);
+    self::assertEquals('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

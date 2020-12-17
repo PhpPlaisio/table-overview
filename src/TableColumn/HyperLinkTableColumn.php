@@ -41,7 +41,7 @@ class HyperLinkTableColumn extends TableColumn
   {
     $url = $row[$this->fieldName];
 
-    if ($url===null)
+    if ($url===null || $url==='')
     {
       return '<td></td>';
     }

@@ -1,13 +1,14 @@
+import {Cast} from '../../Helper/Cast';
 import {OverviewTable} from '../OverviewTable';
-import {TextTableColumn} from './TextTableColumn';
+import {NumericTableColumn} from './NumericTableColumn';
 
 /**
  * Table column for IPv4 addresses.
  */
-export class Ipv4TableColumn extends TextTableColumn
+export class Ipv4TableColumn extends NumericTableColumn
 {
   // Nothing to implement.
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-OverviewTable.registerTableColumn('ip4', Ipv4TableColumn);
+OverviewTable.registerTableColumn('ipv4', Ipv4TableColumn);

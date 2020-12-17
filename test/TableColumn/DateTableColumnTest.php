@@ -33,7 +33,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => ''];
     $ret    = $column->getHtmlCell($row);
 
-    self::assertEquals('<td class="date"></td>', $ret);
+    self::assertEquals('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => '9999-12-31'];
     $ret    = $column->getHtmlCell($row);
 
-    self::assertEquals('<td class="date"></td>', $ret);
+    self::assertEquals('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => '8888-88-88'];
     $ret    = $column->getHtmlCell($row);
 
-    self::assertEquals('<td class="date"></td>', $ret);
+    self::assertEquals('<td></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

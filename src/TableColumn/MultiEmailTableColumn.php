@@ -64,26 +64,23 @@ class MultiEmailTableColumn extends TableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value!==false && $value!==null && $value!=='')
+    if ($value===null || $value==='')
     {
-      // Value has 1 or more mail addresses.
-      $addresses = explode($this->dataSeparator, $value);
-
-      $html = '<td class="email">';
-      foreach ($addresses as $i => $address)
-      {
-        if ($i) $html .= $this->htmlSeparator;
-        $html .= Html::generateElement('a', ['href' => 'mailto:'.$address], $address);
-      }
-      $html .= '</td>';
-
-      return $html;
-    }
-    else
-    {
-      // The value is empty.
       return '<td></td>';
     }
+
+    // Value has 1 or more mail addresses.
+    $addresses = explode($this->dataSeparator, $value);
+
+    $html = '<td class="email">';
+    foreach ($addresses as $i => $address)
+    {
+      if ($i) $html .= $this->htmlSeparator;
+      $html .= Html::generateElement('a', ['href' => 'mailto:'.$address], $address);
+    }
+    $html .= '</td>';
+
+    return $html;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
