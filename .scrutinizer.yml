@@ -1,14 +1,29 @@
-build:
-  dependencies:
-    before:
-      - pecl install inotify
+filter:
+  dependency_paths:
+    - "vendor/"
+  excluded_paths:
+    - 'test/'
 
-  tests:
-    before:
-      - export PLAISIO_CONFIG_DIR=test
-      - ./bin/phing kernel
-    override:
-      - command: './bin/phing unit'
-        coverage:
-          file:   'test/coverage.xml'
-          format: 'php-clover'
+build:
+  environment:
+    php:
+      version: '7.4'
+      pecl_extensions:
+        - inotify
+
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
+
+    coverage:
+      tests:
+        before:
+          - export PLAISIO_CONFIG_DIR=test
+          - ./bin/phing kernel
+        override:
+          - command: './bin/phing unit'
+            coverage:
+              file:   'test/coverage.xml'
+              format: 'php-clover'
