@@ -21,7 +21,7 @@ class NumberTableColumnTest extends TestCase
     $column = new NumberTableColumn('header', 'number');
     $col    = $column->getHtmlCol();
 
-    self::assertEquals('<col data-type="numeric"/>', $col);
+    self::assertEquals('<col data-type="number"/>', $col);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -52,12 +52,12 @@ class NumberTableColumnTest extends TestCase
     $column   = new NumberTableColumn('header', 'number');
     $dataType = $column->getDataType();
 
-    self::assertEquals('numeric', $dataType);
+    self::assertEquals('number', $dataType);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with a none numeric value with HTML entities.
+   * Test with a none number value with HTML entities.
    */
   public function testHtmlEntitiesFormat(): void
   {
@@ -72,7 +72,7 @@ class NumberTableColumnTest extends TestCase
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with a none numeric value.
+   * Test with a none number value.
    */
   public function testInvalidValue01(): void
   {
@@ -86,7 +86,7 @@ class NumberTableColumnTest extends TestCase
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with a none numeric value with HTML entities.
+   * Test with a none number value with HTML entities.
    */
   public function testInvalidValue02(): void
   {
@@ -102,7 +102,7 @@ class NumberTableColumnTest extends TestCase
   /**
    * Test with a integer.
    */
-  public function testNumericValue01(): void
+  public function testnumberValue01(): void
   {
     $column = new NumberTableColumn('header', 'number');
     $walker = new RenderWalker('ot');
@@ -115,7 +115,7 @@ class NumberTableColumnTest extends TestCase
   /**
    * Test with a float.
    */
-  public function testNumericValue02(): void
+  public function testnumberValue02(): void
   {
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
@@ -129,7 +129,7 @@ class NumberTableColumnTest extends TestCase
   /**
    * Test with a float.
    */
-  public function testNumericValue03(): void
+  public function testnumberValue03(): void
   {
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
