@@ -82,9 +82,8 @@ export class OverviewTable
     }
 
     this.moduleClass = Cast.toManString($table.attr('data-overview-table'));
-    const rowClass   = '.' + this.moduleClass + '-filter-row';
-    this.$filters    = $table.children('thead').children(rowClass).find('td');
-    this.$headers    = $table.children('thead').children(rowClass).find('th');
+    this.$filters    = $table.children('thead').children(this.getRealClass('filter-row')).find('td');
+    this.$headers    = $table.children('thead').children(this.getRealClass('header-row')).find('th');
     this.logProfile('Prepare table and table info');
 
     this.initColumnMap();
@@ -697,13 +696,23 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Returns the CSS class name with CSS module name applied.
+   *
+   * @param basename The CSS base class name.
+   */
+  protected getRealClass(basename: string): string
+  {
+    return '.' + this.moduleClass + '-' + basename;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Removes all classes and data attributes concerning sorting from the column headers.
    */
   private cleanSortAttributes(): void
   {
     // Remove all orders for all columns.
-    const headerClass = '.' + this.moduleClass + '-header';
-    this.$table.children('thead').find(headerClass)
+    this.$table.children('thead').find(this.getRealClass('header'))
         .attr('data-sort-order', null)
         .attr('data-sort-order-1', null)
         .attr('data-sort-order-2', null)
@@ -907,18 +916,17 @@ export class OverviewTable
    */
   private mediaChange(mq: MediaQueryList): void
   {
-    const that           = this;
-    const filterRowClass = '.' + this.moduleClass + '-filter-row';
+    const that = this;
 
     if (mq && mq.matches)
     {
       // Small screen.
-      this.$table.children('thead').children(filterRowClass).css('display', 'none');
+      this.$table.children('thead').children(this.getRealClass('filter-row')).css('display', 'none');
     }
     else
     {
       // Large screen. Display the row with table filters.
-      this.$table.children('thead').children(filterRowClass).find('input')
+      this.$table.children('thead').children(this.getRealClass('filter-row')).find('input')
           .css('opacity', '1').css('visibility', 'visible').css('display', 'none').fadeIn(200);
     }
 
