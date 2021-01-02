@@ -8,6 +8,7 @@ use Plaisio\Helper\Html;
 use Plaisio\Helper\HtmlElement;
 use Plaisio\Kernel\Nub;
 use Plaisio\Table\TableColumn\TableColumn;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Class for generating tables with an overview of a list of entities.
@@ -16,25 +17,11 @@ class OverviewTable extends HtmlElement
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * The class used in the generated HTML code.
-   *
-   * @var string|null
-   */
-  public static ?string $class = 'overview-table';
-
-  /**
    * If set CSS for responsive table will generated.
    *
    * @var string|null
    */
   public static ?string $responsiveMediaQuery;
-
-  /**
-   * The objects for generating the columns of this table.
-   *
-   * @var TableColumn[]
-   */
-  protected array $columns = [];
 
   /**
    * If set to true the header will contain a row for filtering.
@@ -44,11 +31,11 @@ class OverviewTable extends HtmlElement
   protected bool $filter = false;
 
   /**
-   * The title of this table.
+   * If set to true the table is sortable.
    *
-   * @var string|null
+   * @var bool
    */
-  protected ?string $title = null;
+  protected bool $sortable = true;
 
   /**
    * The index in $columns of the next column added to this table.
@@ -58,11 +45,32 @@ class OverviewTable extends HtmlElement
   private int $columnIndex = 1;
 
   /**
-   * If set to true the table is sortable.
+   * The objects for generating the columns of this table.
    *
-   * @var bool
+   * @var TableColumn[]
    */
-  private bool $sortable = true;
+  private array $columns = [];
+
+  /**
+   * The CSS module class.
+   *
+   * @var string
+   */
+  protected string $moduleClass = 'ot';
+
+  /**
+   * The CSS sub-module class.
+   *
+   * @var string|null
+   */
+  protected ?string $subModuleClass = null;
+
+  /**
+   * The title of this table.
+   *
+   * @var string|null
+   */
+  private ?string $title = null;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -124,27 +132,10 @@ class OverviewTable extends HtmlElement
 
     $ret .= Html::generateTag('table', $this->attributes);
 
-    // Generate HTML code for the column classes.
-    $ret .= '<colgroup>';
-    foreach ($this->columns as $column)
-    {
-      // If required disable sorting of this column.
-      if (!$this->sortable) $column->setSortable(false);
-
-      // Generate column element.
-      $ret .= $column->getHtmlCol();
-    }
-    $ret .= '</colgroup>';
-
-    // Generate HTML code for the table header.
-    $ret .= Html::generateTag('thead', ['class' => static::$class]);
+    $ret .= $this->getHtmlColGroup();
     $ret .= $this->getHtmlHeader();
-    $ret .= '</thead>';
-
-    // Generate HTML code for the table body.
-    $ret .= Html::generateTag('tbody', ['class' => static::$class]);
     $ret .= $this->getHtmlBody($rows);
-    $ret .= '</tbody>';
+    $ret .= $this->getHtmlFooter();
 
     $ret .= '</table>';
 
@@ -153,6 +144,17 @@ class OverviewTable extends HtmlElement
     $this->generateResponsiveCss();
 
     return $ret;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the CSS module class.
+   *
+   * @return string
+   */
+  public function getModuleClass(): string
+  {
+    return $this->moduleClass;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -168,6 +170,17 @@ class OverviewTable extends HtmlElement
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Returns the CSS sub-module class.
+   *
+   * @return string|null
+   */
+  public function getSubModuleClass(): ?string
+  {
+    return $this->subModuleClass;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Returns the title of this table.
    *
    * @deprecated
@@ -175,6 +188,36 @@ class OverviewTable extends HtmlElement
   public function getTitle(): string
   {
     return $this->title;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sets the CSS module class.
+   *
+   * @param string $moduleClass The CSS module class.
+   *
+   * @return $this
+   */
+  public function setModuleClass(string $moduleClass): self
+  {
+    $this->moduleClass = $moduleClass;
+
+    return $this;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sets the CSS sub-module class.
+   *
+   * @param string|null $subModuleClass
+   *
+   * @return $this
+   */
+  public function setSubModuleClass(?string $subModuleClass): self
+  {
+    $this->subModuleClass = $subModuleClass;
+
+    return $this;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -200,22 +243,72 @@ class OverviewTable extends HtmlElement
    */
   protected function getHtmlBody(array $rows): string
   {
-    $ret = '';
-    $i   = 0;
+    $ret    = Html::generateTag('tbody', ['class' => $this->moduleClass]);
+    $i      = 0;
+    $walker = new RenderWalker($this->moduleClass, $this->subModuleClass);
     foreach ($rows as $row)
     {
-      $class = static::$class;
-      if ($class!==null) $class .= ' ';
-      $class .= ($i % 2==0) ? 'even' : 'odd';
-
-      $ret .= Html::generateTag('tr', ['class' => $class]);
+      $classes   = $walker->getClasses('row');
+      $classes[] = ($i % 2===0) ? 'is-even' : 'is-odd';
+      $ret       .= Html::generateTag('tr', ['class' => $classes]);
       foreach ($this->columns as $column)
       {
-        $ret .= $column->getHtmlCell($row);
+        $ret .= $column->getHtmlCell($walker, $row);
       }
       $ret .= '</tr>';
       $i++;
     }
+    $ret .= '</tbody>';
+
+    return $ret;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the column group element of the table.
+   *
+   * @return string
+   */
+  protected function getHtmlColGroup(): string
+  {
+    $ret = '<colgroup>';
+    foreach ($this->columns as $column)
+    {
+      // If required disable sorting of this column.
+      if (!$this->sortable)
+      {
+        $column->setSortable(false);
+      }
+
+      $ret .= $column->getHtmlCol();
+    }
+    $ret .= '</colgroup>';
+
+    return $ret;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the foot element of the table.
+   *
+   * @return string
+   */
+  protected function getHtmlFooter(): string
+  {
+    return '';
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the HTML code of the header for this table.
+   *
+   * @return string
+   */
+  protected function getHtmlHeader(): string
+  {
+    $ret = Html::generateTag('thead', ['class' => $this->moduleClass]);
+    $ret .= $this->getHtmlInnerHeader();
+    $ret .= '</thead>';
 
     return $ret;
   }
@@ -226,25 +319,26 @@ class OverviewTable extends HtmlElement
    *
    * @return string
    */
-  protected function getHtmlHeader(): string
+  protected function getHtmlInnerHeader(): string
   {
-    $ret = '';
+    $ret    = '';
+    $walker = new RenderWalker($this->moduleClass, $this->subModuleClass);
 
-    if ($this->title)
+    if ($this->title!==null)
     {
       $mode    = 1;
       $colspan = 0;
 
-      $ret .= '<tr class="title">';
+      $ret .= Html::generateTag('tr', ['class' => $walker->getClasses('title')]);
       foreach ($this->columns as $column)
       {
-        $empty = $column->headerIsEmpty();
+        $empty = $column->isHeaderEmpty();
 
-        if ($mode==1)
+        if ($mode===1)
         {
           if ($empty)
           {
-            $ret .= '<th class="empty"></th>';
+            $ret .= Html::generateElement('th', ['class' => $walker->getClasses('empty-header')]);
           }
           else
           {
@@ -252,7 +346,7 @@ class OverviewTable extends HtmlElement
           }
         }
 
-        if ($mode==2)
+        if ($mode===2)
         {
           if ($empty)
           {
@@ -264,41 +358,47 @@ class OverviewTable extends HtmlElement
           }
         }
 
-        if ($mode==3)
+        if ($mode===3)
         {
-          if ($colspan==1) $colspan = null;
-          $ret  .= Html::generateElement('th', ['colspan' => $colspan], $this->title);
+          if ($colspan===1) $colspan = null;
+          $ret  .= Html::generateElement('th',
+                                         ['class'   => $walker->getClasses('header'),
+                                          'colspan' => $colspan],
+                                         $this->title);
           $mode = 4;
         }
 
-        if ($mode==4)
+        if ($mode===4)
         {
-          $ret .= '<th class="empty"></th>';
+          $ret .= Html::generateElement('th', ['class' => $walker->getClasses('empty-header')]);
         }
       }
 
-      if ($mode==2)
+      if ($mode===2)
       {
-        if ($colspan==1) $colspan = null;
-        $ret .= Html::generateElement('th', ['colspan' => $colspan], $this->title);
+        if ($colspan===1) $colspan = null;
+        $ret .= Html::generateElement('th',
+                                      ['class'   => $walker->getClasses('header'),
+                                       'colspan' => $colspan],
+                                      $this->title);
       }
 
       $ret .= '</tr>';
     }
 
-    $ret .= Html::generateTag('tr', ['class' => [self::$class, 'header']]);
+    $ret .= Html::generateTag('tr', ['class' => $walker->getClasses('header-row')]);
     foreach ($this->columns as $column)
     {
-      $ret .= $column->getHtmlColumnHeader();
+      $ret .= $column->getHtmlColumnHeader($walker);
     }
     $ret .= '</tr>';
 
     if ($this->filter)
     {
-      $ret .= Html::generateTag('tr', ['class' => [self::$class, 'filter']]);
+      $ret .= Html::generateTag('tr', ['class' => $walker->getClasses('filter-row')]);
       foreach ($this->columns as $column)
       {
-        $ret .= $column->getHtmlColumnFilter();
+        $ret .= $column->getHtmlColumnFilter($walker);
       }
       $ret .= '</tr>';
     }
@@ -339,13 +439,17 @@ class OverviewTable extends HtmlElement
     Nub::$nub->assets->cssAppendLine(static::$responsiveMediaQuery);
     Nub::$nub->assets->cssAppendLine('{');
     $id     = $this->getAttribute('id');
-    $format = '#%s tr.%s > td:nth-of-type(%d):before {content: %s;}';
+    $format = '#%s .%s-row > td:nth-of-type(%d):before {content: %s;}';
     foreach ($this->columns as $index => $column)
     {
       $text = $column->getHeader();
       for ($i = 0; $i<$column->getColSpan(); $i++)
       {
-        Nub::$nub->assets->cssAppendLine(sprintf($format, $id, static::$class, $index + $i, Css::txt2CssString($text)));
+        Nub::$nub->assets->cssAppendLine(sprintf($format,
+                                                 $id,
+                                                 $this->moduleClass,
+                                                 $index + $i,
+                                                 Css::txt2CssString($text)));
       }
     }
     Nub::$nub->assets->cssAppendLine('}');
@@ -357,7 +461,8 @@ class OverviewTable extends HtmlElement
    */
   private function prepare(): void
   {
-    $this->addClass(static::$class);
+    $this->addClass($this->moduleClass);
+    $this->setAttrData('overview-table', $this->moduleClass);
 
     if (static::$responsiveMediaQuery!==null && $this->getAttribute('id')===null)
     {

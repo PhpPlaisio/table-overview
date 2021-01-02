@@ -5,6 +5,7 @@ namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
 use Plaisio\Table\TableColumn\DateTableColumn;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Test cases for class DateTableColumn.
@@ -30,10 +31,11 @@ class DateTableColumnTest extends TestCase
   public function testEmptyDate1(): void
   {
     $column = new DateTableColumn('header', 'date');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => ''];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td></td>', $ret);
+    self::assertEquals('<td class="ot-date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -55,10 +57,11 @@ class DateTableColumnTest extends TestCase
   public function testInvalidDate1(): void
   {
     $column = new DateTableColumn('header', 'date');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => 'not a date'];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td>not a date</td>', $ret);
+    self::assertEquals('<td class="ot-date">not a date</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -68,10 +71,11 @@ class DateTableColumnTest extends TestCase
   public function testOpenEndDate1(): void
   {
     $column = new DateTableColumn('header', 'date');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => '9999-12-31'];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td></td>', $ret);
+    self::assertEquals('<td class="ot-date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -83,10 +87,11 @@ class DateTableColumnTest extends TestCase
     DateTableColumn::$openDate = '8888-88-88';
 
     $column = new DateTableColumn('header', 'date');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => '8888-88-88'];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td></td>', $ret);
+    self::assertEquals('<td class="ot-date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -96,10 +101,11 @@ class DateTableColumnTest extends TestCase
   public function testValidDate1(): void
   {
     $column = new DateTableColumn('header', 'date', 'l jS \of F Y');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => '2004-07-13'];  // PHP 5.0.0 release date.
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="date" data-value="2004-07-13">Tuesday 13th of July 2004</td>', $ret);
+    self::assertEquals('<td class="ot-date" data-value="2004-07-13">Tuesday 13th of July 2004</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

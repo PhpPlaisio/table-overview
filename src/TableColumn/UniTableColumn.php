@@ -6,11 +6,12 @@ namespace Plaisio\Table\TableColumn;
 use Plaisio\Helper\Html;
 use Plaisio\Kernel\Nub;
 use Plaisio\Table\OverviewTable;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Abstract parent class for generating HTML code for table cells in an overview table.
  */
-abstract class BaseTableColumn
+abstract class UniTableColumn implements TableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -81,9 +82,7 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns the number of columns spanned by this object.
-   *
-   * @return int
+   * @inheritdoc
    */
   public function getColSpan(): int
   {
@@ -103,9 +102,7 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns the text of this header.
-   *
-   * @return string|null
+   * @inheritdoc
    */
   public function getHeader(): ?string
   {
@@ -114,9 +111,7 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code for the col element of this table column.
-   *
-   * @return string
+   * @inheritdoc
    */
   public function getHtmlCol(): string
   {
@@ -125,69 +120,61 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code (including opening and closing th tags) for the table filter cell.
-   *
-   * @return string
+   * @inheritdoc
    */
-  public function getHtmlColumnFilter(): string
+  public function getHtmlColumnFilter(RenderWalker $walker): string
   {
+    $attributes = ['class' => $walker->getClasses('filter')];
+
     if ($this->header===null)
     {
       // If the column header is empty there is no column filter by default. This behaviour can be overridden in a
       // child class.
-      return '<td></td>';
+      $ret = Html::generateElement('td', $attributes);
     }
     else
     {
       // The default filter is a simple text filter.
-      return '<td><input type="text"/></td>';
+      $ret = Html::generateTag('td', $attributes);
+      $ret .= Html::generateElement('input', ['class' => $walker->getClasses('filter-text'), 'type' => 'text']);
+      $ret .= '</td>';
     }
+
+    return $ret;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code (including opening and closing th tags) for the table header cell.
-   *
-   * @return string
+   * @inheritdoc
    */
-  public function getHtmlColumnHeader(): string
+  public function getHtmlColumnHeader(RenderWalker $walker): string
   {
-    $attributes = [];
-    $classes    = [];
-
-    if ($this->header===null)
-    {
-      $classes[] = 'empty';
-    }
-    else
+    $attributes  = ['class' => $walker->getClasses('header')];
+    if ($this->header!==null)
     {
       if ($this->isSortable)
       {
         // Add class indicating this column can be used for sorting.
-        $classes[] = 'sort';
+        $attributes['class'][] = 'is-sortable';
 
         // Add attributes indicating the sort order of this column and direction.
         if ($this->sortOrder!==null)
         {
           $attributes['data-sort-order'] = $this->sortOrder;
 
-          $classes[] = ($this->sortDirection==='desc') ? 'sorted-desc' : 'sorted-asc';
+          $attributes['class'][] = ($this->sortDirection==='desc') ? 'is-sorted-desc' : 'is-sorted-asc';
         }
       }
     }
-
-    $attributes['class'] = implode(' ', $classes);
 
     return Html::generateElement('th', $attributes, $this->header, $this->headerIsHtml);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns true if and only if this column has no header text.
-   *
-   * @return bool
+   * @inheritdoc
    */
-  public function headerIsEmpty(): bool
+  public function isHeaderEmpty(): bool
   {
     return ($this->header===null);
   }
@@ -216,10 +203,7 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * This function is called by OverviewTable::addColumn.
-   *
-   * @param OverviewTable $table
-   * @param int           $columnIndex
+   * @inheritdoc
    */
   public function onAddColumn(OverviewTable $table, int $columnIndex): void
   {
@@ -241,15 +225,13 @@ abstract class BaseTableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Set whether this column can be used for sorting the data in the table of this column. By defaults this column be
-   * used for sorting the table.
-   *
-   * @param bool $isSortable If and only of true this column can be used for sorting the data in the table of this
-   *                         column.
+   * @inheritdoc
    */
-  public function setSortable(bool $isSortable): void
+  public function setSortable(bool $isSortable): self
   {
     $this->isSortable = $isSortable;
+
+    return $this;
   }
 
   //--------------------------------------------------------------------------------------------------------------------

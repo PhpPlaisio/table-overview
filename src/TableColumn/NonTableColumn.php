@@ -1,87 +1,109 @@
-import {OverviewTable} from '../OverviewTable';
-import {TableColumn} from './TableColumn';
+<?php
+declare(strict_types=1);
+
+namespace Plaisio\Table\TableColumn;
+
+use Plaisio\Table\OverviewTable;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
- * Table column for columns that don't require filtering and sorting.
+ * Not a table column.
  */
-export class NoneTableColumn implements TableColumn
+class NonTableColumn implements TableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * Object constructor.
    */
-  compareSortKeys(value1: any, value2: any): number
+  public function __construct()
+  {
+    // Nothing to do.
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritdoc
+   */
+  public function getColSpan(): int
   {
     return 0;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * @inheritdoc
    */
-  getSortKey(tableCell: HTMLTableCellElement): any
+  public function getHeader(): ?string
   {
     return '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * @inheritdoc
    */
-  public initColumn(table: OverviewTable, columnIndex: number): void
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
-    // Nothing to do.
+    return '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * @inheritdoc
    */
-  initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
+  public function getHtmlCol(): string
   {
-    // Nothing to do.
+    return '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * @inheritdoc
    */
-  public initSort(table: OverviewTable, index: number): void
+  public function getHtmlColumnFilter(RenderWalker $walker): string
   {
-    // Nothing to do.
+    return '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * @inheritdoc
    */
-  public mediaChange(mq: MediaQueryList): void
+  public function getHtmlColumnHeader(RenderWalker $walker): string
   {
-    // Nothing to do.
+    return '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * @inheritdoc
    */
-  simpleFilter(tableCell: HTMLTableCellElement): boolean
+  public function isHeaderEmpty(): bool
   {
     return true;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritDoc
+   * @inheritdoc
    */
-  public startFilter(): boolean
+  public function onAddColumn(OverviewTable $table, int $columnIndex): void
   {
-    return false;
+    // Nothing to do.
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritdoc
+   */
+  public function setSortable(bool $isSortable): self
+  {
+    // Nothing to do.
+
+    return $this;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-OverviewTable.registerTableColumn('none', NoneTableColumn);
-
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b8618526543b13f3b803c8c48399bfdc

@@ -13,7 +13,16 @@
             <arg value="--ansi"/>
             <arg value="plaisio:assets"/>
         </exec>
+        <phing phingfile="build.xml" target="code-generation" haltonfailure="true"/>
         <phing phingfile="build.xml" target="kernel" haltonfailure="true"/>
+    </target>
+
+    <target name="code-generation">
+        <exec executable="bin/plaisio" checkreturn="true" passthru="true">
+            <arg value="--ansi"/>
+            <arg value="plaisio:type-script-automator"/>
+            <arg value="--once"/>
+        </exec>
     </target>
 
     <target name="kernel">

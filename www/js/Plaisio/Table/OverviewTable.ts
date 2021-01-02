@@ -1,5 +1,6 @@
-import {TableColumn} from './TableColumn/TableColumn';
+import {Cast} from '../Helper/Cast';
 import {ColumnSortInfo} from './Helper/ColumnSortInfo';
+import {TableColumn} from './TableColumn/TableColumn';
 
 /**
  * Class enabling filtering and soring of overview tables.
@@ -39,24 +40,19 @@ export class OverviewTable
   public $headers: JQuery;
 
   /**
-   * The jQuery object of this table.
-   */
-  public $table: JQuery;
-
-  /**
    * Lookup from column index to header index.
    */
   public headerIndexLookup = Array<number>();
 
   /**
+   * The CSS module class.
+   */
+  protected moduleClass: string;
+
+  /**
    * The columns headers of this table.
    */
   private columnHandlers: TableColumn[] = [];
-
-  /**
-   *  The media query list object (must match for small screens).
-   */
-  private readonly mq: MediaQueryList;
 
   /**
    * The intermediate time (for bugging and profiling).
@@ -75,7 +71,7 @@ export class OverviewTable
    * @param $table The jQuery object of the table.
    * @param mq The media query list object (must match for small screens).
    */
-  public constructor($table: JQuery, mq: MediaQueryList)
+  public constructor(protected $table: JQuery, protected mq: MediaQueryList)
   {
     this.timeStart        = new Date();
     this.timeIntermediate = new Date();
@@ -85,10 +81,10 @@ export class OverviewTable
       this.log('Start create OverviewTable:');
     }
 
-    this.$table   = $table;
-    this.mq       = mq;
-    this.$filters = $table.children('thead').children('tr.filter').find('td');
-    this.$headers = $table.children('thead').children('tr.header').find('th');
+    this.moduleClass = Cast.toManString($table.attr('data-overview-table'));
+    const rowClass   = '.' + this.moduleClass + '-filter-row';
+    this.$filters    = $table.children('thead').children(rowClass).find('td');
+    this.$headers    = $table.children('thead').children(rowClass).find('th');
     this.logProfile('Prepare table and table info');
 
     this.initColumnMap();
@@ -169,7 +165,7 @@ export class OverviewTable
         $table = $table.find('table').first();
       }
 
-      if (!$table.hasClass('is-registered'))
+      if ($table.attr('data-overview-table') && !$table.hasClass('is-registered'))
       {
         OverviewTable.tables.push(new that($table, mq));
         $table.addClass('is-registered');
@@ -222,7 +218,7 @@ export class OverviewTable
         tableSortInfo[i].colspan,
         tableSortInfo[i].offset),
         order);
-      $header.addClass(this.getAttributeName('sorted',
+      $header.addClass(this.getAttributeName('is-sorted',
         tableSortInfo[i].colspan,
         tableSortInfo[i].offset) + '-' + tableSortInfo[i].sortDirection);
     }
@@ -245,11 +241,11 @@ export class OverviewTable
       {
         if (even)
         {
-          $this.removeClass('odd').addClass('even');
+          $this.removeClass('is-odd').addClass('is-even');
         }
         else
         {
-          $this.removeClass('even').addClass('odd');
+          $this.removeClass('is-even').addClass('is-odd');
         }
         even = !even;
       }
@@ -388,7 +384,7 @@ export class OverviewTable
     }
     else if (span === '2')
     {
-      if ($header.hasClass('sort-1') && $header.hasClass('sort-2'))
+      if ($header.hasClass('is-sortable-1') && $header.hasClass('is-sortable-2'))
       {
         // Header spans two columns and both columns can be used for sorting.
         let widthCol1 = 0;
@@ -433,7 +429,7 @@ export class OverviewTable
           columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 1);
         }
       }
-      else if ($header.hasClass('sort-1'))
+      else if ($header.hasClass('is-sortable-1'))
       {
         // Header spans two columns but only the first/left column can used for sorting.
         columnInfo.colspan       = 2;
@@ -441,7 +437,7 @@ export class OverviewTable
         columnInfo.sortOrder     = parseInt($header.attr('data-sort-order-1') || '-1', 10);
         columnInfo.sortDirection = this.getFlipSortDirection($header, 2, 0);
       }
-      else if ($header.hasClass('sort-2'))
+      else if ($header.hasClass('is-sortable-2'))
       {
         // Header spans two columns but only the second/right column can used for sorting.
         columnInfo.colspan       = 2;
@@ -484,12 +480,12 @@ export class OverviewTable
    */
   public getSortDirection($header: JQuery, colSpan: number, offset: number): string
   {
-    if ($header.hasClass(this.getAttributeName('sorted', colSpan, offset) + '-desc'))
+    if ($header.hasClass(this.getAttributeName('is-sorted', colSpan, offset) + '-desc'))
     {
       return 'desc';
     }
 
-    if ($header.hasClass(this.getAttributeName('sorted', colSpan, offset) + '-asc'))
+    if ($header.hasClass(this.getAttributeName('is-sorted', colSpan, offset) + '-asc'))
     {
       return 'asc';
     }
@@ -706,16 +702,17 @@ export class OverviewTable
   private cleanSortAttributes(): void
   {
     // Remove all orders for all columns.
-    this.$table.children('thead').find('th')
+    const headerClass = '.' + this.moduleClass + '-header';
+    this.$table.children('thead').find(headerClass)
         .attr('data-sort-order', null)
         .attr('data-sort-order-1', null)
         .attr('data-sort-order-2', null)
-        .removeClass('sorted-asc')
-        .removeClass('sorted-desc')
-        .removeClass('sorted-1-asc')
-        .removeClass('sorted-1-desc')
-        .removeClass('sorted-2-asc')
-        .removeClass('sorted-2-desc');
+        .removeClass('is-sorted-asc')
+        .removeClass('is-sorted-desc')
+        .removeClass('is-sorted-1-asc')
+        .removeClass('is-sorted-1-desc')
+        .removeClass('is-sorted-2-asc')
+        .removeClass('is-sorted-2-desc');
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -771,7 +768,7 @@ export class OverviewTable
           dual = 'right';
         }
 
-        if (dual === 'left' && $th.hasClass('sort-1'))
+        if (dual === 'left' && $th.hasClass('is-sortable-1'))
         {
           sortOrder = that.getSortOrder($th, 2, 0);
           if (sortOrder !== -1)
@@ -780,7 +777,7 @@ export class OverviewTable
           }
         }
 
-        if (dual === 'right' && $th.hasClass('sort-2'))
+        if (dual === 'right' && $th.hasClass('is-sortable-2'))
         {
           sortOrder = that.getSortOrder($th, 2, 1);
           if (sortOrder !== -1)
@@ -910,17 +907,18 @@ export class OverviewTable
    */
   private mediaChange(mq: MediaQueryList): void
   {
-    const that = this;
+    const that           = this;
+    const filterRowClass = '.' + this.moduleClass + '-filter-row';
 
     if (mq && mq.matches)
     {
       // Small screen.
-      this.$table.children('thead').children('tr.filter').css('display', 'none');
+      this.$table.children('thead').children(filterRowClass).css('display', 'none');
     }
     else
     {
       // Large screen. Display the row with table filters.
-      this.$table.children('thead').children('tr.filter').find('input')
+      this.$table.children('thead').children(filterRowClass).find('input')
           .css('opacity', '1').css('visibility', 'visible').css('display', 'none').fadeIn(200);
     }
 
@@ -934,3 +932,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 35c2820a96c45c0bc5206049266d4c6b

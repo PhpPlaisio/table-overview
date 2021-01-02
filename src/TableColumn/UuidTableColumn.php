@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column for table cells with UUIDs.
  */
-class UuidTableColumn extends TableColumn
+class UuidTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -37,9 +38,9 @@ class UuidTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
-    return '<td>'.Html::txt2Html($row[$this->fieldName]).'</td>';
+    return Html::generateElement('td', ['class' => $walker->getClasses('uuid')], $row[$this->fieldName]);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

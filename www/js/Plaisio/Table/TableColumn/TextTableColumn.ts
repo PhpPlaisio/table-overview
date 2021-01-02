@@ -107,18 +107,18 @@ export class TextTableColumn implements TableColumn
     // Install event handler for click on sort icon.
     let $header = table.$headers.eq(table.headerIndexLookup[index]);
 
-    if ($header.hasClass('sort'))
+    if ($header.hasClass('is-sortable'))
     {
       $header.on('click', function (event: JQuery.ClickEvent)
       {
         table.sort(event, $header, that, index);
       });
     }
-    else if ($header.hasClass('sort-1') || $header.hasClass('sort-2'))
+    else if ($header.hasClass('is-sortable-1') || $header.hasClass('is-sortable-2'))
     {
       $header.on('click', function (event: JQuery.TriggeredEvent)
       {
-        if ($header.hasClass('sort-1') && $header.hasClass('sort-2'))
+        if ($header.hasClass('is-sortable-1') && $header.hasClass('is-sortable-2'))
         {
           let widthCol1 = 0;
           let widthCol2 = 0;
@@ -163,11 +163,11 @@ export class TextTableColumn implements TableColumn
             }
           }
         }
-        else if ($header.hasClass('sort-1'))
+        else if ($header.hasClass('is-sortable-1'))
         {
           table.sort(event, $header, that, index);
         }
-        else if ($header.hasClass('sort-2'))
+        else if ($header.hasClass('is-sortable-2'))
         {
           table.sort(event, $header, that, index);
         }
@@ -220,3 +220,5 @@ export class TextTableColumn implements TableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('text', TextTableColumn);
 OverviewTable.registerTableColumn('email', TextTableColumn);
+
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b9b7732218f1cf8449d30aa05e93207a

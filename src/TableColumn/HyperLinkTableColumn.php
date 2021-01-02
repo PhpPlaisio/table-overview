@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column for table cells with a hyper link.
  */
-class HyperLinkTableColumn extends TableColumn
+class HyperLinkTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -37,16 +38,20 @@ class HyperLinkTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
     $url = $row[$this->fieldName];
 
     if ($url===null || $url==='')
     {
-      return '<td></td>';
+      $inner = null;
+    }
+    else
+    {
+      $inner = Html::generateElement('a', ['href' => $url], $url);
     }
 
-    return '<td>'.Html::generateElement('a', ['href' => $url], $url).'</td>';
+    return Html::generateElement('td', ['class' => $walker->getClasses('link')], $inner, true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

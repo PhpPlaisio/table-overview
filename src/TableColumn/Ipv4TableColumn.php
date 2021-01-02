@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column for table cells with IPv4 addresses.
  */
-class Ipv4TableColumn extends TableColumn
+class Ipv4TableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -37,27 +38,30 @@ class Ipv4TableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
-      return '<td></td>';
-    }
-
-    if (is_int($value))
-    {
-      $int    = $value;
-      $string = long2ip($value);
+      $int    = null;
+      $string = null;
     }
     else
     {
-      $int    = ip2long($value);
-      $string = $value;
+      if (is_int($value))
+      {
+        $int    = $value;
+        $string = long2ip($value);
+      }
+      else
+      {
+        $int    = ip2long($value);
+        $string = $value;
+      }
     }
 
-    return Html::generateElement('td', ['class' => 'ipv4', 'data-value' => $int], $string);
+    return Html::generateElement('td', ['class' => $walker->getClasses('ipv4'), 'data-value' => $int], $string);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

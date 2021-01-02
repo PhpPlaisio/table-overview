@@ -5,6 +5,7 @@ namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
 use Plaisio\Table\TableColumn\DateTimeTableColumn;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Test cases for class DateTimeTableColumn.
@@ -18,10 +19,11 @@ class DateTimeTableColumnTest extends TestCase
   public function test1(): void
   {
     $column = new DateTimeTableColumn('header', 'date', 'l jS \of F Y h:i:s A');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => '2004-07-13 12:13:14'];  // PHP 5.0.0 release date and some random time.
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="datetime" data-value="2004-07-13 12:13:14">Tuesday 13th of July 2004 12:13:14 PM</td>', $ret);
+    self::assertEquals('<td class="ot-datetime" data-value="2004-07-13 12:13:14">Tuesday 13th of July 2004 12:13:14 PM</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -31,10 +33,11 @@ class DateTimeTableColumnTest extends TestCase
   public function test2(): void
   {
     $column = new DateTimeTableColumn('header', 'date');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => 'not a date and time'];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td>not a date and time</td>', $ret);
+    self::assertEquals('<td class="ot-datetime">not a date and time</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -44,10 +47,11 @@ class DateTimeTableColumnTest extends TestCase
   public function test3(): void
   {
     $column = new DateTimeTableColumn('header', 'date');
+    $walker = new RenderWalker('ot');
     $row    = ['date' => ''];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td></td>', $ret);
+    self::assertEquals('<td class="ot-datetime"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

@@ -5,6 +5,7 @@ namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
 use Plaisio\Table\TableColumn\MultiEmailTableColumn;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Test cases for class MultiEmailTableColumn.
@@ -30,10 +31,11 @@ class MultiEmailTableColumnTest extends TestCase
   public function testEmptyAddress(): void
   {
     $column = new MultiEmailTableColumn('header', 'mail');
+    $walker = new RenderWalker('ot');
     $row    = ['mail' => ''];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td></td>', $ret);
+    self::assertEquals('<td class="ot-emails"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -55,11 +57,16 @@ class MultiEmailTableColumnTest extends TestCase
   public function testValidAddress1(): void
   {
     $column = new MultiEmailTableColumn('header', 'mail');
+    $walker = new RenderWalker('ot');
     $row    = ['mail' => 'info@setbased.nl,webmaster@setbased.nl'];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="email"><a href="mailto:info@setbased.nl">info@setbased.nl</a><br/>'.
-                       '<a href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a></td>', $ret);
+    self::assertEquals('<td class="ot-emails">'.
+                       '<span class="ot-email-list">'.
+                       '<a href="mailto:info@setbased.nl">info@setbased.nl</a>'.
+                       '<a href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a>'.
+                       '</span>'.
+                       '</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

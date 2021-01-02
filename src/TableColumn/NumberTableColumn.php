@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column for table cells with numbers.
  */
-class NumericTableColumn extends TableColumn
+class NumberTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -37,7 +38,7 @@ class NumericTableColumn extends TableColumn
    */
   public function __construct($header, string $fieldName, string $format = '%d', bool $headerIsHtml = false)
   {
-    parent::__construct('numeric', $header, $headerIsHtml);
+    parent::__construct('number', $header, $headerIsHtml);
 
     $this->fieldName = $fieldName;
     $this->format    = $format;
@@ -47,24 +48,28 @@ class NumericTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
-      // The value is empty.
-      return '<td></td>';
+      $inner = null;
+      $data  = null;
     }
 
     if (!is_numeric($value))
     {
-      // Value is not numeric. Just show the value as is.
-      return '<td>'.Html::txt2Html($value).'</td>';
+      $inner = $value;
+      $data  = null;
+    }
+    else
+    {
+      $inner = sprintf($this->format, $value);
+      $data  = $value;
     }
 
-    // Value is a number. Use the format specifier for showing the value.
-    return Html::generateElement('td', ['class' => 'number', 'data-value' => $value], sprintf($this->format, $value));
+    return Html::generateElement('td', ['class' => $walker->getClasses('number'), 'data-value' => $data], $inner);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

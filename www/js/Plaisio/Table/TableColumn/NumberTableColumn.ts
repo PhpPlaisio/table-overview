@@ -5,7 +5,7 @@ import {TextTableColumn} from './TextTableColumn';
 /**
  * Table column for integers and floats.
  */
-export class NumericTableColumn extends TextTableColumn
+export class NumberTableColumn extends TextTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -49,4 +49,6 @@ export class NumericTableColumn extends TextTableColumn
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-OverviewTable.registerTableColumn('numeric', NumericTableColumn);
+OverviewTable.registerTableColumn('number', NumberTableColumn);
+
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4219a6020942b44b2abe2b3133571ef5

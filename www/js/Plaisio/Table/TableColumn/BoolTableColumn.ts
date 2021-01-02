@@ -29,3 +29,5 @@ export class BoolTableColumn extends TextTableColumn
 
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('bool', BoolTableColumn);
+
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 31df39e9e6b5a0141d830d70fe27edeb

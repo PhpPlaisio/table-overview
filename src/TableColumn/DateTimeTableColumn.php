@@ -4,13 +4,14 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Table column for table cells with dates and times.
  */
-class DateTimeTableColumn extends TableColumn
+class DateTimeTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -56,26 +57,34 @@ class DateTimeTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
-      // The value is empty.
-      return '<td></td>';
+      // Value is empty.
+      $inner = null;
+      $data  = null;
     }
-
-    $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $row[$this->fieldName]);
-    if (!$datetime)
+    else
     {
-      // The value is not a valid datetime.
-      return '<td>'.Html::txt2Html($row[$this->fieldName]).'</td>';
+      $datetime = \DateTime::createFromFormat('Y-m-d H:i:s', $value);
+      if (!$datetime)
+      {
+        // Not a valid datetime.
+        $inner = $value;
+        $data  = null;
+      }
+      else
+      {
+        // A valid datetime.
+        $inner = $datetime->format($this->format);
+        $data  = $datetime->format('Y-m-d H:i:s');
+      }
     }
 
-    return Html::generateElement('td',
-                                 ['class' => 'datetime', 'data-value' => $datetime->format('Y-m-d H:i:s')],
-                                 $datetime->format($this->format));
+    return Html::generateElement('td', ['class' => $walker->getClasses('datetime'), 'data-value' => $data], $inner);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

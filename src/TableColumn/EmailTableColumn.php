@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column for table cells with email addresses.
  */
-class EmailTableColumn extends TableColumn
+class EmailTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -37,21 +38,20 @@ class EmailTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
-      // The value is empty.
-      return '<td></td>';
+      $inner = null;
+    }
+    else
+    {
+      $inner = Html::generateElement('a', ['href' => 'mailto:'.$value], $value);
     }
 
-    $html = '<td class="email">';
-    $html .= Html::generateElement('a', ['href' => 'mailto:'.$value], $value);
-    $html .= '</td>';
-
-    return $html;
+    return Html::generateElement('td', ['class' => $walker->getClasses('email')], $inner, true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

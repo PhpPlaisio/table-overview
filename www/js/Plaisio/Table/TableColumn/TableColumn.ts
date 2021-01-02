@@ -68,3 +68,4 @@ export interface TableColumn
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: fec010e5a36a8bfabb126e430d10198a

@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
-use Plaisio\Table\TableColumn\NumericTableColumn;
+use Plaisio\Table\TableColumn\NumberTableColumn;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
- * Test cases for class NumericTableColumn.
+ * Test cases for class NumberTableColumn.
  */
-class NumericTableColumnTest extends TestCase
+class NumberTableColumnTest extends TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -17,7 +18,7 @@ class NumericTableColumnTest extends TestCase
    */
   public function testColElement(): void
   {
-    $column = new NumericTableColumn('header', 'number');
+    $column = new NumberTableColumn('header', 'number');
     $col    = $column->getHtmlCol();
 
     self::assertEquals('<col data-type="numeric"/>', $col);
@@ -29,15 +30,16 @@ class NumericTableColumnTest extends TestCase
    */
   public function testEmptyValue01(): void
   {
-    $column = new NumericTableColumn('header', 'number');
+    $column = new NumberTableColumn('header', 'number');
 
     $values = [null, ''];
+    $walker = new RenderWalker('ot');
     foreach ($values as $value)
     {
       $row = ['number' => $value];
-      $ret = $column->getHtmlCell($row);
+      $ret = $column->getHtmlCell($walker, $row);
 
-      self::assertSame('<td></td>', $ret, var_export($value, true));
+      self::assertSame('<td class="ot-number"></td>', $ret, var_export($value, true));
     }
   }
 
@@ -47,7 +49,7 @@ class NumericTableColumnTest extends TestCase
    */
   public function testGetDataType(): void
   {
-    $column   = new NumericTableColumn('header', 'number');
+    $column   = new NumberTableColumn('header', 'number');
     $dataType = $column->getDataType();
 
     self::assertEquals('numeric', $dataType);
@@ -59,12 +61,13 @@ class NumericTableColumnTest extends TestCase
    */
   public function testHtmlEntitiesFormat(): void
   {
-    // Actually, NumericTableColumn should not be used with a format specifier like this.
-    $column = new NumericTableColumn('header', 'number', "&<'\"%s\"'>&");
+    // Actually, NumberTableColumn should not be used with a format specifier like this.
+    $column = new NumberTableColumn('header', 'number', "&<'\"%s\"'>&");
+    $walker = new RenderWalker('ot');
     $row    = ['number' => 1234];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertSame('<td class="number" data-value="1234">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
+    self::assertSame('<td class="ot-number" data-value="1234">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -73,11 +76,12 @@ class NumericTableColumnTest extends TestCase
    */
   public function testInvalidValue01(): void
   {
-    $column = new NumericTableColumn('header', 'number', '%.2f');
+    $column = new NumberTableColumn('header', 'number', '%.2f');
+    $walker = new RenderWalker('ot');
     $row    = ['number' => 'qwerty'];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertSame('<td>qwerty</td>', $ret);
+    self::assertSame('<td class="ot-number">qwerty</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -86,11 +90,12 @@ class NumericTableColumnTest extends TestCase
    */
   public function testInvalidValue02(): void
   {
-    $column = new NumericTableColumn('header', 'number', '%.2f');
+    $column = new NumberTableColumn('header', 'number', '%.2f');
+    $walker = new RenderWalker('ot');
     $row    = ['number' => "<'\">& "];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertSame('<td>&lt;&#039;&quot;&gt;&amp; </td>', $ret);
+    self::assertSame('<td class="ot-number">&lt;&#039;&quot;&gt;&amp; </td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -99,11 +104,12 @@ class NumericTableColumnTest extends TestCase
    */
   public function testNumericValue01(): void
   {
-    $column = new NumericTableColumn('header', 'number');
+    $column = new NumberTableColumn('header', 'number');
+    $walker = new RenderWalker('ot');
     $row    = ['number' => 123];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertSame('<td class="number" data-value="123">123</td>', $ret);
+    self::assertSame('<td class="ot-number" data-value="123">123</td>', $ret);
   }
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -111,11 +117,12 @@ class NumericTableColumnTest extends TestCase
    */
   public function testNumericValue02(): void
   {
-    $column = new NumericTableColumn('header', 'number', '%.2f');
+    $column = new NumberTableColumn('header', 'number', '%.2f');
+    $walker = new RenderWalker('ot');
     $row    = ['number' => M_PI];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertSame('<td class="number" data-value="3.1415926535898">3.14</td>', $ret);
+    self::assertSame('<td class="ot-number" data-value="3.1415926535898">3.14</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -124,12 +131,13 @@ class NumericTableColumnTest extends TestCase
    */
   public function testNumericValue03(): void
   {
-    $column = new NumericTableColumn('header', 'number', '%.2f');
+    $column = new NumberTableColumn('header', 'number', '%.2f');
+    $walker = new RenderWalker('ot');
     $row    = ['number' => 1.005];
-    $ret    = $column->getHtmlCell($row);
+    $ret    = $column->getHtmlCell($walker, $row);
 
     // sprintf does not do any rounding!
-    self::assertSame('<td class="number" data-value="1.005">1.00</td>', $ret);
+    self::assertSame('<td class="ot-number" data-value="1.005">1.00</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -138,15 +146,16 @@ class NumericTableColumnTest extends TestCase
    */
   public function testZeroValues01(): void
   {
-    $column = new NumericTableColumn('header', 'number');
+    $column = new NumberTableColumn('header', 'number');
 
     $values = ['0', 0, 0.0];
+    $walker = new RenderWalker('ot');
     foreach ($values as $value)
     {
       $row = ['number' => $value];
-      $ret = $column->getHtmlCell($row);
+      $ret = $column->getHtmlCell($walker, $row);
 
-      self::assertSame('<td class="number" data-value="0">0</td>', $ret, var_export($value, true));
+      self::assertSame('<td class="ot-number" data-value="0">0</td>', $ret, var_export($value, true));
     }
   }
 
@@ -156,15 +165,16 @@ class NumericTableColumnTest extends TestCase
    */
   public function testZeroValues02(): void
   {
-    $column = new NumericTableColumn('header', 'number', '%.2f');
+    $column = new NumberTableColumn('header', 'number', '%.2f');
 
     $values = ['0', 0, 0.0];
+    $walker = new RenderWalker('ot');
     foreach ($values as $value)
     {
       $row = ['number' => $value];
-      $ret = $column->getHtmlCell($row);
+      $ret = $column->getHtmlCell($walker, $row);
 
-      self::assertSame('<td class="number" data-value="0">0.00</td>', $ret, var_export($value, true));
+      self::assertSame('<td class="ot-number" data-value="0">0.00</td>', $ret, var_export($value, true));
     }
   }
 

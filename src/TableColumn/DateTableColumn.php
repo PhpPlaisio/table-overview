@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column for table cells with dates.
  */
-class DateTableColumn extends TableColumn
+class DateTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -62,26 +63,31 @@ class DateTableColumn extends TableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
-    if ($value===null || $value==='' || $row[$this->fieldName]===self::$openDate)
+    if ($value===null || $value==='' || $value===self::$openDate)
     {
-      // The value is empty.
-      return '<td></td>';
+      $inner = null;
+      $data  = null;
+    }
+    else
+    {
+      $date = \DateTime::createFromFormat('Y-m-d', $value);
+      if (!$date)
+      {
+        $inner = $value;
+        $data  = null;
+      }
+      else
+      {
+        $inner = $date->format($this->format);
+        $data  = $date->format('Y-m-d');
+      }
     }
 
-    $date = \DateTime::createFromFormat('Y-m-d', $row[$this->fieldName]);
-    if (!$date)
-    {
-      // The $data[$this->fieldName] is not a valid date.
-      return '<td>'.Html::txt2Html($row[$this->fieldName]).'</td>';
-    }
-
-    return Html::generateElement('td',
-                                 ['class' => 'date', 'data-value' => $date->format('Y-m-d')],
-                                 $date->format($this->format));
+    return Html::generateElement('td', ['class' => $walker->getClasses('date'), 'data-value' => $data], $inner);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

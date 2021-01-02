@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column for table cells with multiple email addresses.
  */
-class MultiEmailTableColumn extends TableColumn
+class MultiEmailTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -25,13 +26,6 @@ class MultiEmailTableColumn extends TableColumn
    */
   protected string $fieldName;
 
-  /**
-   * The character for separating multiple email addresses  in the generated HTML code.
-   *
-   * @var string
-   */
-  protected string $htmlSeparator;
-
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Object constructor.
@@ -39,48 +33,43 @@ class MultiEmailTableColumn extends TableColumn
    * @param string|int|null $header         The header text of this table column.
    * @param string          $fieldName      The key to be used for getting the value from the data row.
    * @param string          $dataSeparator  The character for separating multiple email addresses in the input data.
-   * @param string          $htmlSeparator  The HTML snippet for separating multiple email addresses in the generated
-   *                                        HTML code.
    * @param bool            $headerIsHtml   If and only if true the header is HTML code.
    */
   public function __construct($header,
                               string $fieldName,
                               string $dataSeparator = ',',
-                              string $htmlSeparator = '<br/>',
                               bool $headerIsHtml = false)
   {
     parent::__construct('email', $header, $headerIsHtml);
 
     $this->fieldName     = $fieldName;
     $this->dataSeparator = $dataSeparator;
-    $this->htmlSeparator = $htmlSeparator;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(array $row): string
+  public function getHtmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
-      return '<td></td>';
+      $inner = null;
     }
-
-    // Value has 1 or more mail addresses.
-    $addresses = explode($this->dataSeparator, $value);
-
-    $html = '<td class="email">';
-    foreach ($addresses as $i => $address)
+    else
     {
-      if ($i) $html .= $this->htmlSeparator;
-      $html .= Html::generateElement('a', ['href' => 'mailto:'.$address], $address);
+      $addresses = explode($this->dataSeparator, $value);
+      $inner     = Html::generateTag('span', ['class' => $walker->getClasses('email-list')]);
+      foreach ($addresses as $i => $address)
+      {
+        $inner .= Html::generateElement('a', ['href' => 'mailto:'.$address], $address);
+      }
+      $inner .= '</span>';
     }
-    $html .= '</td>';
 
-    return $html;
+    return Html::generateElement('td', ['class' => $walker->getClasses('emails')], $inner, true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
