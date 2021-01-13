@@ -11,7 +11,12 @@ export class OverviewTable
   /**
    * Name of the event triggered after filtering on a table has ended.
    */
-  public static readonly FILTERING_ENDED = 'overview-table-filtering-ended';
+  public static readonly FILTERING_ENDED = 'OverviewTable:filtering-ended';
+
+  /**
+   * Triggering this event will force to start filtering of this table.
+   */
+  public static readonly TRIGGER_FILTERING = 'OverviewTable:trigger-filtering';
 
   /**
    * All registered tables.
@@ -88,7 +93,8 @@ export class OverviewTable
 
     this.initColumnMap();
     this.initColumnHeaders();
-    this.initMediaChange();
+    this.initEventHandlers();
+
     this.logProfile('Execute additional initializations');
 
     if (OverviewTable.debug)
@@ -105,6 +111,25 @@ export class OverviewTable
   public static enableDebug(): void
   {
     OverviewTable.debug = true;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the associated JavaScript instance of this class for an HTML overview table.
+   *
+   * @param $table The JQuery object for an HTML overview table.
+   */
+  public static getOverviewTable($table: JQuery): OverviewTable | null
+  {
+    for (let i = 0; i < OverviewTable.tables.length; i++)
+    {
+      if (OverviewTable.tables[i].$table.is($table))
+      {
+        return OverviewTable.tables[i];
+      }
+    }
+
+    return null;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -358,6 +383,17 @@ export class OverviewTable
   public filterTrigger(event: JQuery.TriggeredEvent): void
   {
     event.data.table.filter();
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the col element in the colgroup of the table.
+   *
+   * @param columnIndex The column index.
+   */
+  public getColElement(columnIndex: number): JQuery
+  {
+    return this.$table.children('colgroup').children('col:nth-child(' + (columnIndex + 1) + ')');
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -853,6 +889,16 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Install all observers for handling events.
+   */
+  private initEventHandlers(): void
+  {
+    this.initMediaChange();
+    this.initTriggerFiltering();
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Install and fire media change event handler.
    */
   private initMediaChange(): void
@@ -875,6 +921,19 @@ export class OverviewTable
     this.mediaChange(this.mq);
 
     this.logProfile('Initialize media change event handlers');
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Installs the observer for handling an OverviewTable.TRIGGER_FILTERING event.
+   */
+  private initTriggerFiltering(): void
+  {
+    const that = this;
+    this.$table.on(OverviewTable.TRIGGER_FILTERING, function ()
+    {
+      that.filter();
+    });
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -935,9 +994,7 @@ export class OverviewTable
       that.columnHandlers[columnIndex].mediaChange(mq);
     });
   }
-
-  //--------------------------------------------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 35c2820a96c45c0bc5206049266d4c6b
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b9dd9810f3731217014e0cd13b3370d8
