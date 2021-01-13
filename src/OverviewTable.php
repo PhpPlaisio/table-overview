@@ -13,8 +13,11 @@ use Plaisio\Table\Walker\RenderWalker;
 /**
  * Class for generating tables with an overview of a list of entities.
  */
-class OverviewTable extends HtmlElement
+class OverviewTable
 {
+  //--------------------------------------------------------------------------------------------------------------------
+  use HtmlElement;
+
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * If set CSS for responsive table will generated.

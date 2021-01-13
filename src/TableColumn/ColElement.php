@@ -9,8 +9,11 @@ use Plaisio\Helper\HtmlElement;
 /**
  * Class for col elements.
  */
-class ColElement extends HtmlElement
+class ColElement
 {
+  //--------------------------------------------------------------------------------------------------------------------
+  use HtmlElement;
+
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Returns the HTML code for this col element.
