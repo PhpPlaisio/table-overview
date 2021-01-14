@@ -102,7 +102,7 @@ class NumberTableColumnTest extends TestCase
   /**
    * Test with a integer.
    */
-  public function testnumberValue01(): void
+  public function testNumberValue01(): void
   {
     $column = new NumberTableColumn('header', 'number');
     $walker = new RenderWalker('ot');
@@ -115,7 +115,7 @@ class NumberTableColumnTest extends TestCase
   /**
    * Test with a float.
    */
-  public function testnumberValue02(): void
+  public function testNumberValue02(): void
   {
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
@@ -129,7 +129,7 @@ class NumberTableColumnTest extends TestCase
   /**
    * Test with a float.
    */
-  public function testnumberValue03(): void
+  public function testNumberValue03(): void
   {
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
