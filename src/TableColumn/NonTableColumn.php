@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Plaisio\Table\TableColumn;
 
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Table\OverviewTable;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Not a table column.

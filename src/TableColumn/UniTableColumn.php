@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Kernel\Nub;
 use Plaisio\Table\OverviewTable;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Abstract parent class for generating HTML code for table cells in an overview table.
@@ -149,7 +149,7 @@ abstract class UniTableColumn implements TableColumn
    */
   public function getHtmlColumnHeader(RenderWalker $walker): string
   {
-    $attributes  = ['class' => $walker->getClasses('header')];
+    $attributes = ['class' => $walker->getClasses('header')];
     if ($this->header!==null)
     {
       if ($this->isSortable)
@@ -172,15 +172,6 @@ abstract class UniTableColumn implements TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritdoc
-   */
-  public function isHeaderEmpty(): bool
-  {
-    return ($this->header===null);
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
    * Returns true if and only the header is HTML code
    *
    * @return bool
@@ -188,6 +179,15 @@ abstract class UniTableColumn implements TableColumn
   public function headerIsHtml(): bool
   {
     return $this->headerIsHtml;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritdoc
+   */
+  public function isHeaderEmpty(): bool
+  {
+    return ($this->header===null);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

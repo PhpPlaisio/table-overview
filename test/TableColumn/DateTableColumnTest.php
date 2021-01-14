@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Table\TableColumn\DateTableColumn;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Test cases for class DateTableColumn.
@@ -35,7 +35,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => ''];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-date"></td>', $ret);
+    self::assertEquals('<td class="ot ot-date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => 'not a date'];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-date">not a date</td>', $ret);
+    self::assertEquals('<td class="ot ot-date">not a date</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => '9999-12-31'];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-date"></td>', $ret);
+    self::assertEquals('<td class="ot ot-date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => '8888-88-88'];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-date"></td>', $ret);
+    self::assertEquals('<td class="ot ot-date"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ class DateTableColumnTest extends TestCase
     $row    = ['date' => '2004-07-13'];  // PHP 5.0.0 release date.
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-date" data-value="2004-07-13">Tuesday 13th of July 2004</td>', $ret);
+    self::assertEquals('<td class="ot ot-date" data-value="2004-07-13">Tuesday 13th of July 2004</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

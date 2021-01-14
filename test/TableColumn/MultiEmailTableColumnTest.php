@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Table\TableColumn\MultiEmailTableColumn;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Test cases for class MultiEmailTableColumn.
@@ -35,7 +35,7 @@ class MultiEmailTableColumnTest extends TestCase
     $row    = ['mail' => ''];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-emails"></td>', $ret);
+    self::assertEquals('<td class="ot ot-emails"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ class MultiEmailTableColumnTest extends TestCase
     $row    = ['mail' => 'info@setbased.nl,webmaster@setbased.nl'];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-emails">'.
-                       '<span class="ot-email-list">'.
+    self::assertEquals('<td class="ot ot-emails">'.
+                       '<span class="ot ot-email-list">'.
                        '<a href="mailto:info@setbased.nl">info@setbased.nl</a>'.
                        '<a href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a>'.
                        '</span>'.

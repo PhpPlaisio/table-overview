@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Plaisio\Table\TableColumn;
 
 use Plaisio\Helper\Html;
-use Plaisio\Table\Walker\RenderWalker;
+use Plaisio\Helper\RenderWalker;
 
 /**
  * Table column for table cells with multiple email addresses.
@@ -30,10 +30,10 @@ class MultiEmailTableColumn extends UniTableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $header         The header text of this table column.
-   * @param string          $fieldName      The key to be used for getting the value from the data row.
-   * @param string          $dataSeparator  The character for separating multiple email addresses in the input data.
-   * @param bool            $headerIsHtml   If and only if true the header is HTML code.
+   * @param string|int|null $header        The header text of this table column.
+   * @param string          $fieldName     The key to be used for getting the value from the data row.
+   * @param string          $dataSeparator The character for separating multiple email addresses in the input data.
+   * @param bool            $headerIsHtml  If and only if true the header is HTML code.
    */
   public function __construct($header,
                               string $fieldName,

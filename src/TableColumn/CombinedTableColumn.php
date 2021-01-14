@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Plaisio\Table\TableColumn;
 
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Kernel\Nub;
 use Plaisio\Table\OverviewTable;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Table column combining two columns under one column header.

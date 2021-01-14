@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Plaisio\Table\TableColumn;
 
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Table\OverviewTable;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Abstract parent class for generating HTML code for table cells in an overview table.

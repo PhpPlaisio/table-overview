@@ -6,9 +6,9 @@ namespace Plaisio\Table;
 use Plaisio\Helper\Css;
 use Plaisio\Helper\Html;
 use Plaisio\Helper\HtmlElement;
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Kernel\Nub;
 use Plaisio\Table\TableColumn\TableColumn;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Class for generating tables with an overview of a list of entities.
@@ -34,11 +34,25 @@ class OverviewTable
   protected bool $filter = false;
 
   /**
+   * The CSS module class.
+   *
+   * @var string
+   */
+  protected string $moduleClass = 'ot';
+
+  /**
    * If set to true the table is sortable.
    *
    * @var bool
    */
   protected bool $sortable = true;
+
+  /**
+   * The CSS sub-module class.
+   *
+   * @var string|null
+   */
+  protected ?string $subModuleClass = null;
 
   /**
    * The index in $columns of the next column added to this table.
@@ -53,20 +67,6 @@ class OverviewTable
    * @var TableColumn[]
    */
   private array $columns = [];
-
-  /**
-   * The CSS module class.
-   *
-   * @var string
-   */
-  protected string $moduleClass = 'ot';
-
-  /**
-   * The CSS sub-module class.
-   *
-   * @var string|null
-   */
-  protected ?string $subModuleClass = null;
 
   /**
    * The title of this table.

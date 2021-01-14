@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
+use Plaisio\Helper\RenderWalker;
 use Plaisio\Table\TableColumn\DateTimeTableColumn;
-use Plaisio\Table\Walker\RenderWalker;
 
 /**
  * Test cases for class DateTimeTableColumn.
@@ -23,7 +23,7 @@ class DateTimeTableColumnTest extends TestCase
     $row    = ['date' => '2004-07-13 12:13:14'];  // PHP 5.0.0 release date and some random time.
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-datetime" data-value="2004-07-13 12:13:14">Tuesday 13th of July 2004 12:13:14 PM</td>', $ret);
+    self::assertEquals('<td class="ot ot-datetime" data-value="2004-07-13 12:13:14">Tuesday 13th of July 2004 12:13:14 PM</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class DateTimeTableColumnTest extends TestCase
     $row    = ['date' => 'not a date and time'];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-datetime">not a date and time</td>', $ret);
+    self::assertEquals('<td class="ot ot-datetime">not a date and time</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ class DateTimeTableColumnTest extends TestCase
     $row    = ['date' => ''];
     $ret    = $column->getHtmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-datetime"></td>', $ret);
+    self::assertEquals('<td class="ot ot-datetime"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
