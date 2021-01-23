@@ -60,6 +60,11 @@ export class OverviewTable
   private columnHandlers: TableColumn[] = [];
 
   /**
+   * Class for hidden (filter out) table rows.
+   */
+  private hiddenClass: string;
+
+  /**
    * The intermediate time (for bugging and profiling).
    */
   private timeIntermediate: Date;
@@ -87,6 +92,7 @@ export class OverviewTable
     }
 
     this.moduleClass = Cast.toManString($table.attr('data-overview-table'));
+    this.hiddenClass = 'is-hidden';
     this.$filters    = $table.children('thead').children(this.getRealClass('filter-row')).find('td');
     this.$headers    = $table.children('thead').children(this.getRealClass('header-row')).find('th');
     this.logProfile('Prepare table and table info');
@@ -325,7 +331,7 @@ export class OverviewTable
       }
 
       // All filters are ineffective. Show all rows.
-      this.$table.children('tbody').children('tr').css('display', '');
+      this.$table.children('tbody').children('tr').removeClass(this.hiddenClass).css('display', '');
       this.logProfile('Show all rows');
     }
     else
@@ -333,10 +339,11 @@ export class OverviewTable
       // One or more filters are effective.
 
       // Hide all rows.
-      this.$table.children('tbody').children('tr').css('display', 'none');
+      this.$table.children('tbody').children('tr').addClass(this.hiddenClass).css('display', 'none');
       this.logProfile('Hide all rows');
 
       // Apply all effective filters.
+      const that = this;
       this.$table.children('tbody').children('tr').each(function ()
       {
         let show  = 1;
@@ -357,7 +364,7 @@ export class OverviewTable
         if (show === 1)
         {
           // The row matches all filters. Show the row.
-          $this.css('display', '');
+          $this.removeClass(that.hiddenClass).css('display', '');
         }
       });
       this.logProfile('Apply all effective filters');
@@ -997,4 +1004,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b9dd9810f3731217014e0cd13b3370d8
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: d3f6ff87f04e732b3d55f830e38b3f56
