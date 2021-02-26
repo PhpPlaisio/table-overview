@@ -86,10 +86,7 @@ export class OverviewTable
     this.timeStart        = new Date();
     this.timeIntermediate = new Date();
 
-    if (OverviewTable.debug)
-    {
-      this.log('Start create OverviewTable:');
-    }
+   this.log('Start create OverviewTable:');
 
     this.moduleClass = Cast.toManString($table.attr('data-overview-table'));
     this.hiddenClass = 'is-hidden';
@@ -103,11 +100,7 @@ export class OverviewTable
 
     this.logProfile('Execute additional initializations');
 
-    if (OverviewTable.debug)
-    {
-      this.log('End of create OverviewTable ' +
-        (new Date().getTime() - this.timeIntermediate.getTime()) + 'ms');
-    }
+    this.log('End of create OverviewTable ' + (new Date().getTime() - this.timeIntermediate.getTime()) + 'ms');
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -299,12 +292,9 @@ export class OverviewTable
    */
   public filter(): void
   {
-    if (OverviewTable.debug)
-    {
-      this.log('Apply filters:');
-      this.timeStart        = new Date();
-      this.timeIntermediate = new Date();
-    }
+    this.log('Apply filters:');
+    this.timeStart        = new Date();
+    this.timeIntermediate = new Date();
 
     // Create a list of effective filters.
     let filters: (TableColumn | null)[] = [];
@@ -325,10 +315,7 @@ export class OverviewTable
 
     if (count === 0)
     {
-      if (OverviewTable.debug)
-      {
-        this.log('Filters list is empty.');
-      }
+      this.log('Filters list is empty.');
 
       // All filters are ineffective. Show all rows.
       this.$table.children('tbody').children('tr').removeClass(this.hiddenClass).css('display', '');
@@ -375,10 +362,7 @@ export class OverviewTable
 
     this.$table.trigger(OverviewTable.FILTERING_ENDED);
 
-    if (OverviewTable.debug)
-    {
-      this.log('Finish, total time: ' + (new Date().getTime() - this.timeIntermediate.getTime()) + ' ms');
-    }
+    this.log('Finish, total time: ' + (new Date().getTime() - this.timeIntermediate.getTime()) + ' ms');
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -570,12 +554,9 @@ export class OverviewTable
   {
     if (!$(event.target).hasClass('no-sort'))
     {
-      if (OverviewTable.debug)
-      {
-        this.log('Start sort:');
-        this.timeStart        = new Date();
-        this.timeIntermediate = new Date();
-      }
+      this.log('Start sort:');
+      this.timeStart        = new Date();
+      this.timeIntermediate = new Date();
 
       // Get info about all currently sorted columns.
       let sortInfo = this.getSortInfo();
@@ -625,10 +606,7 @@ export class OverviewTable
       this.applyZebraTheme();
       this.logProfile('Apply zebra theme');
 
-      if (OverviewTable.debug)
-      {
-        this.log('Finish sort ' + (new Date().getTime() - this.timeIntermediate.getTime()) + 'ms');
-      }
+      this.log('Finish sort ' + (new Date().getTime() - this.timeIntermediate.getTime()) + 'ms');
     }
   }
 
@@ -951,13 +929,9 @@ export class OverviewTable
    */
   private log(message: string): void
   {
-    if (console && console.debug)
+    if (OverviewTable.debug === true)
     {
       console.log(message);
-    }
-    else
-    {
-      alert(message);
     }
   }
 
@@ -1004,4 +978,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: d3f6ff87f04e732b3d55f830e38b3f56
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c24e93e0a1b2d177f281e5c0ddce1b7d
