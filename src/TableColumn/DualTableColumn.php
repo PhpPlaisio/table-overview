@@ -149,7 +149,7 @@ abstract class DualTableColumn implements TableColumn
     {
       // The default filter is a simple text filter.
       $ret = Html::generateTag('td', ['class' => $walker->getClasses('filter')]);
-      $ret .= Html::generateElement('input', ['class' => $walker->getClasses('filter-text'), 'type' => 'text']);
+      $ret .= Html::generateVoidElement('input', ['class' => $walker->getClasses('filter-text'), 'type' => 'text']);
       $ret .= '</td>';
       $ret .= $ret;
     }
