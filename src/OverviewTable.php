@@ -9,6 +9,8 @@ use Plaisio\Helper\HtmlElement;
 use Plaisio\Helper\RenderWalker;
 use Plaisio\Kernel\Nub;
 use Plaisio\Table\TableColumn\TableColumn;
+use Plaisio\Table\TableRow\TableRow;
+use Plaisio\Table\TableRow\ZebraTableRow;
 
 /**
  * Class for generating tables with an overview of a list of entities.
@@ -64,6 +66,13 @@ class OverviewTable
   private array $columns = [];
 
   /**
+   * Helper class for generating the attributes of the table rows.
+   *
+   * @var TableRow
+   */
+  private TableRow $tableRow;
+
+  /**
    * The title of this table.
    *
    * @var string|null
@@ -71,13 +80,13 @@ class OverviewTable
   private ?string $title = null;
 
   //--------------------------------------------------------------------------------------------------------------------
-
   /**
    * OverviewTable constructor.
    */
   public function __construct()
   {
-    $this->renderWalker = new RenderWalker('ot');
+    $this->renderWalker = new RenderWalker(self::$defaultModuleClass);
+    $this->tableRow     = new ZebraTableRow();
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -178,6 +187,17 @@ class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Sets the helper class for generating the table row attributes.
+   *
+   * @param TableRow $tableRow The helper class for generating the table row attributes.
+   */
+  public function setTableRow(TableRow $tableRow): void
+  {
+    $this->tableRow = $tableRow;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Sets the title of this table.
    *
    * @param string $title The title.
@@ -203,9 +223,7 @@ class OverviewTable
     $i   = 0;
     foreach ($rows as $row)
     {
-      $classes   = $this->renderWalker->getClasses('row');
-      $classes[] = ($i % 2===0) ? 'is-even' : 'is-odd';
-      $ret       .= Html::generateTag('tr', ['class' => $classes]);
+      $ret .= Html::generateTag('tr', $this->tableRow->getRowAttributes($this->renderWalker, $i, $row));
       foreach ($this->columns as $column)
       {
         $ret .= $column->getHtmlCell($this->renderWalker, $row);
