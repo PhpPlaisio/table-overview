@@ -40,7 +40,7 @@ class UuidTableColumn extends UniTableColumn
    */
   public function getHtmlCell(RenderWalker $walker, array $row): string
   {
-    return Html::generateElement('td', ['class' => $walker->getClasses('uuid')], $row[$this->fieldName]);
+    return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'uuid'])], $row[$this->fieldName]);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

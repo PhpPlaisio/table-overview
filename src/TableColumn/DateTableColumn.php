@@ -87,7 +87,10 @@ class DateTableColumn extends UniTableColumn
       }
     }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses('date'), 'data-value' => $data], $inner);
+    return Html::generateElement('td',
+                                 ['class'      => $walker->getClasses(['cell', 'date']),
+                                  'data-value' => $data],
+                                 $inner);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

@@ -61,7 +61,10 @@ class Ipv4TableColumn extends UniTableColumn
       }
     }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses('ipv4'), 'data-value' => $int], $string);
+    return Html::generateElement('td',
+                                 ['class'      => $walker->getClasses(['cell', 'ipv4']),
+                                  'data-value' => $int],
+                                 $string);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

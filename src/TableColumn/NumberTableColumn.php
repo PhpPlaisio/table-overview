@@ -52,24 +52,21 @@ class NumberTableColumn extends UniTableColumn
   {
     $value = $row[$this->fieldName];
 
-    if ($value===null || $value==='')
-    {
-      $inner = null;
-      $data  = null;
-    }
-
-    if (!is_numeric($value))
-    {
-      $inner = $value;
-      $data  = null;
-    }
-    else
+    if (is_numeric($value))
     {
       $inner = sprintf($this->format, $value);
       $data  = $value;
     }
+    else
+    {
+      $inner = $value;
+      $data  = null;
+    }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses('number'), 'data-value' => $data], $inner);
+    return Html::generateElement('td',
+                                 ['class'      => $walker->getClasses(['cell', 'number']),
+                                  'data-value' => $data],
+                                 $inner);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

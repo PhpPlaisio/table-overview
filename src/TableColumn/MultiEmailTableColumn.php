@@ -62,14 +62,14 @@ class MultiEmailTableColumn extends UniTableColumn
     {
       $addresses = explode($this->dataSeparator, $value);
       $inner     = Html::generateTag('span', ['class' => $walker->getClasses('email-list')]);
-      foreach ($addresses as $i => $address)
+      foreach ($addresses as $address)
       {
         $inner .= Html::generateElement('a', ['href' => 'mailto:'.$address], $address);
       }
       $inner .= '</span>';
     }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses('emails')], $inner, true);
+    return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'emails'])], $inner, true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

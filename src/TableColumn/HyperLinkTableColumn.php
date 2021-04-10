@@ -51,7 +51,7 @@ class HyperLinkTableColumn extends UniTableColumn
       $inner = Html::generateElement('a', ['href' => $url], $url);
     }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses('link')], $inner, true);
+    return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'link'])], $inner, true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

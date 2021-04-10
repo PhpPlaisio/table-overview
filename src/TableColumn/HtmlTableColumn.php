@@ -40,7 +40,9 @@ class HtmlTableColumn extends UniTableColumn
    */
   public function getHtmlCell(RenderWalker $walker, array $row): string
   {
-    return Html::generateElement('td', ['class' => $walker->getClasses('text')], $row[$this->fieldName], true);
+    return Html::generateElement('td',
+                                 ['class' => $walker->getClasses(['cell', 'text'])],
+                                 $row[$this->fieldName], true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
