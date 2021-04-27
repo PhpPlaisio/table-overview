@@ -7,11 +7,9 @@ use Plaisio\Helper\Html;
 use Plaisio\Helper\RenderWalker;
 
 /**
- * Table column for table cells with IPv4 addresses.
- *
- * @deprecated Use IpTableColumn instead.
+ * Table column for table cells with IPv4 and IPv6 addresses.
  */
-class Ipv4TableColumn extends UniTableColumn
+class IpTableColumn extends UniTableColumn
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -22,6 +20,7 @@ class Ipv4TableColumn extends UniTableColumn
   protected string $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
+
   /**
    * Object constructor.
    *
@@ -31,7 +30,7 @@ class Ipv4TableColumn extends UniTableColumn
    */
   public function __construct($header, string $fieldName, bool $headerIsHtml = false)
   {
-    parent::__construct('ipv4', $header, $headerIsHtml);
+    parent::__construct('ip', $header, $headerIsHtml);
 
     $this->fieldName = $fieldName;
   }
@@ -46,26 +45,30 @@ class Ipv4TableColumn extends UniTableColumn
 
     if ($value===null || $value==='')
     {
-      $int    = null;
+      $data   = null;
       $string = null;
     }
     else
     {
       if (is_int($value))
       {
-        $int    = $value;
         $string = long2ip($value);
+        $data   = bin2hex(inet_pton('::ffff:'.$string));
       }
       else
       {
-        $int    = ip2long($value);
-        $string = $value;
+        $string = inet_ntop($value);
+        $data   = bin2hex($value);
+        if (substr($data, -12, 4)==='ffff')
+        {
+          $string = substr(strrchr($string, ':'), 1);
+        }
       }
     }
 
     return Html::generateElement('td',
-                                 ['class'      => $walker->getClasses(['cell', 'ipv4']),
-                                  'data-value' => $int],
+                                 ['class'      => $walker->getClasses(['cell', 'ip']),
+                                  'data-value' => $data],
                                  $string);
   }
 
