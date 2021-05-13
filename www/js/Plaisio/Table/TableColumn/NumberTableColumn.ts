@@ -43,7 +43,7 @@ export class NumberTableColumn extends TextTableColumn
     const value: any = $(tableCell).attr('data-value') || $(tableCell).text();
 
     return Cast.isManFloat(value) ? parseFloat(value) : null;
-  };
+  }
 
   //--------------------------------------------------------------------------------------------------------------------
 }
@@ -51,4 +51,4 @@ export class NumberTableColumn extends TextTableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('number', NumberTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4219a6020942b44b2abe2b3133571ef5
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 2d3e71db2f9c306881b458ad74e27e89
