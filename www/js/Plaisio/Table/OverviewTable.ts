@@ -133,6 +133,15 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Returns the JQuery object of the HTML table.
+   */
+  public getTable(): JQuery
+  {
+    return this.$table;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Merges info about sorting of a column to sorting info of a table.
    *
    * @param tableSortInfo  De sorting metadata of the table.
