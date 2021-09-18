@@ -27,6 +27,7 @@ class MultiEmailTableColumn extends UniTableColumn
   protected string $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
+
   /**
    * Object constructor.
    *
@@ -64,7 +65,10 @@ class MultiEmailTableColumn extends UniTableColumn
       $inner     = Html::generateTag('span', ['class' => $walker->getClasses('email-list')]);
       foreach ($addresses as $address)
       {
-        $inner .= Html::generateElement('a', ['href' => 'mailto:'.$address], $address);
+        $inner .= Html::generateElement('a',
+                                        ['class' => $walker->getClasses(['link', 'mailto']),
+                                         'href'  => 'mailto:'.$address],
+                                        $address);
       }
       $inner .= '</span>';
     }

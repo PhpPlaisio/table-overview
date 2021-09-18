@@ -48,7 +48,10 @@ class EmailTableColumn extends UniTableColumn
     }
     else
     {
-      $inner = Html::generateElement('a', ['href' => 'mailto:'.$value], $value);
+      $inner = Html::generateElement('a',
+                                     ['class' => $walker->getClasses('link'),
+                                      'href' => 'mailto:'.$value],
+                                     $value);
     }
 
     return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'email'])], $inner, true);
