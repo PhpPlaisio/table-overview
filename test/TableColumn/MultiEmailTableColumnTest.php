@@ -63,8 +63,8 @@ class MultiEmailTableColumnTest extends TestCase
 
     self::assertEquals('<td class="ot ot-cell ot-emails">'.
                        '<span class="ot ot-email-list">'.
-                       '<a class="ot ot-link ot-mailto" href="mailto:info@setbased.nl">info@setbased.nl</a>'.
-                       '<a class="ot ot-link ot-mailto" href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a>'.
+                       '<a class="link mailto" href="mailto:info@setbased.nl">info@setbased.nl</a>'.
+                       '<a class="link mailto" href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a>'.
                        '</span>'.
                        '</td>', $ret);
   }

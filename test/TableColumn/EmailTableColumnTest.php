@@ -62,7 +62,7 @@ class EmailTableColumnTest extends TestCase
     $ret    = $column->getHtmlCell($walker, $row);
 
     self::assertEquals('<td class="ot ot-cell ot-email">'.
-                       '<a class="ot ot-link" href="mailto:info@setbased.nl">info@setbased.nl</a>'.
+                       '<a class="link mailto" href="mailto:info@setbased.nl">info@setbased.nl</a>'.
                        '</td>', $ret);
   }
 

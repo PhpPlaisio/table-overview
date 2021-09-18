@@ -66,7 +66,7 @@ class MultiEmailTableColumn extends UniTableColumn
       foreach ($addresses as $address)
       {
         $inner .= Html::generateElement('a',
-                                        ['class' => $walker->getClasses(['link', 'mailto']),
+                                        ['class' => ['link', 'mailto'],
                                          'href'  => 'mailto:'.$address],
                                         $address);
       }
