@@ -11,12 +11,12 @@ export class OverviewTable
   /**
    * Name of the event triggered after filtering on a table has ended.
    */
-  public static readonly FILTERING_ENDED = 'OverviewTable:filtering-ended';
+  public static readonly FILTERING_ENDED: string = 'd2911ea5-7e6d-48b7-8eff-671ac3c9c172';
 
   /**
    * Triggering this event will force to start filtering of this table.
    */
-  public static readonly TRIGGER_FILTERING = 'OverviewTable:trigger-filtering';
+  public static readonly TRIGGER_FILTERING: string = 'fd577bba-f297-4436-80da-d07b8a5d7358';
 
   /**
    * All registered tables.
@@ -47,7 +47,7 @@ export class OverviewTable
   /**
    * Lookup from column index to header index.
    */
-  public headerIndexLookup = Array<number>();
+  public headerIndexLookup: Array<number> = Array<number>();
 
   /**
    * The CSS module class.
@@ -86,7 +86,7 @@ export class OverviewTable
     this.timeStart        = new Date();
     this.timeIntermediate = new Date();
 
-   this.log('Start create OverviewTable:');
+    this.log('Start create OverviewTable:');
 
     this.moduleClass = Cast.toManString($table.attr('data-overview-table'));
     this.hiddenClass = 'is-hidden';
@@ -129,15 +129,6 @@ export class OverviewTable
     }
 
     return null;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns the JQuery object of the HTML table.
-   */
-  public getTable(): JQuery
-  {
-    return this.$table;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -247,8 +238,8 @@ export class OverviewTable
       const order   = i + 1;
       const $header = this.$headers.eq(this.headerIndexLookup[tableSortInfo[i].columnIndex]);
       $header.attr(this.getAttributeName('data-sort-order',
-        tableSortInfo[i].colspan,
-        tableSortInfo[i].offset),
+          tableSortInfo[i].colspan,
+          tableSortInfo[i].offset),
         order);
       $header.addClass(this.getAttributeName('is-sorted',
         tableSortInfo[i].colspan,
@@ -545,6 +536,15 @@ export class OverviewTable
     }
 
     return parseInt(order, 10);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the JQuery object of the HTML table.
+   */
+  public getTable(): JQuery
+  {
+    return this.$table;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -987,4 +987,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c24e93e0a1b2d177f281e5c0ddce1b7d
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c43a12dc431ae832dfabd3591fa17db8
