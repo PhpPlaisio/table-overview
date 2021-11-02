@@ -26,7 +26,7 @@ export class OverviewTable
   /**
    * All available column type handler classes.
    */
-  private static TableColumnHandlers: Map<string, TableColumn['constructor']> =
+  private static tableColumnHandlers: Map<string, TableColumn['constructor']> =
     new Map<string, TableColumn['constructor']>();
 
   /**
@@ -205,7 +205,7 @@ export class OverviewTable
    */
   public static registerTableColumn(TableColumn: string, handler: TableColumn['constructor']): void
   {
-    OverviewTable.TableColumnHandlers.set(TableColumn, handler);
+    OverviewTable.tableColumnHandlers.set(TableColumn, handler);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -841,12 +841,12 @@ export class OverviewTable
     this.$table.children('colgroup').children('col').each(function (columnIndex: number, col: HTMLElement)
     {
       let TableColumn = $(col).attr('data-type');
-      if (!TableColumn || !OverviewTable.TableColumnHandlers.has(TableColumn))
+      if (!TableColumn || !OverviewTable.tableColumnHandlers.has(TableColumn))
       {
         TableColumn = 'none';
       }
 
-      const tmp: any                   = OverviewTable.TableColumnHandlers.get(TableColumn);
+      const tmp: any                   = OverviewTable.tableColumnHandlers.get(TableColumn);
       that.columnHandlers[columnIndex] = new tmp();
       that.logProfile('Install column handler with type "' + TableColumn + '"');
 
@@ -987,4 +987,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c43a12dc431ae832dfabd3591fa17db8
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: a02bf7e4aca4e3f32eed541f48ad0e16
