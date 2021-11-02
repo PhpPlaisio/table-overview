@@ -31,7 +31,7 @@ class OverviewTable
   public static string $defaultModuleClass = 'ot';
 
   /**
-   * If set CSS for responsive table will generated.
+   * If set CSS for responsive table will be generated.
    *
    * @var string|null
    */
@@ -219,7 +219,7 @@ class OverviewTable
    */
   protected function getHtmlBody(array $rows): string
   {
-    $ret = Html::generateTag('tbody', ['class' => $this->renderWalker->getClasses()]);
+    $ret = Html::generateTag('tbody', ['class' => $this->renderWalker->getClasses('tbody')]);
     $i   = 0;
     foreach ($rows as $row)
     {
@@ -279,7 +279,7 @@ class OverviewTable
    */
   protected function getHtmlHeader(): string
   {
-    $ret = Html::generateTag('thead', ['class' => $this->renderWalker->getClasses()]);
+    $ret = Html::generateTag('thead', ['class' => $this->renderWalker->getClasses('thead')]);
     $ret .= $this->getHtmlInnerHeader();
     $ret .= '</thead>';
 
@@ -432,7 +432,7 @@ class OverviewTable
    */
   private function prepare(): void
   {
-    $this->addClasses($this->renderWalker->getClasses());
+    $this->addClasses($this->renderWalker->getClasses('table'));
     $this->setAttrData('overview-table', $this->renderWalker->getModuleClass());
 
     if (static::$responsiveMediaQuery!==null && $this->getAttribute('id')===null)
