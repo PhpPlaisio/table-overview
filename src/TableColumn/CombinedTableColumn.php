@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Plaisio\Table\TableColumn;
 
+use Plaisio\Helper\Html;
 use Plaisio\Helper\RenderWalker;
 use Plaisio\Kernel\Nub;
 use Plaisio\Table\OverviewTable;
@@ -102,15 +103,49 @@ class CombinedTableColumn implements TableColumn
   public function getHtmlColumnFilter(RenderWalker $walker): string
   {
     return $this->column1->getHtmlColumnFilter($walker).$this->column2->getHtmlColumnFilter($walker);
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
+  }  //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritdoc
    */
   public function getHtmlColumnHeader(RenderWalker $walker): string
   {
-    return $this->column1->getHtmlColumnHeader($walker).$this->column2->getHtmlColumnHeader($walker);
+    $attributes = [];
+    $classes    = $walker->getClasses('header');
+
+    // Add class indicating this column can be used for sorting.
+    if ($this->column1->isSortable())
+    {
+      $classes[] = 'is-sortable-1';
+
+      // Add attributes indicating the sort order of this column and direction.
+      if ($this->column1->getSortOrder()!==null)
+      {
+        //$attributes['data-sort-order-1'] = $this->column1;
+
+        $classes[] = ($this->column1->getSortDirection()==='desc') ? 'is-sorted-1-desc' : 'is-sorted-1-asc';
+      }
+    }
+
+    // Add class indicating this column can be used for sorting.
+    if ($this->column2->isSortable())
+    {
+      $classes[] = 'is-sortable-2';
+
+      // Add attributes indicating the sort order of this column and direction.
+      if ($this->column2->getSortOrder()!==null)
+      {
+        // $attributes['data-sort-order-2'] = $this->sortOrder2;
+
+        $classes[] = ($this->column2->getSortDirection()==='desc') ? 'is-sorted-2-desc' : 'is-sorted-2-asc';
+      }
+    }
+
+    $attributes['class']   = $classes;
+    $attributes['colspan'] = 2;
+
+    $innerText = '<span>&nbsp;</span>'.($this->headerIsHtml ? $this->header : Html::txt2Html($this->header));
+
+    return Html::generateElement('th', $attributes, $innerText, true);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

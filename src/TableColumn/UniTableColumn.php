@@ -172,6 +172,28 @@ abstract class UniTableColumn implements TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Returns the sort direction (asc or desc) of the data in this column.
+   *
+   * @return string
+   */
+  public function getSortDirection(): string
+  {
+    return $this->sortDirection;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the sort order of the data in this column.
+   *
+   * @return int|null
+   */
+  public function getSortOrder(): ?int
+  {
+    return $this->sortOrder;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Returns true if and only the header is HTML code
    *
    * @return bool
