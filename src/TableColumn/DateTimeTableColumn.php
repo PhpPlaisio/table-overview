@@ -55,15 +55,15 @@ class DateTimeTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
       // Value is empty.
-      $inner = null;
-      $data  = null;
+      $text = null;
+      $data = null;
     }
     else
     {
@@ -71,21 +71,23 @@ class DateTimeTableColumn extends UniTableColumn
       if (!$datetime)
       {
         // Not a valid datetime.
-        $inner = $value;
-        $data  = null;
+        $text = $value;
+        $data = null;
       }
       else
       {
         // A valid datetime.
-        $inner = $datetime->format($this->format);
-        $data  = $datetime->format('Y-m-d H:i:s');
+        $text = $datetime->format($this->format);
+        $data = $datetime->format('Y-m-d H:i:s');
       }
     }
 
-    return Html::generateElement('td',
-                                 ['class'      => $walker->getClasses(['cell', 'datetime']),
-                                  'data-value' => $data],
-                                 $inner);
+    $struct = ['tag'  => 'td',
+               'attr' => ['class'      => $walker->getClasses(['cell', 'datetime']),
+                          'data-value' => $data],
+               'text' => $text];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

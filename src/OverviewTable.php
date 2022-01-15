@@ -135,36 +135,6 @@ class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns the HTML code of this table
-   *
-   * @param array[] $rows The data shown in the table.
-   *
-   * @return string
-   */
-  public function getHtmlTable(array $rows): string
-  {
-    $this->prepare();
-
-    $ret = $this->getHtmlPrefix();
-
-    $ret .= Html::generateTag('table', $this->attributes);
-
-    $ret .= $this->getHtmlColGroup();
-    $ret .= $this->getHtmlHeader();
-    $ret .= $this->getHtmlBody($rows);
-    $ret .= $this->getHtmlFooter();
-
-    $ret .= '</table>';
-
-    $ret .= $this->getHtmlPostfix();
-
-    $this->generateResponsiveCss();
-
-    return $ret;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
    * Returns the total number of columns of this table.
    *
    * @return int
@@ -183,6 +153,30 @@ class OverviewTable
   public function getTitle(): string
   {
     return $this->title;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the HTML code of this table.
+   *
+   * @param array[] $rows The data shown in the table.
+   *
+   * @return string
+   */
+  public function htmlTable(array $rows): string
+  {
+    $this->prepare();
+    $this->generateResponsiveCss();
+
+    $struct = ['tag'   => 'table',
+               'attr'  => $this->attributes,
+               'inner' => [['html' => $this->htmlPrefix()],
+                           ['html' => $this->htmlColGroup()],
+                           ['html' => $this->htmlHeader()],
+                           ['html' => $this->htmlBody($rows)],
+                           ['html' => $this->htmlFooter()]]];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -211,29 +205,46 @@ class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Returns the HTML code inserted before the HTML code of the table.
+   *
+   * @return string
+   */
+  protected function getHtmlPostfix(): string
+  {
+    return '';
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Returns the inner HTML code of the body for this table holding the rows as data.
    *
    * @param array[] $rows The data of the rows.
    *
    * @return string
    */
-  protected function getHtmlBody(array $rows): string
+  protected function htmlBody(array $rows): string
   {
-    $ret = Html::generateTag('tbody', ['class' => $this->renderWalker->getClasses('tbody')]);
-    $i   = 0;
+    $i        = 0;
+    $htmlRows = '';
     foreach ($rows as $row)
     {
-      $ret .= Html::generateTag('tr', $this->tableRow->getRowAttributes($this->renderWalker, $i, $row));
+      $htmlCells = '';
       foreach ($this->columns as $column)
       {
-        $ret .= $column->getHtmlCell($this->renderWalker, $row);
+        $htmlCells .= $column->htmlCell($this->renderWalker, $row);
       }
-      $ret .= '</tr>';
+
+      $htmlRows .= Html::htmlNested(['tag'  => 'tr',
+                                     'attr' => $this->tableRow->getRowAttributes($this->renderWalker, $i, $row),
+                                     'html' => $htmlCells]);
       $i++;
     }
-    $ret .= '</tbody>';
 
-    return $ret;
+    $struct = ['tag'  => 'tbody',
+               'attr' => ['class' => $this->renderWalker->getClasses('tbody')],
+               'html' => $htmlRows];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -242,7 +253,7 @@ class OverviewTable
    *
    * @return string
    */
-  protected function getHtmlColGroup(): string
+  protected function htmlColGroup(): string
   {
     $ret = '<colgroup>';
     foreach ($this->columns as $column)
@@ -253,7 +264,7 @@ class OverviewTable
         $column->setSortable(false);
       }
 
-      $ret .= $column->getHtmlCol();
+      $ret .= $column->htmlCol();
     }
     $ret .= '</colgroup>';
 
@@ -266,7 +277,7 @@ class OverviewTable
    *
    * @return string
    */
-  protected function getHtmlFooter(): string
+  protected function htmlFooter(): string
   {
     return '';
   }
@@ -277,13 +288,13 @@ class OverviewTable
    *
    * @return string
    */
-  protected function getHtmlHeader(): string
+  protected function htmlHeader(): string
   {
-    $ret = Html::generateTag('thead', ['class' => $this->renderWalker->getClasses('thead')]);
-    $ret .= $this->getHtmlInnerHeader();
-    $ret .= '</thead>';
+    $struct = ['tag'  => 'thead',
+               'attr' => ['class' => $this->renderWalker->getClasses('thead')],
+               'html' => $this->htmlInnerHeader()];
 
-    return $ret;
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -292,15 +303,15 @@ class OverviewTable
    *
    * @return string
    */
-  protected function getHtmlInnerHeader(): string
+  protected function htmlInnerHeader(): string
   {
-    $ret = '';
+    $struct = [];
     if ($this->title!==null)
     {
       $mode    = 1;
       $colspan = 0;
 
-      $ret .= Html::generateTag('tr', ['class' => $this->renderWalker->getClasses('title')]);
+      $inner = [];
       foreach ($this->columns as $column)
       {
         $empty = $column->isHeaderEmpty();
@@ -309,7 +320,9 @@ class OverviewTable
         {
           if ($empty)
           {
-            $ret .= Html::generateElement('th', ['class' => $this->renderWalker->getClasses('empty-header')]);
+            $inner[] = ['tag'  => 'th',
+                        'attr' => ['class' => $this->renderWalker->getClasses('empty-header')],
+                        'html' => null];
           }
           else
           {
@@ -331,70 +344,73 @@ class OverviewTable
 
         if ($mode===3)
         {
-          if ($colspan===1) $colspan = null;
-          $ret  .= Html::generateElement('th',
-                                         ['class'   => $this->renderWalker->getClasses('header'),
-                                          'colspan' => $colspan],
-                                         $this->title);
-          $mode = 4;
+          if ($colspan===1)
+          {
+            $colspan = null;
+          }
+          $inner[] = ['tag'  => 'th',
+                      'attr' => ['class'   => $this->renderWalker->getClasses('header'),
+                                 'colspan' => $colspan],
+                      'text' => $this->title];
+          $mode    = 4;
         }
 
         if ($mode===4)
         {
-          $ret .= Html::generateElement('th', ['class' => $this->renderWalker->getClasses('empty-header')]);
+          $inner[] = ['tag'  => 'th',
+                      'attr' => ['class' => $this->renderWalker->getClasses('empty-header')],
+                      'html' => null];
         }
       }
 
       if ($mode===2)
       {
-        if ($colspan===1) $colspan = null;
-        $ret .= Html::generateElement('th',
-                                      ['class'   => $this->renderWalker->getClasses('header'),
-                                       'colspan' => $colspan],
-                                      $this->title);
+        if ($colspan===1)
+        {
+          $colspan = null;
+        }
+        $inner[] = ['tag'  => 'th',
+                    'attr' => ['class'   => $this->renderWalker->getClasses('header'),
+                               'colspan' => $colspan],
+                    'text' => $this->title];
       }
 
-      $ret .= '</tr>';
+      $struct[] = ['tag'   => 'tr',
+                   'attr'  => ['class' => $this->renderWalker->getClasses('title')],
+                   'inner' => $inner];
     }
 
-    $ret .= Html::generateTag('tr', ['class' => $this->renderWalker->getClasses('header-row')]);
+    $cells = '';
     foreach ($this->columns as $column)
     {
-      $ret .= $column->getHtmlColumnHeader($this->renderWalker);
+      $cells .= $column->htmlColumnHeader($this->renderWalker);
     }
-    $ret .= '</tr>';
+    $struct[] = ['tag'  => 'tr',
+                 'attr' => ['class' => $this->renderWalker->getClasses('header-row')],
+                 'html' => $cells];
 
     if ($this->filter)
     {
-      $ret .= Html::generateTag('tr', ['class' => $this->renderWalker->getClasses('filter-row')]);
+      $cells = '';
       foreach ($this->columns as $column)
       {
-        $ret .= $column->getHtmlColumnFilter($this->renderWalker);
+        $cells .= $column->htmlColumnFilter($this->renderWalker);
       }
-      $ret .= '</tr>';
+      $struct[] = ['tag'  => 'tr',
+                   'attr' => ['class' => $this->renderWalker->getClasses('filter-row')],
+                   'html' => $cells];
     }
 
-    return $ret;
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code inserted before the HTML code of the table.
+   * Returns the HTML code appended after the HTML code of the table.
    *
    * @return string
    */
-  protected function getHtmlPostfix(): string
-  {
-    return '';
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns HTML code appended after the HTML code of the table.
-   *
-   * @return string
-   */
-  protected function getHtmlPrefix(): string
+  protected function htmlPrefix(): string
   {
     return '';
   }

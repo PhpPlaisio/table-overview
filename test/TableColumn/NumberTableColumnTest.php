@@ -19,7 +19,7 @@ class NumberTableColumnTest extends TestCase
   public function testColElement(): void
   {
     $column = new NumberTableColumn('header', 'number');
-    $col    = $column->getHtmlCol();
+    $col    = $column->htmlCol();
 
     self::assertEquals('<col data-type="number"/>', $col);
   }
@@ -37,7 +37,7 @@ class NumberTableColumnTest extends TestCase
     foreach ($values as $value)
     {
       $row = ['number' => $value];
-      $ret = $column->getHtmlCell($walker, $row);
+      $ret = $column->htmlCell($walker, $row);
 
       self::assertSame('<td class="ot-cell ot-number"></td>', $ret, var_export($value, true));
     }
@@ -65,7 +65,7 @@ class NumberTableColumnTest extends TestCase
     $column = new NumberTableColumn('header', 'number', "&<'\"%s\"'>&");
     $walker = new RenderWalker('ot');
     $row    = ['number' => 1234];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertSame('<td class="ot-cell ot-number" data-value="1234">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
   }
@@ -79,7 +79,7 @@ class NumberTableColumnTest extends TestCase
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
     $row    = ['number' => 'qwerty'];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertSame('<td class="ot-cell ot-number">qwerty</td>', $ret);
   }
@@ -93,7 +93,7 @@ class NumberTableColumnTest extends TestCase
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
     $row    = ['number' => "<'\">& "];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertSame('<td class="ot-cell ot-number">&lt;&#039;&quot;&gt;&amp; </td>', $ret);
   }
@@ -107,7 +107,7 @@ class NumberTableColumnTest extends TestCase
     $column = new NumberTableColumn('header', 'number');
     $walker = new RenderWalker('ot');
     $row    = ['number' => 123];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertSame('<td class="ot-cell ot-number" data-value="123">123</td>', $ret);
   }
@@ -120,7 +120,7 @@ class NumberTableColumnTest extends TestCase
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
     $row    = ['number' => M_PI];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertSame('<td class="ot-cell ot-number" data-value="3.1415926535898">3.14</td>', $ret);
   }
@@ -134,7 +134,7 @@ class NumberTableColumnTest extends TestCase
     $column = new NumberTableColumn('header', 'number', '%.2f');
     $walker = new RenderWalker('ot');
     $row    = ['number' => 1.005];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     // sprintf does not do any rounding!
     self::assertSame('<td class="ot-cell ot-number" data-value="1.005">1.00</td>', $ret);
@@ -153,7 +153,7 @@ class NumberTableColumnTest extends TestCase
     foreach ($values as $value)
     {
       $row = ['number' => $value];
-      $ret = $column->getHtmlCell($walker, $row);
+      $ret = $column->htmlCell($walker, $row);
 
       self::assertSame('<td class="ot-cell ot-number" data-value="0">0</td>', $ret, var_export($value, true));
     }
@@ -172,7 +172,7 @@ class NumberTableColumnTest extends TestCase
     foreach ($values as $value)
     {
       $row = ['number' => $value];
-      $ret = $column->getHtmlCell($walker, $row);
+      $ret = $column->htmlCell($walker, $row);
 
       self::assertSame('<td class="ot-cell ot-number" data-value="0">0.00</td>', $ret, var_export($value, true));
     }

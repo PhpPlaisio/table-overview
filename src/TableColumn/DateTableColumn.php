@@ -63,34 +63,36 @@ class DateTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='' || $value===self::$openDate)
     {
-      $inner = null;
-      $data  = null;
+      $text = null;
+      $data = null;
     }
     else
     {
       $date = \DateTime::createFromFormat('Y-m-d', $value);
       if (!$date)
       {
-        $inner = $value;
-        $data  = null;
+        $text = $value;
+        $data = null;
       }
       else
       {
-        $inner = $date->format($this->format);
-        $data  = $date->format('Y-m-d');
+        $text = $date->format($this->format);
+        $data = $date->format('Y-m-d');
       }
     }
 
-    return Html::generateElement('td',
-                                 ['class'      => $walker->getClasses(['cell', 'date']),
-                                  'data-value' => $data],
-                                 $inner);
+    $struct = ['tag'  => 'td',
+               'attr' => ['class'      => $walker->getClasses(['cell', 'date']),
+                          'data-value' => $data],
+               'text' => $text];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

@@ -48,25 +48,27 @@ class NumberTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if (is_numeric($value))
     {
-      $inner = sprintf($this->format, $value);
-      $data  = $value;
+      $text = sprintf($this->format, $value);
+      $data = $value;
     }
     else
     {
-      $inner = $value;
-      $data  = null;
+      $text = $value;
+      $data = null;
     }
 
-    return Html::generateElement('td',
-                                 ['class'      => $walker->getClasses(['cell', 'number']),
-                                  'data-value' => $data],
-                                 $inner);
+    $struct = ['tag'  => 'td',
+               'attr' => ['class'      => $walker->getClasses(['cell', 'number']),
+                          'data-value' => $data],
+               'text' => $text];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

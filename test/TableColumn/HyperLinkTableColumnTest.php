@@ -5,12 +5,12 @@ namespace Plaisio\Table\Test\TableColumn;
 
 use PHPUnit\Framework\TestCase;
 use Plaisio\Helper\RenderWalker;
-use Plaisio\Table\TableColumn\EmailTableColumn;
+use Plaisio\Table\TableColumn\HyperLinkTableColumn;
 
 /**
- * Test cases for class EmailTableColumn.
+ * Test cases for class HyperLinkTableColumn.
  */
-class EmailTableColumnTest extends TestCase
+class HyperLinkTableColumnTest extends TestCase
 {
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -18,36 +18,28 @@ class EmailTableColumnTest extends TestCase
    */
   public function testColElement(): void
   {
-    $column = new EmailTableColumn('header', 'date');
+    $column = new HyperLinkTableColumn('header', 'url');
     $col    = $column->htmlCol();
 
-    self::assertEquals('<col data-type="email"/>', $col);
+    self::assertEquals('<col data-type="text"/>', $col);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with an empty email address.
+   * Test with an empty hyperlink.
    */
   public function testEmptyAddress(): void
   {
-    $column = new EmailTableColumn('header', 'mail');
+    $column = new HyperLinkTableColumn('header', 'url');
     $walker = new RenderWalker('ot');
-    $row    = ['mail' => ''];
-    $ret    = $column->htmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-cell ot-email"></td>', $ret);
-  }
+    $row = ['url' => ''];
+    $ret = $column->htmlCell($walker, $row);
+    self::assertEquals('<td class="ot-cell ot-link"></td>', $ret);
 
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Test data type.
-   */
-  public function testGetDataType(): void
-  {
-    $column   = new EmailTableColumn('header', 'mail');
-    $dataType = $column->getDataType();
-
-    self::assertEquals('email', $dataType);
+    $row = ['url' => null];
+    $ret = $column->htmlCell($walker, $row);
+    self::assertEquals('<td class="ot-cell ot-link"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -56,13 +48,13 @@ class EmailTableColumnTest extends TestCase
    */
   public function testValidAddress1(): void
   {
-    $column = new EmailTableColumn('header', 'mail');
+    $column = new HyperLinkTableColumn('header', 'url');
     $walker = new RenderWalker('ot');
-    $row    = ['mail' => 'info@setbased.nl'];
+    $row    = ['url' => 'https://www.setbased.nl'];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-cell ot-email">'.
-                       '<a class="link link-mailto" href="mailto:info@setbased.nl">info@setbased.nl</a>'.
+    self::assertEquals('<td class="ot-cell ot-link">'.
+                       '<a class="link" href="https://www.setbased.nl">https://www.setbased.nl</a>'.
                        '</td>', $ret);
   }
 

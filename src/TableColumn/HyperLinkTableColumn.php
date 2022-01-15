@@ -7,7 +7,7 @@ use Plaisio\Helper\Html;
 use Plaisio\Helper\RenderWalker;
 
 /**
- * Table column for table cells with a hyper link.
+ * Table column for table cells with a hyperlink.
  */
 class HyperLinkTableColumn extends UniTableColumn
 {
@@ -38,7 +38,7 @@ class HyperLinkTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $url = $row[$this->fieldName];
 
@@ -48,10 +48,16 @@ class HyperLinkTableColumn extends UniTableColumn
     }
     else
     {
-      $inner = Html::generateElement('a', ['class' => 'link', 'href' => $url], $url);
+      $inner = ['tag'  => 'a',
+                'attr' => ['class' => 'link', 'href' => $url],
+                'text' => $url];
     }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'link'])], $inner, true);
+    $struct = ['tag'   => 'td',
+               'attr'  => ['class' => $walker->getClasses(['cell', 'link'])],
+               'inner' => $inner];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

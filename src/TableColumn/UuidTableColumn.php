@@ -38,9 +38,13 @@ class UuidTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
-    return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'uuid'])], $row[$this->fieldName]);
+    $struct = ['tag'  => 'td',
+               'attr' => ['class' => $walker->getClasses(['cell', 'uuid'])],
+               'text' => $row[$this->fieldName]];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

@@ -111,67 +111,6 @@ abstract class UniTableColumn implements TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @inheritdoc
-   */
-  public function getHtmlCol(): string
-  {
-    return $this->col->getHtmlCol();
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * @inheritdoc
-   */
-  public function getHtmlColumnFilter(RenderWalker $walker): string
-  {
-    $attributes = ['class' => $walker->getClasses('filter')];
-
-    if ($this->header===null)
-    {
-      // If the column header is empty there is no column filter by default. This behaviour can be overridden in a
-      // child class.
-      $ret = Html::generateElement('td', $attributes);
-    }
-    else
-    {
-      // The default filter is a simple text filter.
-      $ret = Html::generateTag('td', $attributes);
-      $ret .= Html::generateVoidElement('input', ['class' => $walker->getClasses('filter-text'), 'type' => 'text']);
-      $ret .= '</td>';
-    }
-
-    return $ret;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * @inheritdoc
-   */
-  public function getHtmlColumnHeader(RenderWalker $walker): string
-  {
-    $attributes = ['class' => $walker->getClasses('header')];
-    if ($this->header!==null)
-    {
-      if ($this->isSortable)
-      {
-        // Add class indicating this column can be used for sorting.
-        $attributes['class'][] = 'is-sortable';
-
-        // Add attributes indicating the sort order of this column and direction.
-        if ($this->sortOrder!==null)
-        {
-          $attributes['data-sort-order'] = $this->sortOrder;
-
-          $attributes['class'][] = ($this->sortDirection==='desc') ? 'is-sorted-desc' : 'is-sorted-asc';
-        }
-      }
-    }
-
-    return Html::generateElement('th', $attributes, $this->header, $this->headerIsHtml);
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
    * Returns the sort direction (asc or desc) of the data in this column.
    *
    * @return string
@@ -201,6 +140,73 @@ abstract class UniTableColumn implements TableColumn
   public function headerIsHtml(): bool
   {
     return $this->headerIsHtml;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritdoc
+   */
+  public function htmlCol(): string
+  {
+    return $this->col->htmlCol();
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritdoc
+   */
+  public function htmlColumnFilter(RenderWalker $walker): string
+  {
+    if ($this->header===null)
+    {
+      // If the column header is empty there is no column filter by default. This behaviour can be overridden in a
+      // child class.
+      $struct = ['tag'  => 'td',
+                 'attr' => ['class' => $walker->getClasses('filter')],
+                 'html' => null];
+    }
+    else
+    {
+      // The default filter is a simple text filter.
+      $struct = ['tag'   => 'td',
+                 'attr'  => ['class' => $walker->getClasses('filter')],
+                 'inner' => ['tag'  => 'input',
+                             'attr' => ['class' => $walker->getClasses('filter-text'),
+                                        'type'  => 'text']]];
+    }
+
+    return Html::htmlNested($struct);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @inheritdoc
+   */
+  public function htmlColumnHeader(RenderWalker $walker): string
+  {
+    $attributes = ['class' => $walker->getClasses('header')];
+    if ($this->header!==null)
+    {
+      if ($this->isSortable)
+      {
+        // Add class indicating this column can be used for sorting.
+        $attributes['class'][] = 'is-sortable';
+
+        // Add attributes indicating the sort order of this column and direction.
+        if ($this->sortOrder!==null)
+        {
+          $attributes['data-sort-order'] = $this->sortOrder;
+
+          $attributes['class'][] = ($this->sortDirection==='desc') ? 'is-sorted-desc' : 'is-sorted-asc';
+        }
+      }
+    }
+
+    $struct = ['tag'                                   => 'td',
+               'attr'                                  => $attributes,
+               ($this->headerIsHtml) ? 'html' : 'text' => $this->header];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

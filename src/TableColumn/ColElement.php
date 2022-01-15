@@ -20,9 +20,10 @@ class ColElement
    *
    * @return string
    */
-  public function getHtmlCol(): string
+  public function htmlCol(): string
   {
-    return Html::generateVoidElement('col', $this->attributes);
+    return Html::htmlNested(['tag'  => 'col',
+                             'attr' => $this->attributes]);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

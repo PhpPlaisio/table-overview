@@ -38,7 +38,7 @@ class EmailTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
@@ -48,13 +48,17 @@ class EmailTableColumn extends UniTableColumn
     }
     else
     {
-      $inner = Html::generateElement('a',
-                                     ['class' => ['link', 'link-mailto'],
-                                      'href' => 'mailto:'.$value],
-                                     $value);
+      $inner = ['tag'  => 'a',
+                'attr' => ['class' => ['link', 'link-mailto'],
+                           'href'  => 'mailto:'.$value],
+                'text' => $value];
     }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'email'])], $inner, true);
+    $struct = ['tag'   => 'td',
+               'attr'  => ['class' => $walker->getClasses(['cell', 'email'])],
+               'inner' => $inner];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

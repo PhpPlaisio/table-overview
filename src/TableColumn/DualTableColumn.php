@@ -127,41 +127,44 @@ abstract class DualTableColumn implements TableColumn
   /**
    * @inheritdoc
    */
-  public function getHtmlCol(): string
+  public function htmlCol(): string
   {
-    return $this->col1->getHtmlCol().$this->col2->getHtmlCol();
+    return $this->col1->htmlCol().$this->col2->htmlCol();
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritdoc
    */
-  public function getHtmlColumnFilter(RenderWalker $walker): string
+  public function htmlColumnFilter(RenderWalker $walker): string
   {
     if ($this->header===null)
     {
       // If the column header is empty there is no column filter by default. This behaviour can be overridden in a
       // child class.
-      $ret = Html::generateElement('td', ['class' => $walker->getClasses('filter')]);
-      $ret .= $ret;
+      $struct = ['tag'  => 'td',
+                 'attr' => ['class' => $walker->getClasses('filter')],
+                 'html' => null];
     }
     else
     {
-      // The default filter is a simple text filter.
-      $ret = Html::generateTag('td', ['class' => $walker->getClasses('filter')]);
-      $ret .= Html::generateVoidElement('input', ['class' => $walker->getClasses('filter-text'), 'type' => 'text']);
-      $ret .= '</td>';
-      $ret .= $ret;
+      $struct = ['tag'   => 'td',
+                 'attr'  => ['class' => $walker->getClasses('filter')],
+                 'inner' => ['tag'  => 'input',
+                             'attr' => ['class' => $walker->getClasses('filter-text'),
+                                        'type'  => 'text']]];
     }
 
-    return $ret;
+    $html = Html::htmlNested($struct);
+
+    return $html.$html;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritdoc
    */
-  public function getHtmlColumnHeader(RenderWalker $walker): string
+  public function htmlColumnHeader(RenderWalker $walker): string
   {
     $attributes = [];
     $classes    = $walker->getClasses('header');
@@ -197,9 +200,12 @@ abstract class DualTableColumn implements TableColumn
     $attributes['class']   = $classes;
     $attributes['colspan'] = 2;
 
-    $innerText = '<span>&nbsp;</span>'.($this->headerIsHtml ? $this->header : Html::txt2Html($this->header));
+    $struct = ['tag'   => 'th',
+               'attr'  => $attributes,
+               'inner' => [['html' => '<span>&nbsp;</span>'],
+                           [($this->headerIsHtml) ? 'html' : 'text' => $this->header]]];
 
-    return Html::generateElement('th', $attributes, $innerText, true);
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

@@ -24,27 +24,27 @@ class CombinedTableColumnTest extends TestCase
     $column  = new CombinedTableColumn('Period', $column1, $column2);
     $walker  = new RenderWalker('ot');
 
-    $header   = $column->getHtmlColumnHeader($walker);
+    $header   = $column->htmlColumnHeader($walker);
     $expected = '<th class="is-sortable-1 is-sortable-2 ot-header" colspan="2"><span>&nbsp;</span>Period</th>';
     self::assertEquals($expected, $header);
 
     $column1->setSortOrder(1);
-    $header   = $column->getHtmlColumnHeader($walker);
+    $header   = $column->htmlColumnHeader($walker);
     $expected = '<th class="is-sortable-1 is-sortable-2 is-sorted-1-asc ot-header" colspan="2"><span>&nbsp;</span>Period</th>';
     self::assertEquals($expected, $header);
 
     $column2->setSortOrder(1);
-    $header   = $column->getHtmlColumnHeader($walker);
+    $header   = $column->htmlColumnHeader($walker);
     $expected = '<th class="is-sortable-1 is-sortable-2 is-sorted-1-asc is-sorted-2-asc ot-header" colspan="2"><span>&nbsp;</span>Period</th>';
     self::assertEquals($expected, $header);
 
     $column1->setSortable(false);
-    $header   = $column->getHtmlColumnHeader($walker);
+    $header   = $column->htmlColumnHeader($walker);
     $expected = '<th class="is-sortable-2 is-sorted-2-asc ot-header" colspan="2"><span>&nbsp;</span>Period</th>';
     self::assertEquals($expected, $header);
 
     $column2->setSortable(false);
-    $header   = $column->getHtmlColumnHeader($walker);
+    $header   = $column->htmlColumnHeader($walker);
     $expected = '<th class="ot-header" colspan="2"><span>&nbsp;</span>Period</th>';
     self::assertEquals($expected, $header);
   }

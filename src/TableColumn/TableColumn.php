@@ -29,22 +29,22 @@ interface TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code (including opening and closing td tags) for the table cell.
+   * Returns the HTML code (including opening and closing td tags) for the table cell.
    *
    * @param RenderWalker $walker The object for walking the row and column tree.
    * @param array        $row    The data of a row in the overview table.
    *
    * @return string
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string;
+  public function htmlCell(RenderWalker $walker, array $row): string;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code for the col element of this table column.
+   * Returns the HTML code for the col element of this table column.
    *
    * @return string
    */
-  public function getHtmlCol(): string;
+  public function htmlCol(): string;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -54,17 +54,17 @@ interface TableColumn
    *
    * @return string
    */
-  public function getHtmlColumnFilter(RenderWalker $walker): string;
+  public function htmlColumnFilter(RenderWalker $walker): string;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns HTML code (including opening and closing th tags) for the table header cell.
+   * Returns the HTML code (including opening and closing th tags) for the table header cell.
    *
    * @param RenderWalker $walker The object for walking the columns.
    *
    * @return string
    */
-  public function getHtmlColumnHeader(RenderWalker $walker): string;
+  public function htmlColumnHeader(RenderWalker $walker): string;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**

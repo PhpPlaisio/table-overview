@@ -40,33 +40,34 @@ class Ipv4TableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
-      $int    = null;
-      $string = null;
+      $data = null;
+      $text = null;
     }
     else
     {
       if (is_int($value))
       {
-        $int    = $value;
-        $string = long2ip($value);
+        $data = $value;
+        $text = long2ip($value);
       }
       else
       {
-        $int    = ip2long($value);
-        $string = $value;
+        $data = ip2long($value);
+        $text = $value;
       }
     }
+    $struct = ['tag'  => 'td',
+               'attr' => ['class'      => $walker->getClasses(['cell', 'ip4']),
+                          'data-value' => $data],
+               'text' => $text];
 
-    return Html::generateElement('td',
-                                 ['class'      => $walker->getClasses(['cell', 'ipv4']),
-                                  'data-value' => $int],
-                                 $string);
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

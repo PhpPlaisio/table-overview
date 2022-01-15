@@ -42,7 +42,7 @@ class NonTableColumn implements TableColumn
   /**
    * @inheritdoc
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     return '';
   }
@@ -51,7 +51,7 @@ class NonTableColumn implements TableColumn
   /**
    * @inheritdoc
    */
-  public function getHtmlCol(): string
+  public function htmlCol(): string
   {
     return '';
   }
@@ -60,7 +60,7 @@ class NonTableColumn implements TableColumn
   /**
    * @inheritdoc
    */
-  public function getHtmlColumnFilter(RenderWalker $walker): string
+  public function htmlColumnFilter(RenderWalker $walker): string
   {
     return '';
   }
@@ -69,7 +69,7 @@ class NonTableColumn implements TableColumn
   /**
    * @inheritdoc
    */
-  public function getHtmlColumnHeader(RenderWalker $walker): string
+  public function htmlColumnHeader(RenderWalker $walker): string
   {
     return '';
   }

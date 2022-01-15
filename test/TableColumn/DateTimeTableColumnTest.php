@@ -21,7 +21,7 @@ class DateTimeTableColumnTest extends TestCase
     $column = new DateTimeTableColumn('header', 'date', 'l jS \of F Y h:i:s A');
     $walker = new RenderWalker('ot');
     $row    = ['date' => '2004-07-13 12:13:14'];  // PHP 5.0.0 release date and some random time.
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertEquals('<td class="ot-cell ot-datetime" data-value="2004-07-13 12:13:14">Tuesday 13th of July 2004 12:13:14 PM</td>', $ret);
   }
@@ -35,7 +35,7 @@ class DateTimeTableColumnTest extends TestCase
     $column = new DateTimeTableColumn('header', 'date');
     $walker = new RenderWalker('ot');
     $row    = ['date' => 'not a date and time'];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertEquals('<td class="ot-cell ot-datetime">not a date and time</td>', $ret);
   }
@@ -49,7 +49,7 @@ class DateTimeTableColumnTest extends TestCase
     $column = new DateTimeTableColumn('header', 'date');
     $walker = new RenderWalker('ot');
     $row    = ['date' => ''];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertEquals('<td class="ot-cell ot-datetime"></td>', $ret);
   }
@@ -61,7 +61,7 @@ class DateTimeTableColumnTest extends TestCase
   public function testColElement(): void
   {
     $column = new DateTimeTableColumn('header', 'date');
-    $col    = $column->getHtmlCol();
+    $col    = $column->htmlCol();
 
     self::assertEquals('<col data-type="datetime"/>', $col);
   }

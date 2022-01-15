@@ -7,7 +7,7 @@ use Plaisio\Helper\Html;
 use Plaisio\Helper\RenderWalker;
 
 /**
- * Table column for table cells with arbitrary HTML code..
+ * Table column for table cells with arbitrary HTML code.
  */
 class HtmlTableColumn extends UniTableColumn
 {
@@ -38,11 +38,13 @@ class HtmlTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
-    return Html::generateElement('td',
-                                 ['class' => $walker->getClasses(['cell', 'text'])],
-                                 $row[$this->fieldName], true);
+    $struct = ['tag'  => 'td',
+               'attr' => ['class' => $walker->getClasses(['cell', 'text'])],
+               'html' => $row[$this->fieldName]];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

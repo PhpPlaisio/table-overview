@@ -82,32 +82,34 @@ class CombinedTableColumn implements TableColumn
   /**
    * @inheritdoc
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
-    return $this->column1->getHtmlCell($walker, $row).$this->column2->getHtmlCell($walker, $row);
+    return $this->column1->htmlCell($walker, $row).$this->column2->htmlCell($walker, $row);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritdoc
    */
-  public function getHtmlCol(): string
+  public function htmlCol(): string
   {
-    return $this->column1->getHtmlCol().$this->column2->getHtmlCol();
+    return $this->column1->htmlCol().$this->column2->htmlCol();
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritdoc
    */
-  public function getHtmlColumnFilter(RenderWalker $walker): string
+  public function htmlColumnFilter(RenderWalker $walker): string
   {
-    return $this->column1->getHtmlColumnFilter($walker).$this->column2->getHtmlColumnFilter($walker);
-  }  //--------------------------------------------------------------------------------------------------------------------
+    return $this->column1->htmlColumnFilter($walker).$this->column2->htmlColumnFilter($walker);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
   /**
    * @inheritdoc
    */
-  public function getHtmlColumnHeader(RenderWalker $walker): string
+  public function htmlColumnHeader(RenderWalker $walker): string
   {
     $attributes = [];
     $classes    = $walker->getClasses('header');
@@ -143,9 +145,12 @@ class CombinedTableColumn implements TableColumn
     $attributes['class']   = $classes;
     $attributes['colspan'] = 2;
 
-    $innerText = '<span>&nbsp;</span>'.($this->headerIsHtml ? $this->header : Html::txt2Html($this->header));
+    $struct = ['tag'   => 'th',
+               'attr'  => $attributes,
+               'inner' => [['html' => '<span>&nbsp;</span>'],
+                           [($this->headerIsHtml) ? 'html' : 'text' => $this->header]]];
 
-    return Html::generateElement('th', $attributes, $innerText, true);
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

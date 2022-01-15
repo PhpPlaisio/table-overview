@@ -19,7 +19,7 @@ class MultiEmailTableColumnTest extends TestCase
   public function testColElement(): void
   {
     $column = new MultiEmailTableColumn('header', 'mail');
-    $col    = $column->getHtmlCol();
+    $col    = $column->htmlCol();
 
     self::assertEquals('<col data-type="email"/>', $col);
   }
@@ -33,7 +33,7 @@ class MultiEmailTableColumnTest extends TestCase
     $column = new MultiEmailTableColumn('header', 'mail');
     $walker = new RenderWalker('ot');
     $row    = ['mail' => ''];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertEquals('<td class="ot-cell ot-emails"></td>', $ret);
   }
@@ -59,13 +59,13 @@ class MultiEmailTableColumnTest extends TestCase
     $column = new MultiEmailTableColumn('header', 'mail');
     $walker = new RenderWalker('ot');
     $row    = ['mail' => 'info@setbased.nl,webmaster@setbased.nl'];
-    $ret    = $column->getHtmlCell($walker, $row);
+    $ret    = $column->htmlCell($walker, $row);
 
     self::assertEquals('<td class="ot-cell ot-emails">'.
-                       '<span class="ot-email-list">'.
-                       '<a class="link link-mailto" href="mailto:info@setbased.nl">info@setbased.nl</a>'.
-                       '<a class="link link-mailto" href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a>'.
-                       '</span>'.
+                       '<ul class="ot-email-list">'.
+                       '<li class="ot-email-list-item"><a class="link link-mailto" href="mailto:info@setbased.nl">info@setbased.nl</a></li>'.
+                       '<li class="ot-email-list-item"><a class="link link-mailto" href="mailto:webmaster@setbased.nl">webmaster@setbased.nl</a></li>'.
+                       '</ul>'.
                        '</td>', $ret);
   }
 

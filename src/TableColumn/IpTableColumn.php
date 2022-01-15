@@ -20,7 +20,6 @@ class IpTableColumn extends UniTableColumn
   protected string $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
-
   /**
    * Object constructor.
    *
@@ -39,37 +38,39 @@ class IpTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
     if ($value===null || $value==='')
     {
-      $data   = null;
-      $string = null;
+      $data = null;
+      $text = null;
     }
     else
     {
       if (is_int($value))
       {
-        $string = long2ip($value);
-        $data   = bin2hex(inet_pton('::ffff:'.$string));
+        $text = long2ip($value);
+        $data = bin2hex(inet_pton('::ffff:'.$text));
       }
       else
       {
-        $string = inet_ntop($value);
-        $data   = bin2hex($value);
+        $text = inet_ntop($value);
+        $data = bin2hex($value);
         if (substr($data, -12, 4)==='ffff')
         {
-          $string = substr(strrchr($string, ':'), 1);
+          $text = substr(strrchr($text, ':'), 1);
         }
       }
     }
 
-    return Html::generateElement('td',
-                                 ['class'      => $walker->getClasses(['cell', 'ip']),
-                                  'data-value' => $data],
-                                 $string);
+    $struct = ['tag'  => 'td',
+               'attr' => ['class'      => $walker->getClasses(['cell', 'ip']),
+                          'data-value' => $data],
+               'text' => $text];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------

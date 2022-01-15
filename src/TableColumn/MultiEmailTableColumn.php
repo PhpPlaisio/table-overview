@@ -27,7 +27,6 @@ class MultiEmailTableColumn extends UniTableColumn
   protected string $fieldName;
 
   //--------------------------------------------------------------------------------------------------------------------
-
   /**
    * Object constructor.
    *
@@ -51,7 +50,7 @@ class MultiEmailTableColumn extends UniTableColumn
   /**
    * {@inheritdoc}
    */
-  public function getHtmlCell(RenderWalker $walker, array $row): string
+  public function htmlCell(RenderWalker $walker, array $row): string
   {
     $value = $row[$this->fieldName];
 
@@ -62,18 +61,27 @@ class MultiEmailTableColumn extends UniTableColumn
     else
     {
       $addresses = explode($this->dataSeparator, $value);
-      $inner     = Html::generateTag('span', ['class' => $walker->getClasses('email-list')]);
+      $itemClass = $walker->getClasses('email-list-item');
+      $list      = [];
       foreach ($addresses as $address)
       {
-        $inner .= Html::generateElement('a',
-                                        ['class' => ['link', 'link-mailto'],
-                                         'href'  => 'mailto:'.$address],
-                                        $address);
+        $list[] = ['tag'   => 'li',
+                   'attr'  => ['class' => $itemClass],
+                   'inner' => ['tag'  => 'a',
+                               'attr' => ['class' => ['link', 'link-mailto'],
+                                          'href'  => 'mailto:'.$address],
+                               'text' => $address]];
       }
-      $inner .= '</span>';
+      $inner = ['tag'   => 'ul',
+                'attr'  => ['class' => $walker->getClasses('email-list')],
+                'inner' => $list];
     }
 
-    return Html::generateElement('td', ['class' => $walker->getClasses(['cell', 'emails'])], $inner, true);
+    $struct = ['tag'   => 'td',
+               'attr'  => ['class' => $walker->getClasses(['cell', 'emails'])],
+               'inner' => $inner];
+
+    return Html::htmlNested($struct);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
