@@ -202,7 +202,7 @@ abstract class UniTableColumn implements TableColumn
       }
     }
 
-    $struct = ['tag'                                   => 'td',
+    $struct = ['tag'                                   => 'th',
                'attr'                                  => $attributes,
                ($this->headerIsHtml) ? 'html' : 'text' => $this->header];
 
