@@ -23,7 +23,6 @@ class OverviewTable
   use HtmlElement;
 
   //--------------------------------------------------------------------------------------------------------------------
-
   /**
    * The default CSS module class.
    *
@@ -81,7 +80,6 @@ class OverviewTable
   private ?string $title = null;
 
   //--------------------------------------------------------------------------------------------------------------------
-
   /**
    * OverviewTable constructor.
    */
@@ -112,27 +110,44 @@ class OverviewTable
   /**
    * Disables table filtering.
    */
-  public function disableFilter(): void
+  public function disableFilter(): self
   {
     $this->filter = false;
+
+    return $this;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Disables sorting for all columns in table.
    */
-  public function disableSorting(): void
+  public function disableSorting(): self
   {
     $this->sortable = false;
+
+    return $this;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
    * Enables table filtering.
    */
-  public function enableFilter(): void
+  public function enableFilter(): self
   {
     $this->filter = true;
+
+    return $this;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Enables sorting of columns in this table.
+   */
+  public function enableSorting(): self
+  {
+    $this->sortable = true;
+
+    return $this;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
