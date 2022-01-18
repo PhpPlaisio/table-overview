@@ -23,6 +23,7 @@ class OverviewTable
   use HtmlElement;
 
   //--------------------------------------------------------------------------------------------------------------------
+
   /**
    * The default CSS module class.
    *
@@ -80,6 +81,7 @@ class OverviewTable
   private ?string $title = null;
 
   //--------------------------------------------------------------------------------------------------------------------
+
   /**
    * OverviewTable constructor.
    */
@@ -168,13 +170,14 @@ class OverviewTable
     $this->prepare();
     $this->generateResponsiveCss();
 
-    $struct = ['tag'   => 'table',
-               'attr'  => $this->attributes,
-               'inner' => [['html' => $this->htmlPrefix()],
-                           ['html' => $this->htmlColGroup()],
-                           ['html' => $this->htmlHeader()],
-                           ['html' => $this->htmlBody($rows)],
-                           ['html' => $this->htmlFooter()]]];
+    $struct = [['html' => $this->htmlPrefix()],
+               ['tag'   => 'table',
+                'attr'  => $this->attributes,
+                'inner' => [['html' => $this->htmlColGroup()],
+                            ['html' => $this->htmlHeader()],
+                            ['html' => $this->htmlBody($rows)],
+                            ['html' => $this->htmlFooter()]]],
+               ['html' => $this->htmlPostfix()]];
 
     return Html::htmlNested($struct);
   }
@@ -201,17 +204,6 @@ class OverviewTable
   public function setTitle(string $title): void
   {
     $this->title = $title;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Returns the HTML code inserted before the HTML code of the table.
-   *
-   * @return string
-   */
-  protected function getHtmlPostfix(): string
-  {
-    return '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -402,6 +394,17 @@ class OverviewTable
     }
 
     return Html::htmlNested($struct);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the HTML code inserted before the HTML code of the table.
+   *
+   * @return string
+   */
+  protected function htmlPostfix(): string
+  {
+    return '';
   }
 
   //--------------------------------------------------------------------------------------------------------------------
