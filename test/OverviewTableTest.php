@@ -36,7 +36,7 @@ class OverviewTableTest extends TestCase
     self::assertSame('<table class="ot-table" data-overview-table="ot">'.
                      '<colgroup><col data-type="text"/></colgroup>'.
                      '<thead class="ot-thead">'.
-                     '<tr class="ot-header-row"><td class="is-sortable ot-header">Test</td></tr>'.
+                     '<tr class="ot-header-row"><th class="is-sortable ot-header">Test</th></tr>'.
                      '</thead>'.
                      '<tbody class="ot-tbody">'.
                      '<tr class="is-even ot-row"><td class="ot-cell ot-text">Hello, world!</td></tr>'.
