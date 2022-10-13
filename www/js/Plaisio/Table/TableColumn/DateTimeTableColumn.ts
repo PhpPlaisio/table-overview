@@ -1,5 +1,5 @@
-import {OverviewTable} from '../OverviewTable';
-import {TextTableColumn} from './TextTableColumn';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
+import {TextTableColumn} from 'Plaisio/Table/TableColumn/TextTableColumn';
 
 /**
  * Table column for date and datetime.
@@ -22,4 +22,4 @@ export class DateTimeTableColumn extends TextTableColumn
 OverviewTable.registerTableColumn('date', DateTimeTableColumn);
 OverviewTable.registerTableColumn('datetime', DateTimeTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 053170adf3010c5d35e6fc31be1e23da
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 2dbee8595da78c1bcad274105b7a466c

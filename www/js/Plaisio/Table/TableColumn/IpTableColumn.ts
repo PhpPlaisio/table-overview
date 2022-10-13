@@ -1,5 +1,5 @@
-import {OverviewTable} from '../OverviewTable';
-import {TextTableColumn} from './TextTableColumn';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
+import {TextTableColumn} from 'Plaisio/Table/TableColumn/TextTableColumn';
 
 /**
  * Table column for IPv4 and IPv6 addresses.
@@ -22,4 +22,4 @@ export class IpTableColumn extends TextTableColumn
 OverviewTable.registerTableColumn('ip', IpTableColumn);
 OverviewTable.registerTableColumn('ipv4', IpTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: bef1c36e1509e3ea655fbd242600da23
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b125bf4ed80ece8baa72aff76b914897

@@ -1,4 +1,4 @@
-import {OverviewTable} from '../OverviewTable';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
 
 /**
  * Interface for column types.
@@ -68,4 +68,4 @@ export interface TableColumn
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: fec010e5a36a8bfabb126e430d10198a
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4a106e6ca6f0f67870af2893de6c9d24

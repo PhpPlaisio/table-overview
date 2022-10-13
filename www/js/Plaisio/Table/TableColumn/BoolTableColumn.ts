@@ -1,5 +1,5 @@
-import {OverviewTable} from '../OverviewTable';
-import {TextTableColumn} from './TextTableColumn';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
+import {TextTableColumn} from 'Plaisio/Table/TableColumn/TextTableColumn';
 
 /**
  * Table column for boolean.
@@ -30,4 +30,4 @@ export class BoolTableColumn extends TextTableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('bool', BoolTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 31df39e9e6b5a0141d830d70fe27edeb
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 93a450393331c4aa3b5c00f728d223b7

@@ -1,6 +1,6 @@
-import {Cast} from '../../Helper/Cast';
-import {OverviewTable} from '../OverviewTable';
-import {TextTableColumn} from './TextTableColumn';
+import {Cast} from 'Plaisio/Helper/Cast';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
+import {TextTableColumn} from 'Plaisio/Table/TableColumn/TextTableColumn';
 
 /**
  * Table column for integers and floats.
@@ -51,4 +51,4 @@ export class NumberTableColumn extends TextTableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('number', NumberTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 2d3e71db2f9c306881b458ad74e27e89
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: f04d8147d95d8ce9bc115256002e103e

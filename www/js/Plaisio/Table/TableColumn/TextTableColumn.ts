@@ -1,6 +1,6 @@
-import {Cast} from '../../Helper/Cast';
-import {OverviewTable} from '../OverviewTable';
-import {TableColumn} from './TableColumn';
+import {Cast} from 'Plaisio/Helper/Cast';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
+import {TableColumn} from 'Plaisio/Table/TableColumn/TableColumn';
 
 /**
  * Table column for generic text.
@@ -221,4 +221,4 @@ export class TextTableColumn implements TableColumn
 OverviewTable.registerTableColumn('text', TextTableColumn);
 OverviewTable.registerTableColumn('email', TextTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b9b7732218f1cf8449d30aa05e93207a
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c180d39effa3474598e590d6bb3036d2

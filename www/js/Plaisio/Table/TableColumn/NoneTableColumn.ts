@@ -1,5 +1,5 @@
-import {OverviewTable} from '../OverviewTable';
-import {TableColumn} from './TableColumn';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
+import {TableColumn} from 'Plaisio/Table/TableColumn/TableColumn';
 
 /**
  * Table column for columns that don't require filtering and sorting.
@@ -37,7 +37,7 @@ export class NoneTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
+  initFilter(table: OverviewTable, columnIndex: number): void
   {
     // Nothing to do.
   }
@@ -84,4 +84,4 @@ export class NoneTableColumn implements TableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('none', NoneTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b8618526543b13f3b803c8c48399bfdc
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b604aea25d1aebb67c76fb4e6a2dfcce

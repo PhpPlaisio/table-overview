@@ -1,5 +1,5 @@
-import {OverviewTable} from '../OverviewTable';
-import {TextTableColumn} from './TextTableColumn';
+import {OverviewTable} from 'Plaisio/Table/OverviewTable';
+import {TextTableColumn} from 'Plaisio/Table/TableColumn/TextTableColumn';
 
 /**
  * Table column for UUID.
@@ -12,4 +12,4 @@ export class UuidTableColumn extends TextTableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('uuid', UuidTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 6cb54eff0ca3d155823ca53b75df1018
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: db72c74402835835dc43530d6eb85c45
