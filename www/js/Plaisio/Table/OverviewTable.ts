@@ -1,6 +1,9 @@
-import {Cast} from '../Helper/Cast';
-import {ColumnSortInfo} from './Helper/ColumnSortInfo';
-import {TableColumn} from './TableColumn/TableColumn';
+import * as $ from 'jquery';
+import {Cast} from 'Plaisio/Helper/Cast';
+import {Kernel} from 'Plaisio/Kernel/Kernel';
+import {ColumnSortInfo} from 'Plaisio/Table/Helper/ColumnSortInfo';
+import {TableColumn} from 'Plaisio/Table/TableColumn/TableColumn';
+import TriggeredEvent = JQuery.TriggeredEvent;
 
 /**
  * Class enabling filtering and soring of overview tables.
@@ -24,15 +27,20 @@ export class OverviewTable
   protected static tables: OverviewTable[] = [];
 
   /**
+   * If and only if true debug and profiling message are logged on the console.
+   */
+  private static debug: boolean = false;
+
+  /**
+   * The media query list object (must match small screens).
+   */
+  private static mq: MediaQueryList | null = null;
+
+  /**
    * All available column type handler classes.
    */
   private static tableColumnHandlers: Map<string, TableColumn['constructor']> =
     new Map<string, TableColumn['constructor']>();
-
-  /**
-   * If and only if true debug and profiling message are logged on the console.
-   */
-  private static debug: boolean = false;
 
   /**
    * The HTML table cells with filters of this HTML table.
@@ -79,9 +87,8 @@ export class OverviewTable
    * Object constructor.
    *
    * @param $table The jQuery object of the table.
-   * @param mq The media query list object (must match for small screens).
    */
-  public constructor(protected $table: JQuery, protected mq: MediaQueryList)
+  public constructor(protected $table: JQuery)
   {
     this.timeStart        = new Date();
     this.timeIntermediate = new Date();
@@ -114,6 +121,15 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
+   * Returns The media query list object (must match for small screens).
+   */
+  public static getMq(): MediaQueryList | null
+  {
+    return OverviewTable.mq;
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
    * Returns the associated JavaScript instance of this class for an HTML overview table.
    *
    * @param $table The JQuery object for an HTML overview table.
@@ -133,66 +149,27 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Merges info about sorting of a column to sorting info of a table.
+   * Registers tables that are Overview Tables.
    *
-   * @param tableSortInfo  De sorting metadata of the table.
-   * @param columnSortInfo De sorting metadata of the column (on which sorting is requested).
-   *
-   * @returns
+   * @param mq The media query list object (must match small screens).
    */
-  static mergeInfo(tableSortInfo: ColumnSortInfo[], columnSortInfo: ColumnSortInfo): ColumnSortInfo[]
+  public static init(mq: MediaQueryList | null)
   {
-    if (tableSortInfo.length === 0)
+    OverviewTable.mq = mq;
+
+    const $body = $('body');
+    $body.on(Kernel.eventTypeBeefyHtmlAdded, function (event: TriggeredEvent, html: HTMLElement)
     {
-      // If selected only one column and sort info is empty, add column info
-      columnSortInfo.sortOrder = 1;
-      tableSortInfo[0]         = columnSortInfo;
-    }
-    else
-    {
-      if (columnSortInfo.sortOrder !== -1 && tableSortInfo[columnSortInfo.sortOrder - 1])
+      $(html).find('table').each(function ()
       {
-        // If clicked column is already sorted and sort info contain info about this column,
-        // change sort direction for it column.
-        tableSortInfo[columnSortInfo.sortOrder - 1]['sortDirection'] = columnSortInfo.sortDirection;
-      }
-      else
-      {
-        // If clicked column isn't sorted add this column info to sort info.
-        columnSortInfo.sortOrder = tableSortInfo.length + 1;
-        tableSortInfo.push(columnSortInfo);
-      }
-    }
+        const $table = $(this);
 
-    return tableSortInfo;
-  }
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /**
-   * Registers tables that matches a jQuery selector as an OverviewTable.
-   *
-   * @param selector The jQuery selector.
-   * @param mq The media query list object (must match for small screens).
-   */
-  public static registerTable(selector: string, mq: MediaQueryList)
-  {
-    const that = this;
-
-    $(selector).each(function ()
-    {
-      let $table = $(this);
-
-      if (!$table.is('table'))
-      {
-        // Selector is not a table. Find the table below the selector.
-        $table = $table.find('table').first();
-      }
-
-      if ($table.attr('data-overview-table') && !$table.hasClass('is-registered'))
-      {
-        OverviewTable.tables.push(new that($table, mq));
-        $table.addClass('is-registered');
-      }
+        if ($table.attr('data-overview-table') && !$table.hasClass('is-registered'))
+        {
+          OverviewTable.tables.push(new OverviewTable($table));
+          $table.addClass('is-registered');
+        }
+      });
     });
   }
 
@@ -223,6 +200,40 @@ export class OverviewTable
 
     // See https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
     return string.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Merges info about sorting of a column to sorting info of a table.
+   *
+   * @param tableSortInfo  De sorting metadata of the table.
+   * @param columnSortInfo De sorting metadata of the column (on which sorting is requested).
+   */
+  private static mergeInfo(tableSortInfo: ColumnSortInfo[], columnSortInfo: ColumnSortInfo): ColumnSortInfo[]
+  {
+    if (tableSortInfo.length === 0)
+    {
+      // If selected only one column and sort info is empty, add column info
+      columnSortInfo.sortOrder = 1;
+      tableSortInfo[0]         = columnSortInfo;
+    }
+    else
+    {
+      if (columnSortInfo.sortOrder !== -1 && tableSortInfo[columnSortInfo.sortOrder - 1])
+      {
+        // If clicked column is already sorted and sort info contain info about this column,
+        // change sort direction for this column.
+        tableSortInfo[columnSortInfo.sortOrder - 1]['sortDirection'] = columnSortInfo.sortDirection;
+      }
+      else
+      {
+        // If clicked column isn't sorted add this column info to sort info.
+        columnSortInfo.sortOrder = tableSortInfo.length + 1;
+        tableSortInfo.push(columnSortInfo);
+      }
+    }
+
+    return tableSortInfo;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -457,7 +468,7 @@ export class OverviewTable
       }
       else if ($header.hasClass('is-sortable-1'))
       {
-        // Header spans two columns but only the first/left column can used for sorting.
+        // Header spans two columns but only the first/left column can be used for sorting.
         columnInfo.colspan       = 2;
         columnInfo.offset        = 0;
         columnInfo.sortOrder     = parseInt($header.attr('data-sort-order-1') || '-1', 10);
@@ -465,7 +476,7 @@ export class OverviewTable
       }
       else if ($header.hasClass('is-sortable-2'))
       {
-        // Header spans two columns but only the second/right column can used for sorting.
+        // Header spans two columns but only the second/right column can be used for sorting.
         columnInfo.colspan       = 2;
         columnInfo.offset        = 1;
         columnInfo.sortOrder     = parseInt($header.attr('data-sort-order-2') || '-1', 10);
@@ -483,7 +494,7 @@ export class OverviewTable
    *
    * @param $header The table header of the column.
    * @param colSpan The colspan of the column header.
-   * @param offset  The offset of the column (relative the the column header).
+   * @param offset  The offset of the column (relative to the column header).
    */
   public getFlipSortDirection($header: JQuery, colSpan: number, offset: number): string
   {
@@ -502,7 +513,7 @@ export class OverviewTable
    *
    * @param $header The table header of the column.
    * @param colSpan The colspan of the column header.
-   * @param offset  The offset of the column (relative the the column header).
+   * @param offset  The offset of the column (relative to the column header).
    */
   public getSortDirection($header: JQuery, colSpan: number, offset: number): string
   {
@@ -525,7 +536,7 @@ export class OverviewTable
    *
    * @param $header The table header of the column.
    * @param colSpan The colspan of the column header.
-   * @param offset  The offset of the column (relative the the column header).
+   * @param offset  The offset of the column (relative to the column header).
    */
   public getSortOrder($header: JQuery, colSpan: number, offset: number): number
   {
@@ -681,7 +692,7 @@ export class OverviewTable
       (rows[i] as any)['sortKey'] = null;
       tbody.appendChild(rows[i]);
     }
-    this.logProfile('Reappend the sorted rows');
+    this.logProfile('Re-append the sorted rows');
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -714,14 +725,14 @@ export class OverviewTable
     });
     this.logProfile('Sorted by one column');
 
-    // Reappend the rows to the table body.
+    // Re-append the rows to the table body.
     const tbody = this.$table.children('tbody')[0];
     for (let i = 0; i < rows.length; i += 1)
     {
       (rows[i] as any).sortKey = null;
       tbody.appendChild(rows[i]);
     }
-    this.logProfile('Reappend the sorted rows');
+    this.logProfile('Re-append the sorted rows');
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -853,7 +864,7 @@ export class OverviewTable
       that.columnHandlers[columnIndex].initColumn(that, columnIndex);
       that.logProfile('Initialize column');
 
-      that.columnHandlers[columnIndex].initFilter(that, columnIndex, that.mq);
+      that.columnHandlers[columnIndex].initFilter(that, columnIndex);
       that.logProfile('Initialize filter');
 
       that.columnHandlers[columnIndex].initSort(that, columnIndex);
@@ -899,20 +910,26 @@ export class OverviewTable
   {
     const that = this;
 
-    if (this.mq)
+    if (OverviewTable.mq !== null)
     {
-      this.mq.addListener(function ()
+      OverviewTable.mq.addListener(function ()
       {
-        that.mediaChange(that.mq);
+        if (OverviewTable.mq !== null)
+        {
+          that.mediaChange(OverviewTable.mq);
+        }
+      });
+
+      $(window).on('resize', function ()
+      {
+        if (OverviewTable.mq !== null)
+        {
+          that.mediaChange(OverviewTable.mq);
+        }
       });
     }
 
-    $(window).on('resize', function ()
-    {
-      that.mediaChange(that.mq);
-    });
-
-    this.mediaChange(this.mq);
+    this.mediaChange(OverviewTable.mq);
 
     this.logProfile('Initialize media change event handlers');
   }
@@ -932,7 +949,7 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Logs an message to the console.
+   * Logs a message to the console.
    *
    * @param message The messages.
    */
@@ -963,11 +980,11 @@ export class OverviewTable
   /**
    * @param mq The media query list object (must match for small screens).
    */
-  private mediaChange(mq: MediaQueryList): void
+  private mediaChange(mq: MediaQueryList | null): void
   {
     const that = this;
 
-    if (mq && mq.matches)
+    if (mq !== null && mq.matches)
     {
       // Small screen.
       this.$table.children('thead').children(this.getRealClass('filter-row')).css('display', 'none');
@@ -981,10 +998,12 @@ export class OverviewTable
 
     this.$table.children('colgroup').children('col').each(function (columnIndex: number)
     {
-      that.columnHandlers[columnIndex].mediaChange(mq);
+      that.columnHandlers[columnIndex].mediaChange();
     });
   }
+
+  //--------------------------------------------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: a02bf7e4aca4e3f32eed541f48ad0e16
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 79ee9be0fcec919a68d2e3c97ec1a335

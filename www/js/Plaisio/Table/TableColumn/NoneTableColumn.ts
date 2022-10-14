@@ -55,7 +55,7 @@ export class NoneTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  public mediaChange(mq: MediaQueryList): void
+  public mediaChange(): void
   {
     // Nothing to do.
   }
@@ -84,4 +84,4 @@ export class NoneTableColumn implements TableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('none', NoneTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b604aea25d1aebb67c76fb4e6a2dfcce
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4a059b2e0c792947f8517e0b19b251f4

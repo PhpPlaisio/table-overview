@@ -11,4 +11,5 @@
 /vendor/
 /www/js/**/*.js
 /www/js/**/*.js.map
-/www/js/Plaisio/Helper
+/www/js/Plaisio/Helper/
+/www/js/Plaisio/Kernel/

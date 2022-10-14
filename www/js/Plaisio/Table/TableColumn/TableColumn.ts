@@ -31,9 +31,8 @@ export interface TableColumn
    *
    * @param table       The overview table object of the table of this column.
    * @param columnIndex The index of this column in the table.
-   * @param mq          The media query.
    */
-  initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void;
+  initFilter(table: OverviewTable, columnIndex: number): void;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -46,9 +45,9 @@ export interface TableColumn
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * @param mq The media query list object (must match for small screens).
+   * Will be called on media change (from OverviewTable).
    */
-  mediaChange(mq: MediaQueryList): void;
+  mediaChange(): void;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -68,4 +67,4 @@ export interface TableColumn
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4a106e6ca6f0f67870af2893de6c9d24
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c810f8d4614721cbfbf06880a6807020

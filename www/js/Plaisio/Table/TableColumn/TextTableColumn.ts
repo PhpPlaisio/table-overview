@@ -71,7 +71,7 @@ export class TextTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  public initFilter(table: OverviewTable, columnIndex: number, mq: MediaQueryList): void
+  public initFilter(table: OverviewTable, columnIndex: number): void
   {
     const that = this;
 
@@ -93,7 +93,7 @@ export class TextTableColumn implements TableColumn
     // Install event handler for changed filter value.
     this.$input.on('keyup', {table: table, element: this.$input}, table.filterTrigger);
 
-    this.mediaChange(mq);
+    this.mediaChange();
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -179,11 +179,12 @@ export class TextTableColumn implements TableColumn
   /**
    * @inheritDoc
    */
-  public mediaChange(mq: MediaQueryList): void
+  public mediaChange(): void
   {
     this.$input.width('');
 
-    if (mq || (mq as any).matches === false)
+    const mq = OverviewTable.getMq();
+    if (mq!==null || (mq as any).matches === false)
     {
       // Large screen.
       this.$input.width((this.$input.width() || 0) +
@@ -221,4 +222,4 @@ export class TextTableColumn implements TableColumn
 OverviewTable.registerTableColumn('text', TextTableColumn);
 OverviewTable.registerTableColumn('email', TextTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c180d39effa3474598e590d6bb3036d2
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c8a5fef77ef12f643cd16fa85a66ce58
