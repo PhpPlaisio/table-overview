@@ -184,7 +184,7 @@ export class TextTableColumn implements TableColumn
     this.$input.width('');
 
     const mq = OverviewTable.getMq();
-    if (mq!==null || (mq as any).matches === false)
+    if (mq !== null && mq.matches === false)
     {
       // Large screen.
       this.$input.width((this.$input.width() || 0) +
