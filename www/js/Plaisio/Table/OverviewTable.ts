@@ -22,11 +22,6 @@ export class OverviewTable
   public static readonly TRIGGER_FILTERING: string = 'fd577bba-f297-4436-80da-d07b8a5d7358';
 
   /**
-   * The media query list object (must match small screens).
-   */
-  protected static mq: MediaQueryList | null = null;
-
-  /**
    * All registered tables.
    */
   protected static tables: OverviewTable[] = [];
@@ -35,6 +30,11 @@ export class OverviewTable
    * If and only if true debug and profiling message are logged on the console.
    */
   private static debug: boolean = false;
+
+  /**
+   * The media query list object (must match small screens).
+   */
+  private static mq: MediaQueryList | null = null;
 
   /**
    * All available column type handler classes.
@@ -182,6 +182,15 @@ export class OverviewTable
   public static registerTableColumn(TableColumn: string, handler: TableColumn['constructor']): void
   {
     OverviewTable.tableColumnHandlers.set(TableColumn, handler);
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sets the media query list object (must match for small screens).
+   */
+  public static setMq(mq: MediaQueryList | null): void
+  {
+    OverviewTable.mq = mq;
   }
 
   //--------------------------------------------------------------------------------------------------------------------
