@@ -22,6 +22,11 @@ export class OverviewTable
   public static readonly TRIGGER_FILTERING: string = 'fd577bba-f297-4436-80da-d07b8a5d7358';
 
   /**
+   * The media query list object (must match small screens).
+   */
+  protected static mq: MediaQueryList | null = null;
+
+  /**
    * All registered tables.
    */
   protected static tables: OverviewTable[] = [];
@@ -30,11 +35,6 @@ export class OverviewTable
    * If and only if true debug and profiling message are logged on the console.
    */
   private static debug: boolean = false;
-
-  /**
-   * The media query list object (must match small screens).
-   */
-  private static mq: MediaQueryList | null = null;
 
   /**
    * All available column type handler classes.
