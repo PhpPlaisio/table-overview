@@ -157,10 +157,9 @@ export class OverviewTable
   {
     OverviewTable.mq = mq;
 
-    const $body = $('body');
-    $body.on(Kernel.eventTypeBeefyHtmlAdded, function (event: TriggeredEvent, html: HTMLElement)
+    Kernel.onBeefyHtmlAdded(function (event: TriggeredEvent, $html: JQuery)
     {
-      $(html).find('table').each(function ()
+      $html.find('table').each(function ()
       {
         const $table = $(this);
 
@@ -1006,4 +1005,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 79ee9be0fcec919a68d2e3c97ec1a335
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4abff33b45a86ed046681e988f324fb1
