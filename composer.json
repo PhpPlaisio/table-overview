@@ -9,7 +9,7 @@
   "require": {
     "php": ">=7.4",
     "plaisio-ts/helper-cast": "^2.0.0",
-    "plaisio-ts/kernel": "^1.1.0",
+    "plaisio-ts/kernel": "^1.2.0",
     "plaisio/babel": "^2.0.1",
     "plaisio/helper-css": "^1.1.0",
     "plaisio/helper-html": "^4.0.0",
@@ -19,7 +19,7 @@
   },
   "require-dev": {
     "phing/phing": "^2.17.4",
-    "phpunit/phpunit": "^9.5.25",
+    "phpunit/phpunit": "^9.5.26",
     "plaisio/console": "^2.7.1"
   },
   "autoload": {

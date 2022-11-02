@@ -1,4 +1,5 @@
 import {Cast} from 'Plaisio/Helper/Cast';
+import {Kernel} from 'Plaisio/Kernel/Kernel';
 import {OverviewTable} from 'Plaisio/Table/OverviewTable';
 import {TableColumn} from 'Plaisio/Table/TableColumn/TableColumn';
 
@@ -17,6 +18,11 @@ export class TextTableColumn implements TableColumn
    * The value for filtering.
    */
   protected filter: string = '';
+
+  /**
+   * Whether the visibility observer has been installed for determining the width of the parent table cell.
+   */
+  private isVisibilityObserverInstalled = false;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -182,14 +188,24 @@ export class TextTableColumn implements TableColumn
   public mediaChange(): void
   {
     this.$input.width('');
+    const that = this;
 
     const mq = OverviewTable.getMq();
     if (mq !== null && mq.matches === false)
     {
       // Large screen.
-      this.$input.width((this.$input.width() || 0) +
-        ((this.$input.closest('td').innerWidth() || 0) -
-          (this.$input.outerWidth(true) || 0)));
+      if (this.$input.closest('td').innerWidth() === 0 && !this.isVisibilityObserverInstalled)
+      {
+        Kernel.onVisibilityToggled(function ()
+        {
+          that.setWidth();
+        });
+        that.isVisibilityObserverInstalled = true;
+      }
+      else
+      {
+        this.setWidth();
+      }
     }
   }
 
@@ -216,10 +232,24 @@ export class TextTableColumn implements TableColumn
   }
 
   //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Sets the width of the input box based on the width of the parent table cell.
+   */
+  private setWidth(): void
+  {
+    if (this.$input.closest('td').innerWidth() !== 0)
+    {
+      this.$input.width((this.$input.width() || 0) +
+        ((this.$input.closest('td').innerWidth() || 0) -
+          (this.$input.outerWidth(true) || 0)));
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('text', TextTableColumn);
 OverviewTable.registerTableColumn('email', TextTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: c8a5fef77ef12f643cd16fa85a66ce58
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b5d7e50c1d9aa5e42e2972a3b239bc4d
