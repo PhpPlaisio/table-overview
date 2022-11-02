@@ -121,7 +121,7 @@ export class OverviewTable
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Returns The media query list object (must match for small screens).
+   * Returns the media query list object (must match for small screens).
    */
   public static getMq(): MediaQueryList | null
   {
@@ -1014,4 +1014,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4abff33b45a86ed046681e988f324fb1
+// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: a4475962b1187fd2984bf7bf13cf8b22
