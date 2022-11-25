@@ -231,20 +231,12 @@ class OverviewTable
    */
   protected function htmlBody(array $rows): string
   {
-    $i        = 0;
+    $index    = 0;
     $htmlRows = '';
     foreach ($rows as $row)
     {
-      $htmlCells = '';
-      foreach ($this->columns as $column)
-      {
-        $htmlCells .= $column->htmlCell($this->renderWalker, $row);
-      }
-
-      $htmlRows .= Html::htmlNested(['tag'  => 'tr',
-                                     'attr' => $this->tableRow->getRowAttributes($this->renderWalker, $i, $row),
-                                     'html' => $htmlCells]);
-      $i++;
+      $htmlRows .= $this->htmlRow($index, $row);
+      $index++;
     }
 
     $struct = ['tag'  => 'tbody',
@@ -431,6 +423,28 @@ class OverviewTable
   protected function htmlPrefix(): string
   {
     return '';
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the HTML code of a table row.
+   *
+   * @param int   $index The 0-indexed row index.
+   * @param array $row   The data of a row in the overview table.
+   *
+   * @return string
+   */
+  protected function htmlRow(int $index, array $row): string
+  {
+    $htmlCells = '';
+    foreach ($this->columns as $column)
+    {
+      $htmlCells .= $column->htmlCell($this->renderWalker, $row);
+    }
+
+    return Html::htmlNested(['tag'  => 'tr',
+                             'attr' => $this->tableRow->getRowAttributes($this->renderWalker, $index, $row),
+                             'html' => $htmlCells]);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
