@@ -29,6 +29,13 @@ abstract class DualTableColumn implements TableColumn
   protected ColElement $col2;
 
   /**
+   * The header of this column.
+   *
+   * @var int|string|null
+   */
+  protected $header;
+
+  /**
    * If and only if true the header is HTML code.
    *
    * @var bool
@@ -78,11 +85,6 @@ abstract class DualTableColumn implements TableColumn
    * @var int|null
    */
   protected ?int $sortOrder2 = null;
-
-  /**
-   * @var int|string|null
-   */
-  private $header;
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
