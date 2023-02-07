@@ -2,6 +2,8 @@
 /.phpunit.result.cache
 /bin/
 /composer.lock
+/custom.task.properties
+/custom.type.properties
 /doc/
 /node_modules/
 /package-lock.json

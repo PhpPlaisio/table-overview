@@ -17,6 +17,7 @@ use Plaisio\Table\TableRow\ZebraTableRow;
  *
  * @property-read RenderWalker $renderWalker The render walker.
  */
+#[\AllowDynamicProperties]
 class OverviewTable
 {
   //--------------------------------------------------------------------------------------------------------------------
@@ -451,7 +452,7 @@ class OverviewTable
   /**
    * Generates CSS for responsive tables.
    */
-  private function generateResponsiveCss()
+  private function generateResponsiveCss(): void
   {
     if (static::$responsiveMediaQuery===null) return;
 

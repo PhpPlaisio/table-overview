@@ -52,3 +52,4 @@ export class NumberTableColumn extends TextTableColumn
 OverviewTable.registerTableColumn('number', NumberTableColumn);
 
 // Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: f04d8147d95d8ce9bc115256002e103e
+// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: eedb605372ae35cfe48325a3572b8473

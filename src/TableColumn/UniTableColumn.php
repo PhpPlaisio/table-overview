@@ -62,7 +62,7 @@ abstract class UniTableColumn implements TableColumn
    * Object  constructor.
    *
    * @param string          $dataType     The data type of this table column.
-   * @param string|int|null $header       The header of this column. We distinguish 3 types:
+   * @param int|string|null $header       The header of this column. We distinguish 3 types:
    *                                      <ul>
    *                                      <li>string: the value is the header text of this table column,
    *                                      <li>null: this table column has header without a text and with class 'empty',
@@ -71,7 +71,7 @@ abstract class UniTableColumn implements TableColumn
    *                                      Note: 14 is a word ID and '14' is a header text.
    * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct(string $dataType, $header, bool $headerIsHtml = false)
+  public function __construct(string $dataType, int|string|null $header, bool $headerIsHtml = false)
   {
     $this->col = new ColElement();
     $this->col->setAttrData('type', $dataType);

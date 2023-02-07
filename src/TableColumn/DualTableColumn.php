@@ -31,9 +31,9 @@ abstract class DualTableColumn implements TableColumn
   /**
    * The header of this column.
    *
-   * @var int|string|null
+   * @var ?string
    */
-  protected $header;
+  protected ?string $header;
 
   /**
    * If and only if true the header is HTML code.
@@ -92,10 +92,10 @@ abstract class DualTableColumn implements TableColumn
    *
    * @param string          $dataType1    The data type of the first column.
    * @param string          $dataType2    The data type of the second column.
-   * @param string|int|null $header       The header of this table column.
+   * @param int|string|null $header       The header of this table column.
    * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct(string $dataType1, string $dataType2, $header, bool $headerIsHtml = false)
+  public function __construct(string $dataType1, string $dataType2, int|string|null $header, bool $headerIsHtml = false)
   {
     $this->col1 = new ColElement();
     $this->col1->setAttrData('type', $dataType1);

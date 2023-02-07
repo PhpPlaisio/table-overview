@@ -46,12 +46,15 @@ class CombinedTableColumn implements TableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $header       The header of this column.
+   * @param int|string|null $header       The header of this column.
    * @param UniTableColumn  $column1      The first table column.
    * @param UniTableColumn  $column2      The second table column.
    * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($header, UniTableColumn $column1, UniTableColumn $column2, bool $headerIsHtml = false)
+  public function __construct(int|string|null $header,
+                              UniTableColumn  $column1,
+                              UniTableColumn  $column2,
+                              bool            $headerIsHtml = false)
   {
     $this->column1 = $column1;
     $this->column2 = $column2;

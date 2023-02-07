@@ -37,13 +37,16 @@ class DateTimeTableColumn extends UniTableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $header       The header text of this table column.
+   * @param int|string|null $header       The header text of this table column.
    * @param string          $fieldName    The key to be used for getting the value from the data row.
    * @param string|null     $format       The format specifier for formatting the content of this table column. If null
    *                                      the default format is used.
    * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($header, string $fieldName, ?string $format = null, bool $headerIsHtml = false)
+  public function __construct(int|string|null $header,
+                              string          $fieldName,
+                              ?string         $format = null,
+                              bool            $headerIsHtml = false)
   {
     parent::__construct('datetime', $header, $headerIsHtml);
 

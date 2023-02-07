@@ -30,13 +30,16 @@ class NumberTableColumn extends UniTableColumn
   /**
    * Object constructor.
    *
-   * @param string|int|null $header       The header text of this table column.
+   * @param int|string|null $header       The header text of this table column.
    * @param string          $fieldName    The key to be used for getting the value from the data row.
    * @param string          $format       The format specifier for formatting the content of this table column. See
    *                                      sprintf.
    * @param bool            $headerIsHtml If and only if true the header is HTML code.
    */
-  public function __construct($header, string $fieldName, string $format = '%d', bool $headerIsHtml = false)
+  public function __construct(int|string|null $header,
+                              string          $fieldName,
+                              string          $format = '%d',
+                              bool            $headerIsHtml = false)
   {
     parent::__construct('number', $header, $headerIsHtml);
 
