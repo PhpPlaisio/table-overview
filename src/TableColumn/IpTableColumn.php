@@ -56,17 +56,49 @@ class IpTableColumn extends UniTableColumn
       }
       else
       {
-        $text = inet_ntop($value);
-        $data = bin2hex($value);
-        if (substr($data, -12, 4)==='ffff')
+        switch (true)
         {
-          $text = substr(strrchr($text, ':'), 1);
+          case strlen($value)===4:
+            $text = inet_ntop($value);
+            $data = '00000000000000000000ffff'.bin2hex($value);
+            break;
+
+          case strlen($value)===16:
+            $text = inet_ntop($value);
+            $data = bin2hex($value);
+            if (substr($data, -12, 4)==='ffff')
+            {
+              $text = substr(strrchr($text, ':'), 1);
+            }
+            break;
+
+          case preg_match('/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/', $value):
+            $text = $value;
+            $data = '00000000000000000000ffff'.bin2hex(inet_pton($value));
+            break;
+
+          default:
+            $bin = inet_pton($value);
+            if ($bin!==false)
+            {
+              $text = inet_ntop($bin);
+              $data = bin2hex($bin);
+              if (substr($data, -12, 4)==='ffff')
+              {
+                $text = substr(strrchr($text, ':'), 1);
+              }
+            }
+            else
+            {
+              $text = $value;
+              $data = null;
+            }
         }
       }
     }
 
     $struct = ['tag'  => 'td',
-               'attr' => ['class'      => $walker->getClasses(['cell', 'ip']),
+               'attr' => ['class'      => $walker->getClasses(['cell', 'cell-ip']),
                           'data-value' => $data],
                'text' => $text];
 
