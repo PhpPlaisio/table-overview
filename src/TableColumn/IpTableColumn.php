@@ -72,7 +72,7 @@ class IpTableColumn extends UniTableColumn
             }
             break;
 
-          case preg_match('/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/', $value):
+          case preg_match('/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/', $value)===1:
             $text = $value;
             $data = '00000000000000000000ffff'.bin2hex(inet_pton($value));
             break;
