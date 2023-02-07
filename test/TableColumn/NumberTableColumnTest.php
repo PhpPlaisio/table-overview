@@ -39,7 +39,7 @@ class NumberTableColumnTest extends TestCase
       $row = ['number' => $value];
       $ret = $column->htmlCell($walker, $row);
 
-      self::assertSame('<td class="ot-cell ot-number"></td>', $ret, var_export($value, true));
+      self::assertSame('<td class="ot-cell ot-cell-number"></td>', $ret, var_export($value, true));
     }
   }
 
@@ -67,7 +67,7 @@ class NumberTableColumnTest extends TestCase
     $row    = ['number' => 1234];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertSame('<td class="ot-cell ot-number" data-value="1234">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
+    self::assertSame('<td class="ot-cell ot-cell-number" data-value="1234">&amp;&lt;&#039;&quot;1234&quot;&#039;&gt;&amp;</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ class NumberTableColumnTest extends TestCase
     $row    = ['number' => 'qwerty'];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertSame('<td class="ot-cell ot-number">qwerty</td>', $ret);
+    self::assertSame('<td class="ot-cell ot-cell-number">qwerty</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -95,12 +95,12 @@ class NumberTableColumnTest extends TestCase
     $row    = ['number' => "<'\">& "];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertSame('<td class="ot-cell ot-number">&lt;&#039;&quot;&gt;&amp; </td>', $ret);
+    self::assertSame('<td class="ot-cell ot-cell-number">&lt;&#039;&quot;&gt;&amp; </td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with a integer.
+   * Test with an integer.
    */
   public function testNumberValue01(): void
   {
@@ -109,7 +109,7 @@ class NumberTableColumnTest extends TestCase
     $row    = ['number' => 123];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertSame('<td class="ot-cell ot-number" data-value="123">123</td>', $ret);
+    self::assertSame('<td class="ot-cell ot-cell-number" data-value="123">123</td>', $ret);
   }
   //--------------------------------------------------------------------------------------------------------------------
   /**
@@ -122,12 +122,12 @@ class NumberTableColumnTest extends TestCase
     $row    = ['number' => M_PI];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertSame('<td class="ot-cell ot-number" data-value="3.1415926535898">3.14</td>', $ret);
+    self::assertSame('<td class="ot-cell ot-cell-number" data-value="3.1415926535898">3.14</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   /**
-   * Test with a float.
+   * Test rounding with a float.
    */
   public function testNumberValue03(): void
   {
@@ -137,7 +137,7 @@ class NumberTableColumnTest extends TestCase
     $ret    = $column->htmlCell($walker, $row);
 
     // sprintf does not do any rounding!
-    self::assertSame('<td class="ot-cell ot-number" data-value="1.005">1.00</td>', $ret);
+    self::assertSame('<td class="ot-cell ot-cell-number" data-value="1.005">1.00</td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ class NumberTableColumnTest extends TestCase
       $row = ['number' => $value];
       $ret = $column->htmlCell($walker, $row);
 
-      self::assertSame('<td class="ot-cell ot-number" data-value="0">0</td>', $ret, var_export($value, true));
+      self::assertSame('<td class="ot-cell ot-cell-number" data-value="0">0</td>', $ret, var_export($value, true));
     }
   }
 
@@ -174,7 +174,7 @@ class NumberTableColumnTest extends TestCase
       $row = ['number' => $value];
       $ret = $column->htmlCell($walker, $row);
 
-      self::assertSame('<td class="ot-cell ot-number" data-value="0">0.00</td>', $ret, var_export($value, true));
+      self::assertSame('<td class="ot-cell ot-cell-number" data-value="0">0.00</td>', $ret, var_export($value, true));
     }
   }
 

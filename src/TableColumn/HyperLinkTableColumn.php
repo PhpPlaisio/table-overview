@@ -54,7 +54,7 @@ class HyperLinkTableColumn extends UniTableColumn
     }
 
     $struct = ['tag'   => 'td',
-               'attr'  => ['class' => $walker->getClasses(['cell', 'link'])],
+               'attr'  => ['class' => $walker->getClasses(['cell', 'cell-link'])],
                'inner' => $inner];
 
     return Html::htmlNested($struct);

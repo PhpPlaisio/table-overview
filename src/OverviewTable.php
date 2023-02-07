@@ -481,7 +481,7 @@ class OverviewTable
   private function prepare(): void
   {
     $this->addClasses($this->renderWalker->getClasses('table'));
-    $this->setAttrData('overview-table', $this->renderWalker->getModuleClass());
+    $this->setAttrData('overview-table-module-class', $this->renderWalker->getModuleClass());
 
     if (static::$responsiveMediaQuery!==null && $this->getAttribute('id')===null)
     {

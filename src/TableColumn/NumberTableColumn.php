@@ -64,7 +64,7 @@ class NumberTableColumn extends UniTableColumn
     }
 
     $struct = ['tag'  => 'td',
-               'attr' => ['class'      => $walker->getClasses(['cell', 'number']),
+               'attr' => ['class'      => $walker->getClasses(['cell', 'cell-number']),
                           'data-value' => $data],
                'text' => $text];
 

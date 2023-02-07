@@ -33,13 +33,13 @@ class OverviewTableTest extends TestCase
     $table->addColumn(new TextTableColumn('Test', 'my-field'));
     $html = $table->htmlTable($rows);
 
-    self::assertSame('<table class="ot-table" data-overview-table="ot">'.
+    self::assertSame('<table class="ot-table" data-overview-table-module-class="ot">'.
                      '<colgroup><col data-type="text"/></colgroup>'.
                      '<thead class="ot-thead">'.
                      '<tr class="ot-header-row"><th class="is-sortable ot-header">Test</th></tr>'.
                      '</thead>'.
                      '<tbody class="ot-tbody">'.
-                     '<tr class="is-even ot-row"><td class="ot-cell ot-text">Hello, world!</td></tr>'.
+                     '<tr class="is-even ot-row"><td class="ot-cell ot-cell-text">Hello, world!</td></tr>'.
                      '</tbody>'.
                      '</table>', $html);
   }

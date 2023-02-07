@@ -20,6 +20,5 @@ export class IpTableColumn extends TextTableColumn
 
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('ip', IpTableColumn);
-OverviewTable.registerTableColumn('ipv4', IpTableColumn);
 
 // Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: b125bf4ed80ece8baa72aff76b914897

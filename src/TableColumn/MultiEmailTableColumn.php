@@ -78,7 +78,7 @@ class MultiEmailTableColumn extends UniTableColumn
     }
 
     $struct = ['tag'   => 'td',
-               'attr'  => ['class' => $walker->getClasses(['cell', 'emails'])],
+               'attr'  => ['class' => $walker->getClasses(['cell', 'cell-emails'])],
                'inner' => $inner];
 
     return Html::htmlNested($struct);

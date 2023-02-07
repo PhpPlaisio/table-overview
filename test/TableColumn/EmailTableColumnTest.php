@@ -35,7 +35,7 @@ class EmailTableColumnTest extends TestCase
     $row    = ['mail' => ''];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-cell ot-email"></td>', $ret);
+    self::assertEquals('<td class="ot-cell ot-cell-email"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class EmailTableColumnTest extends TestCase
     $row    = ['mail' => 'info@setbased.nl'];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-cell ot-email">'.
+    self::assertEquals('<td class="ot-cell ot-cell-email">'.
                        '<a class="link link-mailto" href="mailto:info@setbased.nl">info@setbased.nl</a>'.
                        '</td>', $ret);
   }

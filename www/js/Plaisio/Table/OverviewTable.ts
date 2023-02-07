@@ -95,7 +95,7 @@ export class OverviewTable
 
     this.log('Start create OverviewTable:');
 
-    this.moduleClass = Cast.toManString($table.attr('data-overview-table'));
+    this.moduleClass = Cast.toManString($table.attr('data-overview-table-module-class'));
     this.hiddenClass = 'is-hidden';
     this.$filters    = $table.children('thead').children(this.getRealClass('filter-row')).find('td');
     this.$headers    = $table.children('thead').children(this.getRealClass('header-row')).find('th');
@@ -163,7 +163,7 @@ export class OverviewTable
       {
         const $table = $(this);
 
-        if ($table.attr('data-overview-table') && !$table.hasClass('is-registered'))
+        if ($table.attr('data-overview-table-module-class') && !$table.hasClass('is-registered'))
         {
           OverviewTable.tables.push(new OverviewTable($table));
           $table.addClass('is-registered');

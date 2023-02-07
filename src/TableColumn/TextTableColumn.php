@@ -41,7 +41,7 @@ class TextTableColumn extends UniTableColumn
   public function htmlCell(RenderWalker $walker, array $row): string
   {
     $struct = ['tag'  => 'td',
-               'attr' => ['class' => $walker->getClasses(['cell', 'text'])],
+               'attr' => ['class' => $walker->getClasses(['cell', 'cell-text'])],
                'text' => $row[$this->fieldName]];
 
     return Html::htmlNested($struct);

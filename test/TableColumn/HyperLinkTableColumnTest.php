@@ -35,11 +35,11 @@ class HyperLinkTableColumnTest extends TestCase
 
     $row = ['url' => ''];
     $ret = $column->htmlCell($walker, $row);
-    self::assertEquals('<td class="ot-cell ot-link"></td>', $ret);
+    self::assertEquals('<td class="ot-cell ot-cell-link"></td>', $ret);
 
     $row = ['url' => null];
     $ret = $column->htmlCell($walker, $row);
-    self::assertEquals('<td class="ot-cell ot-link"></td>', $ret);
+    self::assertEquals('<td class="ot-cell ot-cell-link"></td>', $ret);
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ class HyperLinkTableColumnTest extends TestCase
     $row    = ['url' => 'https://www.setbased.nl'];
     $ret    = $column->htmlCell($walker, $row);
 
-    self::assertEquals('<td class="ot-cell ot-link">'.
+    self::assertEquals('<td class="ot-cell ot-cell-link">'.
                        '<a class="link" href="https://www.setbased.nl">https://www.setbased.nl</a>'.
                        '</td>', $ret);
   }

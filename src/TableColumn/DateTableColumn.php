@@ -88,7 +88,7 @@ class DateTableColumn extends UniTableColumn
     }
 
     $struct = ['tag'  => 'td',
-               'attr' => ['class'      => $walker->getClasses(['cell', 'date']),
+               'attr' => ['class'      => $walker->getClasses(['cell', 'cell-date']),
                           'data-value' => $data],
                'text' => $text];
 
