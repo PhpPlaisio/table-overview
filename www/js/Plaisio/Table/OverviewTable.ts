@@ -1014,5 +1014,4 @@ export class OverviewTable
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 659ae817803da6f2af30a64c2a77ff04
-// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: b8e69f0dc1c74fea2d32c7c4b1a06935
+// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 659ae817803da6f2af30a64c2a77ff04

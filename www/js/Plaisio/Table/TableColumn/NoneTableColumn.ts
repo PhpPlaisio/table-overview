@@ -84,5 +84,4 @@ export class NoneTableColumn implements TableColumn
 //----------------------------------------------------------------------------------------------------------------------
 OverviewTable.registerTableColumn('none', NoneTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 4a059b2e0c792947f8517e0b19b251f4
-// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 5a1997fdb1493eca53f49e2463c57837
+// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 4a059b2e0c792947f8517e0b19b251f4

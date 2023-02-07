@@ -252,5 +252,4 @@ export class TextTableColumn implements TableColumn
 OverviewTable.registerTableColumn('text', TextTableColumn);
 OverviewTable.registerTableColumn('email', TextTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 27981cccb2f8c54eb800256bd9066f29
-// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 21aa87e999f8a279d39c94e33f455dbf
+// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 27981cccb2f8c54eb800256bd9066f29

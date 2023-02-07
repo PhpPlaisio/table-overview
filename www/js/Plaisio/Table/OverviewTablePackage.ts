@@ -12,5 +12,4 @@ export class OverviewTablePackage extends OverviewTable
   // Nothing to implement.
 }
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 0da8b3912e0fdeeb05f78111262236e3
-// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 36ae53aa83a73542df279da79a9be019
+// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 0da8b3912e0fdeeb05f78111262236e3

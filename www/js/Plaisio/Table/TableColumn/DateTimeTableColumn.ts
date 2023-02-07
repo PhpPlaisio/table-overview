@@ -22,5 +22,4 @@ export class DateTimeTableColumn extends TextTableColumn
 OverviewTable.registerTableColumn('date', DateTimeTableColumn);
 OverviewTable.registerTableColumn('datetime', DateTimeTableColumn);
 
-// Plaisio\Console\Helper\TypeScript\TypeScriptMarkHelper::md5: 2dbee8595da78c1bcad274105b7a466c
-// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: b3859c149ecad5842b8ece5d2327dc50
+// Plaisio\Console\TypeScript\Helper\MarkHelper::md5: 2dbee8595da78c1bcad274105b7a466c
