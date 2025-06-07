@@ -454,7 +454,10 @@ class OverviewTable
    */
   private function generateResponsiveCss(): void
   {
-    if (static::$responsiveMediaQuery===null) return;
+    if (static::$responsiveMediaQuery===null)
+    {
+      return;
+    }
 
     Nub::$nub->assets->cssAppendLine(static::$responsiveMediaQuery);
     Nub::$nub->assets->cssAppendLine('{');
